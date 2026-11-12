@@ -1,0 +1,871 @@
+/* ==========================================================================
+   BillTrax Enterprise Design System & Observability Hub
+   Masterclass Architecture & Executive Telemetry System
+   Colors Extracted Directly From Official BillTrax Platform:
+   - Primary BillTrax Orange: #FF9C1D (Warm amber/orange CTA & active highlights)
+   - Deep Executive Navy:     #091E3E (Commanding corporate midnight navy)
+   - Royal Tech Blue:         #00468E (Data pathways, throughput metrics)
+   - Diagram Flow Slate Blue: #597A9D (Workflow connectors & subtitles)
+   - Emerald Green:           #10B981 (System health, success rate SLA)
+   - Alert Crimson:           #DC2626 (Service breaks, format exceptions)
+   ========================================================================== */
+
+/* 100% Offline Robust Architecture - Zero External Font / CDN Requests */
+
+:root {
+    /* Brand Colors */
+    --bt-orange: #FF9C1D;
+    --bt-orange-hover: #F58700;
+    --bt-orange-glow: rgba(255, 156, 29, 0.35);
+    --bt-orange-light: #FFF7ED;
+    --bt-orange-subtle: #FFF0DB;
+
+    --bt-navy: #091E3E;
+    --bt-navy-deep: #06152B;
+    --bt-navy-royal: #00468E;
+    --bt-navy-subtle: #0F2B57;
+
+    --bt-slate-blue: #597A9D;
+    --bt-cyan: #06A3DA;
+    --bt-ice: #EEF9FF;
+
+    /* Semantic Status */
+    --bt-emerald: #10B981;
+    --bt-emerald-dark: #059669;
+    --bt-emerald-light: #ECFDF5;
+    --bt-emerald-border: #A7F3D0;
+
+    --bt-crimson: #DC2626;
+    --bt-crimson-dark: #991B1B;
+    --bt-crimson-light: #FEF2F2;
+    --bt-crimson-border: #FECACA;
+
+    --bt-amber: #F59E0B;
+    --bt-amber-light: #FFFBEB;
+    --bt-amber-border: #FDE68A;
+
+    /* Surfaces & Canvas */
+    --bt-canvas: #F8FAFC;
+    --bt-surface: #FFFFFF;
+    --bt-surface-subtle: #F1F5F9;
+    --bt-border: #E2E8F0;
+    --bt-border-light: #F8FAFC;
+    --bt-text-primary: #0F172A;
+    --bt-text-secondary: #475569;
+    --bt-text-muted: #64748B;
+
+    /* Typography - 100% Offline Robust Native System Stack */
+    --font-heading: 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-accent: 'Oswald', system-ui, -apple-system, 'Segoe UI', Impact, sans-serif;
+    --font-body: 'Montserrat', 'Rubik', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Segoe UI Mono', Consolas, 'Courier New', monospace;
+
+    /* Shadows & Elevation (Multi-Stage Apple/Stripe Precision) */
+    --shadow-xs: 0 1px 2px 0 rgba(9, 30, 62, 0.05);
+    --shadow-sm: 0 2px 4px 0 rgba(9, 30, 62, 0.06), 0 1px 2px -1px rgba(9, 30, 62, 0.04);
+    --shadow-card: 0 2px 8px -1px rgba(9, 30, 62, 0.06), 0 1px 3px rgba(9, 30, 62, 0.04);
+    --shadow-hover: 0 14px 30px -4px rgba(9, 30, 62, 0.12), 0 4px 10px -2px rgba(9, 30, 62, 0.06);
+    --shadow-orange: 0 4px 16px rgba(255, 156, 29, 0.35);
+    --shadow-blue: 0 4px 16px rgba(0, 70, 142, 0.25);
+    --shadow-emerald: 0 4px 14px rgba(16, 185, 129, 0.22);
+    --shadow-crimson: 0 4px 14px rgba(220, 38, 38, 0.22);
+}
+
+/* ==========================================================================
+   Base Body & Atmospheric Canvas
+   ========================================================================== */
+body {
+    font-family: var(--font-body);
+    background-color: var(--bt-canvas);
+    background-image:
+        radial-gradient(1000px circle at 5% 0%, rgba(255, 156, 29, 0.05) 0%, transparent 60%),
+        radial-gradient(1200px circle at 95% 5%, rgba(0, 70, 142, 0.06) 0%, transparent 60%),
+        radial-gradient(800px circle at 50% 60%, rgba(255, 156, 29, 0.02) 0%, transparent 70%),
+        radial-gradient(circle, rgba(9, 30, 62, 0.06) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 24px 24px;
+    background-attachment: fixed;
+    color: var(--bt-text-primary);
+    line-height: 1.5;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+    font-family: var(--font-heading);
+    color: var(--bt-navy);
+}
+
+.font-accent {
+    font-family: var(--font-accent);
+}
+
+code,
+pre,
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+/* Custom Sleek Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bt-orange);
+}
+
+/* ==========================================================================
+   Header: Ultra-Clean Frosted Acrylic Glass (Official BillTrax Brand Architecture)
+   ========================================================================== */
+.bt-header {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 2px 10px rgba(9, 30, 62, 0.03), 0 1px 2px rgba(9, 30, 62, 0.02);
+    color: var(--bt-navy);
+}
+
+.bt-brand-badge {
+    background-color: var(--bt-navy);
+    color: #FFFFFF !important;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: 0 1px 3px rgba(9, 30, 62, 0.15);
+}
+
+.bt-brand-badge span {
+    color: #FFFFFF !important;
+}
+
+body.dark-mode .bt-logo-light {
+    display: none !important;
+}
+
+body.dark-mode .bt-logo-dark {
+    display: block !important;
+}
+
+/* Sub-Navigation Rail */
+.bt-nav-rail {
+    background: #F1F5F9;
+    border: 1px solid var(--bt-border);
+    border-radius: 9999px;
+    padding: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+/* Navigation Tabs: Pill Aesthetic */
+.bt-nav-pill {
+    padding: 6px 15px;
+    border-radius: 9999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--bt-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.bt-nav-pill:hover {
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--bt-navy);
+    transform: translateY(-1px);
+}
+
+/* Active Portal Pill: Signature BillTrax Orange */
+.bt-nav-pill.active {
+    background: linear-gradient(135deg, #FF9C1D 0%, #FF8A00 100%);
+    color: #FFFFFF !important;
+    border-color: transparent;
+    box-shadow: var(--shadow-orange);
+    font-weight: 700;
+}
+
+.bt-nav-pill.active span.rounded-full {
+    background-color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   Executive KPI Mission Control Cards (Left Sidebar)
+   ========================================================================== */
+.bt-kpi-card {
+    position: relative;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFF 100%);
+    border: 1px solid var(--bt-border);
+    border-radius: 16px;
+    padding: 1.05rem 1.15rem;
+    box-shadow: var(--shadow-card);
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+/* Top Accent Highlight Lines with Subtle Luminous Sheen */
+.bt-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+    background: linear-gradient(90deg, #00468E 0%, #597A9D 100%);
+    transition: height 0.2s ease;
+}
+
+.bt-kpi-card-orange::before {
+    background: linear-gradient(90deg, #FF9C1D 0%, #FF8A00 100%);
+}
+
+.bt-kpi-card-success::before {
+    background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+.bt-kpi-card-danger::before {
+    background: linear-gradient(90deg, #DC2626 0%, #EF4444 100%);
+}
+
+.bt-kpi-card:hover {
+    border-color: #CBD5E1;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+}
+
+.bt-kpi-card:hover::before {
+    height: 4.5px;
+}
+
+/* Clickable & Active State for Left Sidebar KPI Cards */
+.bt-kpi-card-clickable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.bt-kpi-card-clickable:active {
+    transform: translateY(-1px) scale(0.99);
+}
+
+.bt-kpi-card-active {
+    border-color: #00468E !important;
+    background: linear-gradient(180deg, #F0F7FF 0%, #E6F0FA 100%) !important;
+    box-shadow: 0 0 0 2px #00468E, 0 10px 25px -4px rgba(0, 70, 142, 0.25) !important;
+    transform: translateY(-2px);
+}
+
+.bt-kpi-card-active.bt-kpi-card-success {
+    border-color: #10B981 !important;
+    background: linear-gradient(180deg, #F0FDF4 0%, #DCFCE7 100%) !important;
+    box-shadow: 0 0 0 2px #10B981, 0 10px 25px -4px rgba(16, 185, 129, 0.25) !important;
+}
+
+.bt-kpi-card-active.bt-kpi-card-danger {
+    border-color: #DC2626 !important;
+    background: linear-gradient(180deg, #FEF2F2 0%, #FEE2E2 100%) !important;
+    box-shadow: 0 0 0 2px #DC2626, 0 10px 25px -4px rgba(220, 38, 38, 0.25) !important;
+}
+
+.bt-kpi-card-active.bt-kpi-card-orange {
+    border-color: #FF9C1D !important;
+    background: linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%) !important;
+    box-shadow: 0 0 0 2px #FF9C1D, 0 10px 25px -4px rgba(255, 156, 29, 0.25) !important;
+}
+
+.bt-kpi-hint {
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateX(-4px);
+}
+
+.bt-kpi-card-clickable:hover .bt-kpi-hint {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.bt-kpi-icon-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.bt-kpi-card:hover .bt-kpi-icon-badge {
+    transform: scale(1.08);
+}
+
+.bt-kpi-number {
+    font-family: var(--font-heading);
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--bt-navy);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Mini Progress Gauges inside KPI Cards */
+.bt-kpi-track {
+    width: 100%;
+    height: 4px;
+    border-radius: 9999px;
+    background: #F1F5F9;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.bt-kpi-bar {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   Segmented Tab Switcher in Inspector Section (3 Tabs)
+   ========================================================================== */
+.bt-tab-container {
+    background: #EEF2F6;
+    border: 1px solid var(--bt-border);
+    padding: 4px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: inset 0 1px 2px rgba(9, 30, 62, 0.04);
+}
+
+.bt-tab-pill {
+    padding: 7px 16px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--bt-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+}
+
+.bt-tab-pill:hover {
+    color: var(--bt-navy);
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.bt-tab-pill.active {
+    background: #FFFFFF;
+    color: var(--bt-navy) !important;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(9, 30, 62, 0.08), 0 1px 2px rgba(9, 30, 62, 0.04);
+    border-color: #E2E8F0;
+}
+
+.bt-tab-count-badge {
+    padding: 1px 7px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    background: #F1F5F9;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+}
+
+.bt-tab-pill.active .bt-tab-count-badge {
+    background: #091E3E;
+    color: #FFFFFF;
+    border-color: transparent;
+}
+
+/* ==========================================================================
+   Interactive Service Cards Metric Buttons (Node-Flow Architecture)
+   ========================================================================== */
+.svc-metric-node-btn {
+    border-radius: 12px;
+    padding: 9px 10px;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    outline: none;
+}
+
+.svc-metric-node-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(9, 30, 62, 0.08);
+}
+
+.svc-metric-node-btn.processed-btn {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+}
+
+.svc-metric-node-btn.processed-btn:hover {
+    border-color: #00468E;
+    box-shadow: 0 6px 16px rgba(0, 70, 142, 0.16);
+}
+
+.svc-metric-node-btn.success-btn {
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.svc-metric-node-btn.success-btn:hover {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: #10B981;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.20);
+}
+
+.svc-metric-node-btn.danger-btn {
+    background: rgba(220, 38, 38, 0.06);
+    border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.svc-metric-node-btn.danger-btn:hover {
+    background: rgba(220, 38, 38, 0.12);
+    border-color: #DC2626;
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.20);
+}
+
+/* ==========================================================================
+   Glass Panels & Cards (Luxury Multi-Layer Architecture)
+   ========================================================================== */
+.glass-panel {
+    background: #FFFFFF;
+    border: 1px solid var(--bt-border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-panel:hover {
+    border-color: #CBD5E1;
+    box-shadow: var(--shadow-hover);
+}
+
+/* Service Intelligence Assistant Box */
+.bt-assistant-box {
+    background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFF 100%);
+    border: 1px solid var(--bt-border);
+    border-radius: 18px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+}
+
+.bt-assistant-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+    background: linear-gradient(90deg, #FF9C1D 0%, #FF8A00 40%, #00468E 100%);
+}
+
+/* Search and Form Controls */
+.bt-form-input {
+    border-radius: 9999px;
+    background: #F8FAFC;
+    border: 1.5px solid var(--bt-border);
+    padding: 11px 20px;
+    color: var(--bt-navy);
+    font-size: 13px;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.bt-form-input:focus {
+    background: #FFFFFF;
+    border-color: var(--bt-orange);
+    box-shadow: 0 0 0 4px rgba(255, 156, 29, 0.18);
+}
+
+/* Primary Action Buttons: BillTrax Orange (Like 'Biller' CTA in Screenshot) */
+.btn-bt-primary {
+    background: linear-gradient(135deg, #FF9C1D 0%, #FF8A00 100%);
+    color: #FFFFFF !important;
+    font-weight: 700;
+    border-radius: 9999px;
+    border: none;
+    padding: 8px 22px;
+    box-shadow: var(--shadow-orange);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.015em;
+}
+
+.btn-bt-primary:hover {
+    background: linear-gradient(135deg, #FF8A00 0%, #E67800 100%);
+    box-shadow: 0 8px 24px rgba(255, 156, 29, 0.45);
+    transform: translateY(-1.5px);
+}
+
+.btn-bt-secondary {
+    background: #F8FAFC;
+    color: var(--bt-navy);
+    border: 1px solid var(--bt-border);
+    border-radius: 9999px;
+    font-weight: 600;
+    padding: 7px 18px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-bt-secondary:hover {
+    background: #FFFFFF;
+    color: var(--bt-orange);
+    border-color: var(--bt-orange);
+    box-shadow: 0 3px 10px rgba(9, 30, 62, 0.08);
+    transform: translateY(-1px);
+}
+
+.btn-bt-navy {
+    background: #091E3E;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 9999px;
+    font-weight: 600;
+    padding: 7px 18px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-bt-navy:hover {
+    background: #00468E;
+    color: #FFFFFF;
+    box-shadow: var(--shadow-blue);
+    transform: translateY(-1px);
+}
+
+/* Quick Query Pill Buttons */
+.quick-query-pill {
+    background: #F8FAFC;
+    border: 1px solid var(--bt-border);
+    color: var(--bt-text-secondary);
+    border-radius: 9999px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.quick-query-pill:hover {
+    background: #FFFFFF;
+    border-color: var(--bt-orange);
+    color: var(--bt-orange);
+    box-shadow: 0 2px 8px rgba(255, 156, 29, 0.22);
+    transform: translateY(-1px);
+}
+
+/* Status Badges */
+.badge-bt-success {
+    background: var(--bt-emerald-light);
+    color: var(--bt-emerald-dark);
+    border: 1px solid var(--bt-emerald-border);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-bt-danger {
+    background: var(--bt-crimson-light);
+    color: var(--bt-crimson-dark);
+    border: 1px solid var(--bt-crimson-border);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-bt-warning {
+    background: var(--bt-amber-light);
+    color: #92400E;
+    border: 1px solid var(--bt-amber-border);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-bt-cyan {
+    background: #F0F9FF;
+    color: #0369A1;
+    border: 1px solid #BAE6FD;
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Pulse animation */
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.35;
+        transform: scale(1.25);
+    }
+}
+
+.pulse-badge {
+    animation: pulse-dot 2s infinite ease-in-out;
+}
+
+/* ==========================================================================
+   Table Design: Deep Navy Header + Crisp White Zebra Rows
+   ========================================================================== */
+.bt-table-container {
+    border: 1px solid var(--bt-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #FFFFFF;
+    box-shadow: var(--shadow-sm);
+}
+
+.bt-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bt-table-container thead tr {
+    background: var(--bt-navy);
+    color: #FFFFFF;
+}
+
+.bt-table-container thead th {
+    padding: 13px 16px;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: none;
+}
+
+.bt-table-container tbody tr {
+    border-bottom: 1px solid #F1F5F9;
+    background: #FFFFFF;
+    transition: all 0.15s ease;
+}
+
+.bt-table-container tbody tr:nth-child(even) {
+    background: #FAFCFE;
+}
+
+.bt-table-container tbody tr:hover {
+    background: #FFF9F2;
+    border-left: 3.5px solid var(--bt-orange);
+}
+
+.bt-table-container tbody td {
+    padding: 11px 16px;
+    color: var(--bt-text-primary);
+}
+
+/* Markdown Answer Formatting */
+.markdown-body h3 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    margin-bottom: 0.6rem;
+    color: var(--bt-navy);
+}
+
+.markdown-body h4 {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 0.75rem;
+    margin-bottom: 0.4rem;
+    color: var(--bt-navy-royal);
+}
+
+.markdown-body p {
+    margin-bottom: 0.65rem;
+    line-height: 1.6;
+    color: var(--bt-text-primary);
+    font-size: 0.875rem;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    margin-left: 1.25rem;
+    margin-bottom: 0.65rem;
+}
+
+.markdown-body li {
+    margin-bottom: 0.25rem;
+    line-height: 1.5;
+    color: var(--bt-text-primary);
+    font-size: 0.875rem;
+}
+
+.markdown-body pre {
+    background: var(--bt-navy);
+    color: #EEF9FF;
+    border: 1px solid var(--bt-border);
+    border-radius: 10px;
+    padding: 0.85rem 1.1rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    margin-bottom: 0.65rem;
+}
+
+.markdown-body code {
+    background: #FFF7ED;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #C2410C;
+    font-weight: 600;
+}
+
+.markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.75rem 0;
+    font-size: 0.825rem;
+}
+
+.markdown-body th {
+    background: #F1F5F9;
+    color: var(--bt-navy);
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--bt-border);
+    font-weight: 600;
+}
+
+.markdown-body td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--bt-border);
+}
+
+/* ==========================================================================
+   Dark Mode Support (Enterprise Midnight Edition)
+   ========================================================================== */
+body.dark-mode {
+    --bt-canvas: #060F1E;
+    background-color: #060F1E;
+    background-image:
+        radial-gradient(1000px circle at 5% 0%, rgba(255, 156, 29, 0.06) 0%, transparent 60%),
+        radial-gradient(1200px circle at 95% 5%, rgba(0, 70, 142, 0.12) 0%, transparent 60%),
+        radial-gradient(circle, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 24px 24px;
+    color: #F8FAFC;
+}
+
+body.dark-mode .bt-header {
+    background: rgba(6, 15, 30, 0.94);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .bt-kpi-card,
+body.dark-mode .glass-panel,
+body.dark-mode .bt-assistant-box,
+body.dark-mode .bt-table-container {
+    background: #0B192F;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+body.dark-mode .bt-kpi-number,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode .font-heading {
+    color: #FFFFFF;
+}
+
+body.dark-mode .bt-form-input,
+body.dark-mode .quick-query-pill {
+    background: #061124;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #CBD5E1;
+}
+
+body.dark-mode .bt-tab-container {
+    background: #061124;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .bt-tab-pill {
+    color: #94A3B8;
+}
+
+body.dark-mode .bt-tab-pill.active {
+    background: #0F2342;
+    color: #FFFFFF !important;
+    border-color: rgba(255, 255, 255, 0.15);
+}

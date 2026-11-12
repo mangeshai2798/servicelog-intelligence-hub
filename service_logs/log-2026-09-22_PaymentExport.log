@@ -1,0 +1,439 @@
+2026-09-22 14:00:12.4326||DEBUG|Program|Main Method Is Started  |url: |action: 
+2026-09-22 14:00:12.4783||DEBUG|Program|DorchesterPaymentExport Service Start: 9/22/2026 2:00:12 PM |url: |action: 
+2026-09-22 14:00:21.0576||DEBUG|Program|Process Method of DorchesterPaymentExport Service is Working, DateTime:  : 9/22/2026 2:00:21 PM |url: |action: 
+2026-09-22 14:00:21.1851||DEBUG|Program|PaymentExport Service is Working For Dorchester FTPDATACONFIGURATION Service Name : DorchesterDailyPaymentReport |url: |action: 
+2026-09-22 14:00:21.1851||DEBUG|Program|PaymentsExport Method is Called , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:23.6059||DEBUG|Program|PaymentsExport Workign for BillType Treasurer Bill , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:24.3704||DEBUG|Program|Payment is Not Found for TransactionId  :  C48907607P87934745 for BillType : Treasurer Bill |url: |action: 
+2026-09-22 14:00:24.3704||DEBUG|Program|Payment is Not Found for TransactionId  :  C48922213P87959604 for BillType : Treasurer Bill |url: |action: 
+2026-09-22 14:00:24.3704||DEBUG|Program|Payment is Not Found for TransactionId  :  C48949881P88019871 for BillType : Treasurer Bill |url: |action: 
+2026-09-22 14:00:24.9705||DEBUG|Program|total payments : 199 |url: |action: 
+2026-09-22 14:00:24.9705||DEBUG|Program|SettledPayments Count :199 |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|All Payments Working for settledDate  9/21/2026 12:00:00 AM , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| Now Inserting Header Record to the File  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56223111P105917678   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56223111P105917678  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56223030P105917570   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56223030P105917570  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222704P105917150   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222704P105917150  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222606P105917025   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222606P105917025  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222600P105917017   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222600P105917017  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222556P105916964   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222556P105916964  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222500P105916895   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222500P105916895  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222491P105916880   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222491P105916880  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222419P105916785   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222419P105916785  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222408P105916772   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222408P105916772  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222340P105916687   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222340P105916687  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222334P105916676   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222334P105916676  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222319P105916642   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222319P105916642  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222310P105916623   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222310P105916623  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222201P105916454   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222201P105916454  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56222144P105916378   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56222144P105916378  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221955P105916122   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221955P105916122  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221937P105916092   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221937P105916092  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221861P105915995   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221861P105915995  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221851P105915982   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221851P105915982  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221673P105915738   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221673P105915738  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221655P105915717   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221655P105915717  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221610P105915664   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221610P105915664  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221590P105915640   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221590P105915640  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221580P105915629   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221580P105915629  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221490P105915519   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221490P105915519  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221458P105915480   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221458P105915480  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221406P105915404   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221406P105915404  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221390P105915383   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221390P105915383  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221343P105915323   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221343P105915323  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221323P105915300   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221323P105915300  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221313P105915288   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221313P105915288  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221302P105915271   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221302P105915271  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221228P105915184   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221228P105915184  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221206P105915156   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221206P105915156  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221198P105915147   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221198P105915147  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221184P105915126   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221184P105915126  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221167P105915103   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221167P105915103  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221093P105915002   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221093P105915002  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221064P105914964   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221064P105914964  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56221042P105914935   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56221042P105914935  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220847P105914675   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220847P105914675  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220838P105914664   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220838P105914664  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220820P105914643   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220820P105914643  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220764P105914570   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220764P105914570  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220706P105914494   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220706P105914494  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220694P105914479   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220694P105914479  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220662P105914441   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220662P105914441  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220566P105914316   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220566P105914316  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220487P105914223   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220487P105914223  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220469P105914200   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220469P105914200  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220447P105914174   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220447P105914174  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220433P105914159   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220433P105914159  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220397P105914106   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220397P105914106  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220367P105914071   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220367P105914071  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220355P105914055   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220355P105914055  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220348P105914046   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220348P105914046  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220244P105913920   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220244P105913920  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220234P105913909   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220234P105913909  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220179P105913842   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220179P105913842  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220170P105913831   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220170P105913831  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220169P105913830   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220169P105913830  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56220074P105913700   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56220074P105913700  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219949P105913550   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219949P105913550  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219822P105913381   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219822P105913381  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219811P105913370   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219811P105913370  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219790P105913343   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219790P105913343  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219767P105913302   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219767P105913302  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219615P105913106   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219615P105913106  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219607P105913098   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219607P105913098  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219511P105912976   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219511P105912976  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219493P105912953   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219493P105912953  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219489P105912946   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219489P105912946  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219395P105912816   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219395P105912816  |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219389P105912807   |url: |action: 
+2026-09-22 14:00:24.9777||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219389P105912807  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219218P105912582   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219218P105912582  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219194P105912554   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219194P105912554  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219190P105912549   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219190P105912549  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219167P105912521   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219167P105912521  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219106P105912435   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219106P105912435  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219082P105912400   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219082P105912400  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219070P105912385   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219070P105912385  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219019P105912312   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219019P105912312  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219007P105912293   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219007P105912293  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219004P105912290   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219004P105912290  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56219000P105912286   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56219000P105912286  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218968P105912231   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218968P105912231  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218962P105912222   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218962P105912222  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218831P105912032   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218831P105912032  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218791P105911983   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218791P105911983  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218785P105911977   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218785P105911977  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218749P105911932   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218749P105911932  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218724P105911901   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218724P105911901  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218684P105911813   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218684P105911813  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218673P105911799   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218673P105911799  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218659P105911781   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218659P105911781  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218642P105911762   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218642P105911762  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218634P105911694   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218634P105911694  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218631P105911629   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218631P105911629  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218619P105911558   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218619P105911558  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218588P105911426   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218588P105911426  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218582P105911414   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218582P105911414  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218576P105911130   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218576P105911130  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218528P105910218   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218528P105910218  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218263P105909450   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218263P105909450  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218255P105909440   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218255P105909440  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218251P105909435   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218251P105909435  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218248P105909430   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218248P105909430  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|performing writing operation for payment having Transaction Id : C56218238P105909418   |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56218238P105909418  |url: |action: 
+2026-09-22 14:00:24.9871||DEBUG|Program|output file name :Treasurer Bill_WebPayments_09_21_2026.txt |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|file store in output path : |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|All Payments Working for settledDate  9/22/2026 12:00:00 AM , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| Now Inserting Header Record to the File  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56194093P105866984   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56194093P105866984  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56190473P105861695   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56190473P105861695  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56195809P105869006   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56195809P105869006  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56169940P105849637   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56169940P105849637  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56188105P105858018   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56188105P105858018  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56193594P105866408   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56193594P105866408  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56193703P105866555   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56193703P105866555  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56191433P105863157   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56191433P105863157  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56186073P105854814   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56186073P105854814  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56186118P105854879   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56186118P105854879  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56190554P105861837   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56190554P105861837  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56189350P105859962   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56189350P105859962  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56167122P105844440   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56167122P105844440  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56192561P105864860   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56192561P105864860  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56194691P105867684   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56194691P105867684  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56194691P105867684   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56194691P105867684  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56191152P105862747   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56191152P105862747  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56191152P105862747   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56191152P105862747  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56169069P105848162   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56169069P105848162  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56195003P105868054   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56195003P105868054  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56193305P105866016   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56193305P105866016  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56170105P105849878   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56170105P105849878  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56185999P105854706   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56185999P105854706  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56184955P105854455   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56184955P105854455  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56187221P105856607   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56187221P105856607  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56180441P105853837   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56180441P105853837  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56188254P105858274   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56188254P105858274  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56170876P105851107   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56170876P105851107  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56168065P105847017   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56168065P105847017  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56167976P105846818   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56167976P105846818  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56167581P105844550   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56167581P105844550  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56166733P105842097   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56166733P105842097  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56214716P105905335   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56214716P105905335  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56214369P105904880   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56214369P105904880  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56217508P105908458   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56217508P105908458  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56217508P105908458   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56217508P105908458  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56217135P105908183   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56217135P105908183  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56217099P105908175   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56217099P105908175  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56216604P105907794   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56216604P105907794  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56214696P105905312   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56214696P105905312  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56213473P105903604   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56213473P105903604  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56214357P105904864   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56214357P105904864  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56213253P105903241   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56213253P105903241  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56214135P105904577   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56214135P105904577  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56214233P105904700   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56214233P105904700  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56213502P105903719   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56213502P105903719  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56213754P105904066   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56213754P105904066  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56205054P105887474   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56205054P105887474  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56200552P105880192   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56200552P105880192  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56208785P105893415   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56208785P105893415  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56208785P105893415   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56208785P105893415  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56199066P105877650   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56199066P105877650  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56210214P105895707   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56210214P105895707  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56211207P105897231   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56211207P105897231  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56210674P105896471   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56210674P105896471  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56204939P105887298   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56204939P105887298  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56203093P105884344   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56203093P105884344  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56210140P105895555   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56210140P105895555  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56203846P105885511   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56203846P105885511  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56203846P105885511   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56203846P105885511  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56201288P105881405   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56201288P105881405  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56199349P105878231   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56199349P105878231  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56200289P105879772   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56200289P105879772  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56211969P105898290   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56211969P105898290  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56203451P105884867   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56203451P105884867  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56199263P105877996   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56199263P105877996  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56208097P105892326   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56208097P105892326  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56202572P105883542   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56202572P105883542  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56196549P105872169   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56196549P105872169  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56199326P105878164   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56199326P105878164  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56200247P105879696   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56200247P105879696  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56205464P105888111   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56205464P105888111  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56205464P105888111   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56205464P105888111  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56205464P105888111   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56205464P105888111  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56205464P105888111   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56205464P105888111  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56205205P105887717   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56205205P105887717  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56201083P105881103   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56201083P105881103  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56203963P105885746   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56203963P105885746  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56203963P105885746   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56203963P105885746  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56209357P105894331   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56209357P105894331  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56209879P105895158   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56209879P105895158  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56201975P105882580   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56201975P105882580  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56200712P105880467   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56200712P105880467  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56206341P105889474   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56206341P105889474  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56203912P105885618   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56203912P105885618  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56203912P105885618   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56203912P105885618  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56197841P105876124   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56197841P105876124  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56196862P105873441   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56196862P105873441  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56196791P105872682   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56196791P105872682  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|performing writing operation for payment having Transaction Id : C56197236P105875050   |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program| File Writing Operation is Completed For Transaction Having transactionId : C56197236P105875050  |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|output file name :Treasurer Bill_WebPayments_09_22_2026.txt |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|file store in output path : |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|achPayments Count  90 , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|achPayment Working for settledDate  9/22/2026 12:00:00 AM , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|output file name :Treasurer Bill_Payment_Summary09222026.csv |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|file store in output path : |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|ccPayments Count  109 , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0185||DEBUG|Program|ccPayments Count  109 , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0340||DEBUG|Program|ccPayments Working for settledDate  9/21/2026 12:00:00 AM , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0340||DEBUG|Program|output file name :Treasurer Bill_Payment_Summary09222026.csv |url: |action: 
+2026-09-22 14:00:25.0340||DEBUG|Program|file store in output path : |url: |action: 
+2026-09-22 14:00:25.0340||DEBUG|Program|ccPayments Count  0 , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0340||DEBUG|Program|rppsMastercardPayments Count  0 , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0340||DEBUG|Program|rppsFiservPayments Count  0 , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.0340||DEBUG|Program|lockBoxPayments Count  0 , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.3735||DEBUG|Program|file uploaded successfully : True |url: |action: 
+2026-09-22 14:00:25.3803||DEBUG|Program|PaymentsExport Workign for BillType Window-Add , Method : PaymentsExport |url: |action: 
+2026-09-22 14:00:25.4529||DEBUG|Program|Payment is Not Found for TransactionId  :  C49527762P89519320 for BillType : Window-Add |url: |action: 
+2026-09-22 14:00:26.0017||ERROR|Program| DorchesterPaymentExport method: GetSettledPayments Message : System.Exception: Payment is Not Found for TransactionId  :  C49527762P89519320 for BillType : Window-Add
+   at Billtrax.Dorchester.Services.PaymentExport.PaymentExportRepository.GetSettledAdhocArray(List`1 setteledPayments, BsonDocument billType, Boolean isRefund) in D:\Repos\BillTrax Projects\Billtrax.County.ServiceHub\Billtrax.Dorchester.Services\PaymentExport\PaymentExportRepository.cs:line 90 |url: |action: 
+2026-09-22 14:00:26.0655||DEBUG|Program|total payments : 0 |url: |action: 
+2026-09-22 14:00:26.0655||DEBUG|Program|SettledPayments Count :0 |url: |action: 
+2026-09-22 14:00:26.0655||DEBUG|Program|DorchesterPaymentExport Service End: 9/22/2026 2:00:26 PM |url: |action: 
+2026-09-22 14:00:26.0655||DEBUG|Program|Main Method Is Ended |url: |action: 

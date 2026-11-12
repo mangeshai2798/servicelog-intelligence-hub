@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ServiceLog Intelligence Hub - Enterprise Observability & Root Cause Analysis">
+    <title>ServiceLog Intelligence Hub | Enterprise Observability & RCA</title>
+
+    <!-- 100% Offline Architecture: Native System Typography (No External CDNs / Fonts) -->
+    <!-- Tailwind CSS (Offline Local Vendor) -->
+    <script src="/static/js/vendor/tailwindcss.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'Rubik', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        heading: ['Rubik', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        accent: ['Oswald', 'system-ui', '-apple-system', 'Segoe UI', 'Impact', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Cascadia Code', 'Segoe UI Mono', 'Consolas', 'Courier New', 'monospace'],
+                    },
+                    colors: {
+                        bt: {
+                            navy: '#001e5d',
+                            'navy-dark': '#091E3E',
+                            'navy-royal': '#00468e',
+                            cyan: '#06A3DA',
+                            'cyan-light': '#3ba5f5',
+                            'cyan-dark': '#027ad6',
+                            orange: '#ff9c1d',
+                            success: '#34AD54',
+                            danger: '#dc3545',
+                            warning: '#ffc107',
+                            ice: '#EEF9FF',
+                            bg: '#f5f5f5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons (Offline Local Vendor) -->
+    <script src="/static/js/vendor/lucide.min.js"></script>
+
+    <!-- Chart.js (Offline Local Vendor) -->
+    <script src="/static/js/vendor/chart.umd.min.js"></script>
+
+    <!-- Marked.js for markdown rendering (Offline Local Vendor) -->
+    <script src="/static/js/vendor/marked.min.js"></script>
+
+    <!-- Authentic BillTrax Design System CSS -->
+    <link rel="stylesheet" href="/static/css/style.css?v=5.0">
+    <link rel="icon" type="image/png" href="/static/img/favicon-32x32.png">
+</head>
+
+<body class="min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Full-Screen Initialization / Sync Overlay (Guarantees 100% Complete Data Before Display) -->
+    <div id="appInitOverlay" class="fixed inset-0 z-50 bg-[#F8FAFC] flex flex-col items-center justify-center transition-all duration-300">
+        <div class="flex flex-col items-center text-center p-8 max-w-md w-full">
+            <div class="relative mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#00468E] via-[#06A3DA] to-[#FF9C1D] flex items-center justify-center shadow-xl shadow-blue-500/15">
+                    <i data-lucide="activity" class="w-8 h-8 text-white animate-pulse"></i>
+                </div>
+                <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-4 w-4 bg-[#10B981]"></span>
+                </span>
+            </div>
+            
+            <h2 id="appInitTitle" class="text-xl font-heading font-black text-[#091E3E] tracking-tight mb-1.5">
+                ServiceLog Intelligence Hub
+            </h2>
+            <p id="appInitStatusText" class="text-xs text-slate-500 mb-6 font-medium">
+                Synchronizing service log telemetry & initializing analytics...
+            </p>
+            
+            <div class="w-64 h-2 bg-slate-200 rounded-full overflow-hidden relative">
+                <div id="appInitProgressBar" class="h-full bg-gradient-to-r from-[#00468E] via-[#06A3DA] to-[#FF9C1D] rounded-full transition-all duration-300 w-1/3 animate-pulse"></div>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-2 font-mono" id="appInitSubText">
+                Loading telemetry...
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Sticky Navigation Bar (Universal Enterprise Header - High Precision Architecture) -->
+    <header class="sticky top-0 z-40 bt-header px-4 sm:px-6 py-2.5">
+        <div class="max-w-[1680px] mx-auto flex flex-wrap items-center justify-between gap-3">
+            <!-- Brand Identity with Official Logo & Observability Badge -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5">
+                    <img src="/static/img/LogoBlue.png" alt="LogTrax"
+                        class="h-8 md:h-9 w-auto object-contain bt-logo-light">
+                    <img src="/static/img/Logo.png" alt="LogTrax"
+                        class="h-8 md:h-9 w-auto object-contain bt-logo-dark hidden">
+                    <span class="bt-brand-badge">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
+                        <span id="appNavBadgeText">Observability Hub</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Controls & Operational Badges -->
+            <div class="flex items-center flex-wrap gap-2 text-xs">
+                <div id="systemAlertBadge"
+                    class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold">
+                    <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+                    <span id="systemAlertBadgeText">System Telemetry Active</span>
+                </div>
+
+                <div id="systemStatusDateBadge"
+                    class="px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-mono font-medium">
+                    Active Date: Loading...
+                </div>
+
+                <!-- AI Engine Badge -->
+                <button id="aiConfigBtn"
+                    class="px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-300 text-xs font-bold text-emerald-800 transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+                    title="Configure AI Model / Qwen / Local LLM">
+                    <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+                    <span id="aiConfigBtnText">QWEN: Qwen2.5-3B (Local)</span>
+                </button>
+
+                <!-- Backend Logs Viewer -->
+                <button id="viewBackendLogsBtn"
+                    class="px-3 py-1 rounded-full bg-white hover:bg-slate-50 border border-slate-300 text-xs font-semibold text-[#091E3E] transition-all flex items-center gap-1.5 shadow-xs hover:border-[#00468E]">
+                    <i data-lucide="terminal" class="w-3.5 h-3.5 text-[#00468E]"></i>
+                    <span>Execution Logs</span>
+                </button>
+
+                <!-- Reindex Button -->
+                <button id="reindexBtn"
+                    class="px-3 py-1 rounded-full bg-white hover:bg-slate-50 border border-slate-300 text-xs font-medium text-slate-700 transition-colors flex items-center gap-1.5 shadow-xs">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-slate-500"></i> Reindex
+                </button>
+
+                <!-- Upload Log Button (Prominent BillTrax Orange Pill matching 'Biller' CTA in image) -->
+                <button id="uploadLogBtn"
+                    class="px-4 py-1.5 rounded-full btn-bt-primary text-xs font-bold flex items-center gap-1.5">
+                    <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload Log
+                </button>
+                <input type="file" id="fileUploadInput" accept=".log" class="hidden">
+
+                <!-- Theme Toggle -->
+                <button id="themeToggleBtn" title="Toggle Light/Dark Mode"
+                    class="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 transition-colors">
+                    <i data-lucide="sun-moon" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Service Portals Sub-navigation Bar -->
+        <div
+            class="max-w-[1680px] mx-auto mt-2 pt-2 border-t border-slate-200/80 flex items-center justify-between gap-3 overflow-x-auto text-xs pb-0.5">
+            <div id="portalNavContainer" class="flex items-center gap-2 flex-nowrap shrink-0">
+                <span
+                    class="text-[#091E3E] font-bold uppercase tracking-wider text-[10px] mr-1 flex items-center gap-1">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-[#FF9C1D]"></i> Portals:
+                </span>
+                <button type="button" class="bt-nav-pill active service-nav-tab" data-service-target="ALL" id="portalBtnAll">
+                    All Services
+                </button>
+                <div id="dynamicServicePills" class="flex items-center gap-2 flex-nowrap"></div>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0 text-[11px] text-slate-600 font-semibold">
+                <a href="#queryAssistantSection" class="hover:text-[#FF9C1D] transition-colors flex items-center gap-1">
+                    <i data-lucide="search" class="w-3 h-3 text-[#FF9C1D]"></i> Log Query
+                </a>
+                <a href="#visualAnalyticsSection"
+                    class="hover:text-[#00468E] transition-colors flex items-center gap-1">
+                    <i data-lucide="pie-chart" class="w-3 h-3 text-[#00468E]"></i> Analytics
+                </a>
+                <a href="#errorCausesSection" class="hover:text-[#DC2626] transition-colors flex items-center gap-1">
+                    <i data-lucide="shield-alert" class="w-3 h-3 text-[#DC2626]"></i> RCA Blueprint
+                </a>
+                <a href="#logsExplorerSection" class="hover:text-[#00468E] transition-colors flex items-center gap-1">
+                    <i data-lucide="list-filter" class="w-3 h-3 text-[#00468E]"></i> Log Explorer
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container: 2-Column Responsive Dashboard -->
+    <main class="max-w-[1680px] mx-auto px-4 sm:px-6 py-4 w-full flex-1 flex flex-col lg:flex-row gap-5 items-start">
+
+        <!-- LEFT SIDE PANEL: 6 Executive KPI Mission Control Cards -->
+        <aside class="w-full lg:w-72 xl:w-80 shrink-0 space-y-3 lg:sticky lg:top-24">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200/90">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+                    <span class="text-xs font-heading font-extrabold text-[#091E3E] uppercase tracking-wider">Executive
+                        Telemetry</span>
+                </div>
+                <span id="kpiPanelScopeBadge"
+                    class="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-100 text-[#091E3E] border border-slate-200 font-bold flex items-center gap-1.5 shadow-xs">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>All Services
+                </span>
+            </div>
+
+            <!-- 1. System SLA & Operational Health -->
+            <div id="kpiCardSuccess" class="bt-kpi-card bt-kpi-card-success bt-kpi-card-clickable group"
+                data-kpi-type="success" role="button" tabindex="0"
+                title="Click to inspect System SLA and operations breakdown in main view">
+                <div
+                    class="flex items-center justify-between text-slate-500 text-[11px] mb-1 font-semibold uppercase tracking-wider">
+                    <span class="text-[#059669] font-bold flex items-center gap-1">
+                        SLA &amp; Health
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 bt-kpi-hint text-[#059669]"></i>
+                    </span>
+                    <div class="bt-kpi-icon-badge bg-[#10B981]/15 text-[#059669]">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div id="kpiSuccessRateLarge" class="bt-kpi-number text-[#059669]">97.8%</div>
+                <div class="bt-kpi-track">
+                    <div id="kpiSuccessProgressBar" class="bt-kpi-bar bg-gradient-to-r from-[#10B981] to-[#34D399]"
+                        style="width: 97.8%;"></div>
+                </div>
+                <div id="kpiSlaSummary"
+                    class="text-[10.5px] text-[#059669] mt-1 flex items-center justify-between font-semibold">
+                    <span id="kpiSuccessfulRecordsSubText">2,310 / 2,363 Operations</span>
+                    <span id="kpiHealthBadge"
+                        class="text-[9.5px] px-1.5 py-0.5 rounded bg-emerald-100 text-[#065F46] font-bold uppercase tracking-wider">SLA Met</span>
+                </div>
+            </div>
+
+            <!-- 2. Critical Service Breaks & Pipeline Incidents -->
+            <div id="kpiCardBreaks" class="bt-kpi-card bt-kpi-card-danger bg-[#FFF7F7] bt-kpi-card-clickable group"
+                data-kpi-type="breaks" role="button" tabindex="0"
+                title="Click to inspect the Critical Service Break flow in main view">
+                <div
+                    class="flex items-center justify-between text-rose-700 text-[11px] mb-1 font-semibold uppercase tracking-wider">
+                    <span class="text-rose-700 font-bold flex items-center gap-1">
+                        Pipeline Breaks
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 bt-kpi-hint text-rose-700"></i>
+                    </span>
+                    <div class="bt-kpi-icon-badge bg-rose-200/50 text-rose-700">
+                        <i data-lucide="flame" class="w-4 h-4 text-rose-600"></i>
+                    </div>
+                </div>
+                <div id="kpiServiceBreaks" class="bt-kpi-number text-[#DC2626]">--</div>
+                <div class="bt-kpi-track">
+                    <div class="bt-kpi-bar bg-[#DC2626] w-full"></div>
+                </div>
+                <div id="kpiServiceBreaksSub"
+                    class="text-[10.5px] text-rose-700 mt-1 font-semibold flex items-center justify-between">
+                    <span>PaymentExport Halt</span>
+                    <span
+                        class="text-[9.5px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold uppercase tracking-wider">HALT</span>
+                </div>
+            </div>
+
+            <!-- 3. Root Cause Analysis (RCA) Clusters -->
+            <div id="kpiCardRca" class="bt-kpi-card bt-kpi-card-orange bt-kpi-card-clickable group"
+                data-kpi-type="rca" role="button" tabindex="0"
+                title="Click to inspect the 3 Root Cause Analysis Clusters in main view">
+                <div
+                    class="flex items-center justify-between text-slate-500 text-[11px] mb-1 font-semibold uppercase tracking-wider">
+                    <span class="text-[#D97706] font-bold flex items-center gap-1">
+                        Root Cause Anomalies
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 bt-kpi-hint text-[#D97706]"></i>
+                    </span>
+                    <div class="bt-kpi-icon-badge bg-[#FF9C1D]/15 text-[#D97706]">
+                        <i data-lucide="git-pull-request" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div id="kpiRcaClusters" class="bt-kpi-number text-[#D97706]">3 Clusters</div>
+                <div class="bt-kpi-track">
+                    <div class="bt-kpi-bar bg-gradient-to-r from-[#FF9C1D] to-[#F59E0B] w-full"></div>
+                </div>
+                <div id="kpiRcaClustersSub" class="text-[10.5px] text-amber-800 mt-1 font-medium truncate">
+                    ERR-01 (Missing Tx), ERR-02 (Base64), ERR-03 (ACH)
+                </div>
+            </div>
+
+            <!-- 4. Runtime Exception Logs -->
+            <div id="kpiCardErrors" class="bt-kpi-card bt-kpi-card-danger bt-kpi-card-clickable group"
+                data-kpi-type="errors" role="button" tabindex="0" title="Click to view all Error Logs in main view">
+                <div
+                    class="flex items-center justify-between text-slate-500 text-[11px] mb-1 font-semibold uppercase tracking-wider">
+                    <span class="text-[#DC2626] font-bold flex items-center gap-1">
+                        Error Logs
+                        <span id="kpiErrorScopeBadge" class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-100 text-[#DC2626] uppercase ml-1">ALL (57)</span>
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 bt-kpi-hint text-[#DC2626]"></i>
+                    </span>
+                    <div class="bt-kpi-icon-badge bg-[#DC2626]/10 text-[#DC2626]">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-1.5">
+                    <div id="kpiTotalErrors" class="bt-kpi-number text-[#DC2626]">--</div>
+                    <span id="kpiTotalErrorsDenominator" class="text-xs font-mono font-bold text-slate-400">across 4 services</span>
+                </div>
+                <div class="bt-kpi-track">
+                    <div id="kpiErrorProgressBar" class="bt-kpi-bar bg-gradient-to-r from-[#DC2626] to-[#F87171]"
+                        style="width: 2.2%;"></div>
+                </div>
+                <div id="kpiTotalErrorsSub" class="text-[10.5px] text-[#DC2626] mt-1 font-medium">56 Base64 + 1 Missing Tx</div>
+            </div>
+
+            <!-- 5. Indexed SQLite Event Storage -->
+            <div id="kpiCardIndexed" class="bt-kpi-card bt-kpi-card-clickable group" data-kpi-type="indexed"
+                role="button" tabindex="0" title="Click to inspect all 35,860 Indexed Events in SQLite repository">
+                <div
+                    class="flex items-center justify-between text-slate-500 text-[11px] mb-1 font-semibold uppercase tracking-wider">
+                    <span class="text-[#091E3E] font-bold flex items-center gap-1">
+                        SQLite Event Storage
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 bt-kpi-hint text-[#091E3E]"></i>
+                    </span>
+                    <div class="bt-kpi-icon-badge bg-slate-100 text-[#091E3E]">
+                        <i data-lucide="database" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div id="kpiTotalLogLines" class="bt-kpi-number">--</div>
+                <div class="bt-kpi-track">
+                    <div class="bt-kpi-bar bg-gradient-to-r from-[#091E3E] to-[#597A9D] w-full"></div>
+                </div>
+                <div id="kpiTotalLogLinesSub" class="text-[10.5px] text-slate-500 mt-1 font-medium">
+                    <span id="kpiTotalFiles">4</span> services indexed in logs.db (&lt;1ms query)
+                </div>
+            </div>
+
+            <!-- 6. Batch Execution Audit Span -->
+            <div id="kpiCardLatest" class="bt-kpi-card bt-kpi-card-clickable group"
+                data-kpi-type="latest" role="button" tabindex="0"
+                title="Click to filter main view by batch execution timeline">
+                <div
+                    class="flex items-center justify-between text-slate-500 text-[11px] mb-1 font-semibold uppercase tracking-wider">
+                    <span class="text-[#00468E] font-bold flex items-center gap-1">
+                        Execution Audit Span
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 bt-kpi-hint text-[#00468E]"></i>
+                    </span>
+                    <div class="bt-kpi-icon-badge bg-[#00468E]/10 text-[#00468E]">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div id="kpiAuditWindow" class="text-sm font-bold text-[#091E3E] mt-1 font-mono">2026-09-22 → 10-13</div>
+                <div class="bt-kpi-track">
+                    <div class="bt-kpi-bar bg-gradient-to-r from-[#00468E] to-[#06A3DA] w-full"></div>
+                </div>
+                <div id="kpiLatestDateSub"
+                    class="text-[10.5px] text-slate-500 mt-1 flex items-center justify-between font-medium">
+                    <span>Latest batch: <strong id="kpiLatestDate">2026-10-13</strong></span>
+                    <span class="inline-flex items-center gap-1 text-[9.5px] text-emerald-600 font-bold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping"></span> Live
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- RIGHT MAIN CONTENT COLUMN: Contained Visuals Viewport + Log Explorer -->
+        <div class="flex-1 min-w-0 space-y-4 w-full">
+
+            <!-- Service Intelligence Search & Query Section (Executive Copilot) -->
+            <section id="queryAssistantSection" class="bt-assistant-box p-4 relative">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2.5">
+                    <div class="flex items-center gap-2.5">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#00468E] to-[#091E3E] flex items-center justify-center text-white shadow-xs">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#FF9C1D]"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center flex-wrap gap-2">
+                                <h2 class="text-xs font-heading font-extrabold text-[#091E3E] tracking-tight">
+                                    Service Intelligence &amp; Dynamic Log Diagnostic Copilot
+                                </h2>
+                                <span id="aiAssistantScopeBadge" class="text-[9.5px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#00468E] border border-blue-200 flex items-center gap-1 shadow-2xs">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                                    <span id="aiAssistantScopeText">ALL SERVICES (System-Wide)</span>
+                                </span>
+                            </div>
+                            <p class="text-[10.5px] text-slate-500">Autonomous log reasoning and automated root cause triage via SQLite RAG &amp; Local Qwen 2.5 3B</p>
+                        </div>
+                    </div>
+
+                    <!-- Example Question Pills showcasing full dynamic capability -->
+                    <div id="quickQueriesContainer" class="flex items-center flex-wrap gap-1.5 text-xs text-slate-600">
+                        <span class="font-semibold text-slate-500 text-[10px] mr-0.5 flex items-center gap-1">
+                            <i data-lucide="zap" class="w-3 h-3 text-[#FF9C1D]"></i> Context Questions:
+                        </span>
+                        <button type="button"
+                            class="quick-query-pill border-rose-300 text-rose-700 bg-rose-50 text-[10.5px] py-0.5 px-2.5"
+                            data-query="which error is latest">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#DC2626]"></span>
+                            <span>Which error is latest</span>
+                        </button>
+                        <button type="button" class="quick-query-pill text-[10.5px] py-0.5 px-2.5"
+                            data-query="what error break the flow">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#FF9C1D]"></span>
+                            <span>What error break the flow</span>
+                        </button>
+                        <button type="button"
+                            class="quick-query-pill border-blue-300 text-[#00468E] bg-blue-50 text-[10.5px] py-0.5 px-2.5"
+                            data-query="how many logs shows error">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#00468E]"></span>
+                            <span>How many logs shows error</span>
+                        </button>
+                        <button type="button"
+                            class="quick-query-pill border-amber-300 text-amber-700 bg-amber-50 text-[10.5px] py-0.5 px-2.5"
+                            data-query="what is our system SLA">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                            <span>System SLA</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Query Input Box -->
+                <form id="queryForm" class="relative">
+                    <div class="relative flex items-center">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 text-[#00468E]"></i>
+                        <input type="text" id="queryInput"
+                            placeholder="Ask an operational question or search error telemetry (e.g. why did the pipeline break)..."
+                            class="w-full bt-form-input pl-10 pr-28 py-2.5 text-xs shadow-sm">
+                        <div class="absolute right-1 flex items-center gap-1">
+                            <span
+                                class="hidden md:inline-block text-[10px] text-slate-400 font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200">↵
+                                Enter</span>
+                            <button type="submit"
+                                class="btn-bt-primary text-xs py-1.5 px-3.5 font-bold flex items-center gap-1">
+                                <span>Analyze</span>
+                                <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Dynamic Query Response Area -->
+                <div id="queryResponseArea" class="hidden mt-3 pt-3 border-t border-slate-200 animate-fade-in">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center flex-wrap gap-2">
+                            <span id="queryCategoryBadge" class="badge-bt-cyan text-xs font-semibold">Diagnostic Analysis</span>
+                            <span id="queryServiceBadge"
+                                class="hidden px-2 py-0.5 rounded-full text-xs font-mono bg-[#EEF9FF] text-[#00468e] border border-[#b8e2f2]">All
+                                Services</span>
+                            <span id="queryLatencyBadge"
+                                class="hidden px-2.5 py-0.5 rounded-full text-xs font-mono bg-amber-50 text-amber-800 border border-amber-300 font-bold flex items-center gap-1 shadow-2xs">
+                                <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-600"></i>
+                                <span id="queryLatencyText">0.00s (0 ms)</span>
+                            </span>
+                            <span id="queryPerfPill"
+                                class="hidden px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-300 font-semibold flex items-center gap-1 shadow-2xs">
+                                <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <span id="queryPerfText">-- tok/s</span>
+                            </span>
+                        </div>
+                        <button type="button"
+                            onclick="document.getElementById('queryResponseArea').classList.add('hidden')"
+                            class="text-slate-400 hover:text-slate-600 text-xs flex items-center gap-1">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i> Close
+                        </button>
+                    </div>
+                    <div id="queryLoadingIndicator" class="hidden py-4 text-center text-slate-500 text-xs">
+                        <i data-lucide="loader-2" class="w-4 h-4 animate-spin mx-auto text-[#00468e] mb-1"></i>
+                        <div class="font-medium">Analyzing log telemetry and synthesizing operational answer...</div>
+                        <div id="queryTimerCounter" class="text-[11px] font-mono text-[#00468E] font-bold mt-1">⏱️ 0.0s elapsed</div>
+                    </div>
+                    <div id="queryAnswerContent" class="markdown-body text-slate-800 text-xs max-h-60 overflow-y-auto">
+                    </div>
+                    <div id="querySuggestedContainer"></div>
+                </div>
+            </section>
+
+            <!-- Visual Analytics Dashboard (4 Interactive Charts in Compact Grid) -->
+            <section id="visualAnalyticsSection" class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <h3
+                            class="text-xs font-heading font-bold text-[#091E3E] uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-[#00468e]"></i> Visual Operational &amp;
+                            Error Analytics
+                        </h3>
+                        <span id="visualAnalyticsScopeBadge"
+                            class="hidden text-[10px] px-2 py-0.5 rounded-full bg-[#00468e] text-white font-semibold">All
+                            Services</span>
+                    </div>
+                    <p id="visualAnalyticsSubtitle" class="text-[11px] text-slate-500 hidden sm:block">Throughput, error
+                        frequency &amp; batch execution timelines across all services</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                    <!-- Chart 1: Status Distribution -->
+                    <div class="glass-panel p-3 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-1">
+                            <h4 class="font-heading font-bold text-[#091E3E] text-[11px] uppercase tracking-wider">
+                                Success vs Error</h4>
+                            <span id="successRateCenterBadge"
+                                class="text-[10.5px] font-bold badge-bt-success">--%</span>
+                        </div>
+                        <div class="relative h-36 w-full flex items-center justify-center">
+                            <canvas id="statusDistributionChart"></canvas>
+                        </div>
+                        <div id="statusChartSub" class="text-[10px] text-slate-500 text-center mt-1">97.8% successful
+                            completion</div>
+                    </div>
+
+                    <!-- Chart 2: Service Volume -->
+                    <div class="glass-panel p-3 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-1">
+                            <h4 class="font-heading font-bold text-[#091E3E] text-[11px] uppercase tracking-wider">
+                                Service Volume</h4>
+                            <span id="serviceVolumeBadge" class="text-[10px] text-[#00468e] font-semibold">4
+                                Services</span>
+                        </div>
+                        <div class="relative h-36 w-full">
+                            <canvas id="serviceVolumeChart"></canvas>
+                        </div>
+                        <div id="serviceVolumeSub" class="text-[10px] text-slate-500 text-center mt-1">Throughput by service</div>
+                    </div>
+
+                    <!-- Chart 3: Error Causes Breakdown -->
+                    <div class="glass-panel p-3 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-1">
+                            <h4 class="font-heading font-bold text-[#091E3E] text-[11px] uppercase tracking-wider">Error
+                                Frequency</h4>
+                            <span id="errorCausesBadge" class="text-[10px] text-[#ff9c1d] font-semibold">Anomalies</span>
+                        </div>
+                        <div class="relative h-36 w-full">
+                            <canvas id="errorCausesChart"></canvas>
+                        </div>
+                        <div id="errorCausesSub" class="text-[10px] text-slate-500 text-center mt-1">RCA anomaly breakdown</div>
+                    </div>
+
+                    <!-- Chart 4: Timeline Activity -->
+                    <div class="glass-panel p-3 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-1">
+                            <h4 class="font-heading font-bold text-[#091E3E] text-[11px] uppercase tracking-wider">
+                                Activity Timeline</h4>
+                            <span id="timelineBadge" class="text-[10px] text-[#06A3DA] font-semibold">Batch
+                                Cycles</span>
+                        </div>
+                        <div class="relative h-36 w-full">
+                            <canvas id="timelineChart"></canvas>
+                        </div>
+                        <div id="timelineSub" class="text-[10px] text-slate-500 text-center mt-1">Spikes at 10:00 AM
+                            settledment</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contained Tabbed View for Service Hub & RCA Blueprint -->
+            <section class="space-y-3">
+                <!-- Dynamic KPI Drilldown Bar & Details Card (Updated when Left Panel KPI Card is clicked) -->
+                <div id="kpiDrilldownBanner"
+                    class="hidden glass-panel p-3.5 sm:p-4 border-2 border-[#00468E]/30 bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-white rounded-2xl animate-fade-in shadow-xs">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-start sm:items-center gap-3">
+                            <div id="kpiDrilldownIconBox"
+                                class="w-10 h-10 rounded-xl bg-[#00468E] text-white flex items-center justify-center shrink-0 shadow-xs">
+                                <i id="kpiDrilldownIcon" data-lucide="layers" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center flex-wrap gap-2">
+                                    <h3 id="kpiDrilldownTitle"
+                                        class="text-sm font-heading font-extrabold text-[#091E3E] tracking-tight">
+                                        Viewing All Processed Records</h3>
+                                    <span id="kpiDrilldownCountBadge"
+                                        class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#00468E] text-white">2,363
+                                        records</span>
+                                    <span id="kpiDrilldownTag"
+                                        class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-100 text-[#00468E]">Across
+                                        4 Services</span>
+                                </div>
+                                <p id="kpiDrilldownDescription" class="text-xs text-slate-600 mt-0.5">Showing all
+                                    processed operations across 4 services in the Interactive Log Explorer below.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                            <button type="button" onclick="resetKPIDrilldown()"
+                                class="btn-bt-secondary text-xs font-semibold py-1.5 px-3 flex items-center gap-1.5 shadow-xs hover:border-[#00468E]">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
+                                <span>Reset Filter</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 pb-1">
+                    <div class="bt-tab-container">
+                        <button type="button" id="tabBtnServices" onclick="switchInspectorTab('services')"
+                            class="bt-tab-pill active">
+                            <i data-lucide="server" class="w-3.5 h-3.5"></i>
+                            <span id="tabBtnServicesLabel">Active Pipelines (4 Services)</span>
+                        </button>
+                        <button type="button" id="tabBtnRca" onclick="switchInspectorTab('rca')" class="bt-tab-pill">
+                            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-[#DC2626]"></i>
+                            <span id="tabBtnRcaLabel">RCA Blueprint (3 Anomalies)</span>
+                        </button>
+                        <button type="button" id="tabBtnLogs" onclick="switchInspectorTab('logs')" class="bt-tab-pill">
+                            <i data-lucide="list-filter" class="w-3.5 h-3.5 text-[#00468E]"></i>
+                            <span id="tabBtnLogsLabel">Interactive Log Explorer</span>
+                        </button>
+                    </div>
+                    <span id="tabSectionHint" class="text-[11px] text-slate-500 hidden sm:inline font-medium">Select
+                        view to inspect active service pipelines, root cause anomalies, or raw execution logs</span>
+                </div>
+
+                <!-- Tab Pane 1: Monitored Services Grid -->
+                <div id="servicesSection" class="transition-all duration-200">
+                    <div id="servicesGridContainer" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                        <!-- Populated dynamically via app.js -->
+                    </div>
+                </div>
+
+                <!-- Tab Pane 2: Root Cause Analysis (RCA) Deep Dive Cards -->
+                <div id="errorCausesSection" class="hidden transition-all duration-200">
+                    <div id="errorCausesContainer" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <!-- Populated dynamically via app.js -->
+                    </div>
+                </div>
+
+                <!-- Tab Pane 3: Interactive Log Explorer -->
+                <div id="logsExplorerSection"
+                    class="hidden transition-all duration-200 glass-panel p-4 sm:p-5 space-y-3.5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 id="logsExplorerTitle"
+                                    class="text-sm font-heading font-bold text-[#091E3E] flex items-center gap-2">
+                                    <i data-lucide="list-filter" class="w-4 h-4 text-[#00468e]"></i> Interactive Log
+                                    Explorer
+                                </h3>
+                                <span id="logsExplorerScopeBadge"
+                                    class="hidden text-[10.5px] px-2 py-0.5 rounded-full bg-[#00468e] text-white font-mono font-semibold"></span>
+                            </div>
+                            <p id="logsExplorerSubtitle" class="text-xs text-slate-500">Search, filter, and inspect
+                                detailed stack traces across all indexed log files</p>
+                        </div>
+                    </div>
+
+                    <!-- Active Service Filter Notification Banner -->
+                    <div id="activeServiceFilterBanner"
+                        class="hidden flex items-center justify-between p-2.5 px-3.5 bg-[#FFF9F2] border border-[#FF9C1D]/40 rounded-xl text-xs text-[#091E3E] font-sans animate-fade-in shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="filter" class="w-4 h-4 text-[#FF9C1D]"></i>
+                            <span id="activeServiceFilterText">Viewing logs for service</span>
+                        </div>
+                        <button type="button" onclick="clearLogExplorerFilters()"
+                            class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-[#091E3E] transition-colors flex items-center gap-1 shadow-xs">
+                            <i data-lucide="x" class="w-3 h-3"></i> Clear Filter
+                        </button>
+                    </div>
+
+                    <!-- Filters Bar -->
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 bg-[#F8FAFC] p-2.5 rounded-xl border border-slate-200">
+                        <!-- Service Filter -->
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-wider">Service</label>
+                            <select id="filterService"
+                                class="w-full bg-white border border-[#dee2e6] text-xs text-[#212529] rounded-lg p-2 outline-none focus:border-[#00468e]">
+                                <option value="ALL">All Services</option>
+                            </select>
+                        </div>
+
+                        <!-- Record Status Filter -->
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-wider">Record
+                                Status</label>
+                            <select id="filterStatus"
+                                class="w-full bg-white border border-[#dee2e6] text-xs text-[#212529] rounded-lg p-2 outline-none focus:border-[#00468e] font-medium">
+                                <option value="ALL">All Records</option>
+                                <option value="errors">Errors / Failed Only</option>
+                                <option value="success">Successful Records Only</option>
+                                <option value="processed">Processed Records Only</option>
+                                <option value="breaks">Service Breaks Only</option>
+                            </select>
+                        </div>
+
+                        <!-- Level Filter -->
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-wider">Log
+                                Level</label>
+                            <select id="filterLevel"
+                                class="w-full bg-white border border-[#dee2e6] text-xs text-[#212529] rounded-lg p-2 outline-none focus:border-[#00468e]">
+                                <option value="ALL">All Levels</option>
+                                <option value="ERROR">ERROR</option>
+                                <option value="INFO">INFO</option>
+                                <option value="DEBUG">DEBUG</option>
+                            </select>
+                        </div>
+
+                        <!-- Date Filter -->
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-wider">Date</label>
+                            <select id="filterDate"
+                                class="w-full bg-white border border-[#dee2e6] text-xs text-[#212529] rounded-lg p-2 outline-none focus:border-[#00468e]">
+                                <option value="ALL">All Dates</option>
+                            </select>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div>
+                            <label
+                                class="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-wider">Keyword
+                                Search</label>
+                            <div class="relative">
+                                <input type="text" id="filterSearch"
+                                    placeholder="e.g. Exception, TransactionId, Error, 500, Timeout..."
+                                    class="w-full bg-white border border-[#dee2e6] text-xs text-[#212529] rounded-lg p-2 pl-7 outline-none focus:border-[#00468e]">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-2.5"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Container -->
+                    <div class="bt-table-container overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr>
+                                    <th class="w-40">Timestamp</th>
+                                    <th class="w-24">Level</th>
+                                    <th class="w-52">Service</th>
+                                    <th class="w-32">Component</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <!-- Populated dynamically via app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination Bar -->
+                    <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+                        <div>
+                            Showing <span id="paginationInfo" class="font-mono text-[#091E3E] font-semibold">0 - 0 of
+                                0</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="prevPageBtn"
+                                class="px-3.5 py-1.5 rounded-full btn-bt-secondary text-xs disabled:opacity-40 transition-colors">
+                                Previous
+                            </button>
+                            <button id="nextPageBtn"
+                                class="px-3.5 py-1.5 rounded-full btn-bt-secondary text-xs disabled:opacity-40 transition-colors">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200/80 bg-[#091E3E] text-white py-4 text-xs">
+        <div class="max-w-[1680px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <img src="/static/img/Logo.png" alt="Logo" class="h-6 w-auto object-contain">
+                <span class="text-white/40">|</span>
+                <span id="footerBrandText" class="text-white/80">ServiceLog Intelligence Hub &copy; 2026</span>
+            </div>
+            <div class="text-white/80 font-mono text-[11px] flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+                <span id="footerTelemetryBadge">Telemetry Active &bull; Monitored Pipelines Indexed</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Log Detail Modal -->
+    <div id="logDetailModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div
+            class="bg-white border border-[#dee2e6] rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-[#dee2e6] flex items-center justify-between bg-[#001e5d] text-white">
+                <div class="flex items-center gap-2">
+                    <span id="modalLevel" class="badge-bt-danger">ERROR</span>
+                    <h3 class="font-heading font-bold text-white text-sm">Log Event Details</h3>
+                </div>
+                <button onclick="closeLogDetailModal()"
+                    class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-5 overflow-y-auto space-y-4 text-xs font-sans text-[#212529]">
+                <!-- Metadata Grid -->
+                <div
+                    class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 bg-[#f8f9fa] rounded-xl border border-[#dee2e6] font-mono text-[11px]">
+                    <div>
+                        <div class="text-slate-500 uppercase text-[10px]">Timestamp</div>
+                        <div id="modalTimestamp" class="text-[#091E3E] font-semibold mt-0.5">--</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-500 uppercase text-[10px]">Service</div>
+                        <div id="modalService" class="text-[#00468e] mt-0.5 font-semibold">--</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-500 uppercase text-[10px]">Component</div>
+                        <div id="modalComponent" class="text-slate-700 mt-0.5">--</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-500 uppercase text-[10px]">Source File</div>
+                        <div id="modalFile" class="text-slate-700 mt-0.5 break-all">--</div>
+                    </div>
+                </div>
+
+                <!-- URL & Action (if any) -->
+                <div
+                    class="grid grid-cols-2 gap-3 p-3 bg-[#f8f9fa] rounded-xl border border-[#dee2e6] font-mono text-[11px]">
+                    <div>
+                        <div class="text-slate-500 uppercase text-[10px]">URL Parameter</div>
+                        <div id="modalUrl" class="text-slate-700 mt-0.5 break-all">--</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-500 uppercase text-[10px]">Action Parameter</div>
+                        <div id="modalAction" class="text-slate-700 mt-0.5">--</div>
+                    </div>
+                </div>
+
+                <!-- Message Body -->
+                <div>
+                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Log Message</div>
+                    <div id="modalMessage"
+                        class="p-3.5 bg-[#f8f9fa] rounded-xl border border-[#dee2e6] text-[#212529] font-mono whitespace-pre-wrap leading-relaxed text-[11px]">
+                        --
+                    </div>
+                </div>
+
+                <!-- Stack Trace (if present) -->
+                <div id="modalStackTraceContainer" class="hidden">
+                    <div
+                        class="text-xs font-semibold uppercase tracking-wider text-[#dc3545] mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="alert-octagon" class="w-4 h-4 text-[#dc3545]"></i> Stack Trace & Location
+                    </div>
+                    <pre id="modalStackTrace"
+                        class="p-3.5 bg-[#091E3E] rounded-xl border border-[#dee2e6] text-[#EEF9FF] font-mono whitespace-pre-wrap text-[11px] leading-relaxed overflow-x-auto"></pre>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-3 border-t border-[#dee2e6] bg-[#f8f9fa] flex justify-end">
+                <button onclick="closeLogDetailModal()"
+                    class="px-4 py-1.5 bg-[#00468e] hover:bg-[#003366] text-white text-xs font-medium rounded-full transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Backend Logs Modal -->
+    <div id="backendLogsModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div
+            class="bg-[#030B1C] border border-[#06A3DA]/40 rounded-2xl max-w-5xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden font-mono text-xs">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-[#001e5d] text-white">
+                <div class="flex items-center gap-2.5">
+                    <div
+                        class="w-7 h-7 rounded-lg bg-[#06A3DA]/20 border border-[#06A3DA]/40 flex items-center justify-center text-[#06A3DA]">
+                        <i data-lucide="terminal" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-white text-sm font-sans flex items-center gap-2">
+                            Live Backend Execution Logs
+                            <span class="w-2 h-2 rounded-full bg-[#34AD54] animate-pulse"></span>
+                        </h3>
+                        <p class="text-[11px] text-white/70 font-sans">Full trace: server startup, HTTP requests, file
+                            parsing, query processing & payloads</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 font-sans">
+                    <button id="refreshBackendLogsBtn"
+                        class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs flex items-center gap-1 transition-colors">
+                        <i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh
+                    </button>
+                    <button onclick="closeBackendLogsModal()"
+                        class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Terminal Output Area -->
+            <div id="backendLogsOutput"
+                class="p-4 overflow-y-auto space-y-1 bg-black text-slate-300 flex-1 font-mono text-[11px] leading-relaxed selection:bg-[#06A3DA]/40 selection:text-white max-h-[65vh]">
+                <div class="text-slate-500 italic">Fetching backend execution logs...</div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="p-3 border-t border-slate-800 bg-[#001e5d] flex items-center justify-between font-sans text-xs text-white">
+                <span id="backendLogFilePath" class="text-white/80 truncate text-[11px]">File: logs/backend.log</span>
+                <div class="flex items-center gap-2">
+                    <button id="copyBackendLogsBtn"
+                        class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs flex items-center gap-1 transition-colors">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy All
+                    </button>
+                    <button onclick="closeBackendLogsModal()"
+                        class="px-4 py-1 btn-bt-primary font-medium rounded-full text-xs transition-colors">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dedicated Local In-Memory Qwen 2.5 3B Status & Verification Modal -->
+    <div id="aiSettingsModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div
+            class="bg-white border border-[#dee2e6] rounded-2xl max-w-lg w-full flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-[#dee2e6] flex items-center justify-between bg-[#001e5d] text-white">
+                <div class="flex items-center gap-2">
+                    <span class="p-1.5 rounded-lg bg-white/10 text-[#FF9C1D]">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                    </span>
+                    <div>
+                        <h3 class="font-heading font-bold text-white text-sm">Local SLM Engine Status</h3>
+                        <p class="text-[11px] text-white/70">Strictly Local In-Memory Qwen 2.5 (3B) Engine</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAISettingsModal()"
+                    class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content Form -->
+            <form id="aiSettingsForm" class="p-5 space-y-4 text-xs font-sans text-[#212529]">
+                <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-start gap-3">
+                    <span class="p-1 rounded-lg bg-emerald-100 text-emerald-700 shrink-0 mt-0.5">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    </span>
+                    <div>
+                        <div class="font-bold text-xs mb-0.5">In-Memory Local Engine Active</div>
+                        <div class="text-[11px] text-emerald-700 leading-relaxed">
+                            The system is strictly configured to execute on the local <strong>Qwen 2.5 3B Instruct</strong> model. No external network requests or third-party cloud APIs are used.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-1 text-xs">Model Identifier</label>
+                        <input type="text" id="aiModelInput" readonly
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-[#091E3E] select-none"
+                            value="Qwen/Qwen2.5-3B-Instruct">
+                        <p class="text-[10px] text-slate-500 mt-1">Project-local weights: <span class="font-mono text-slate-600">models/Qwen2.5-3B-Instruct</span></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-1 text-xs">Execution Mode</label>
+                        <input type="text" id="aiEndpointInput" readonly
+                            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-[#091E3E] select-none"
+                            value="local-in-memory (PyTorch CPU / Single Process)">
+                        <p class="text-[10px] text-slate-500 mt-1">100% Offline, Privacy-Compliant, Zero Cloud Latency</p>
+                    </div>
+                </div>
+
+                <!-- Status message -->
+                <div id="aiSaveStatus" class="min-h-[16px] text-xs"></div>
+
+                <!-- Modal Footer Actions -->
+                <div class="pt-3 border-t border-[#dee2e6] flex items-center justify-between">
+                    <button type="button" onclick="closeAISettingsModal()"
+                        class="px-4 py-2 border border-slate-300 rounded-full text-slate-700 hover:bg-slate-100 font-medium text-xs transition-colors">
+                        Close
+                    </button>
+                    <button type="submit" id="saveAiSettingsBtn"
+                        class="px-5 py-2 btn-bt-primary font-bold rounded-full text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="check" class="w-4 h-4"></i> Confirm Local Engine
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Scripts (with cache-busting) -->
+    <script src="/static/js/charts.js?v=6.0"></script>
+    <script src="/static/js/app.js?v=6.0"></script>
+</body>
+
+</html>

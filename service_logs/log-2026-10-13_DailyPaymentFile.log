@@ -1,0 +1,29 @@
+2026-10-13 11:00:40.2613||DEBUG|Program|Main Method Is Started  |url: |action: 
+2026-10-13 11:00:40.3179||DEBUG|Program|DorchesterDailyPaymentReport Service Start: 10/13/2026 11:00:40 AM |url: |action: 
+2026-10-13 11:00:50.6645||DEBUG|Program|Process Method of DorchesterDailyPaymentReport Service is Working, DateTime:  : 10/13/2026 11:00:50 AM |url: |action: 
+2026-10-13 11:00:50.8517||DEBUG|Program|PaymentExport Service is Working For Dorchester FTPDATACONFIGURATION Service Name : DorchesterDailyPaymentReport |url: |action: 
+2026-10-13 11:00:51.1546||DEBUG|Program|DorchesterDailyPaymentReport Method is Called , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:51.1639||DEBUG|Program|DorchesterDailyPaymentReport Workign for BillType Treasurer Bill , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:51.7398||DEBUG|Program|DorchesterDailyPaymentReport Workign for BillType Window-Add , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:51.7398||DEBUG|Program| Now Inserting Header Record to the File  |url: |action: 
+2026-10-13 11:00:51.7398||DEBUG|Program|output file name :Dorchester_County_Payments_10_12_2026.txt |url: |action: 
+2026-10-13 11:00:51.7769||DEBUG|Program|file store in output path : |url: |action: 
+2026-10-13 11:00:53.8359||DEBUG|Program|Status sent to mail to JTurbeville@dorchestercountysc.gov,BWestbury@dorchestercountysc.gov,AHerndon@dorchestercountysc.gov,ttucker@dorchestercountysc.gov |url: |action: 
+2026-10-13 11:00:53.8359||DEBUG|Program|Status sent to mail cc cchitty@dorchestercountysc.gov,tanveer.patel@bestdigitalsolutions.net,nash.patel@bestdigitalsolutions.net |url: |action: 
+2026-10-13 11:00:53.8359||DEBUG|Program|Mail Status : Accepted |url: |action: 
+2026-10-13 11:00:53.8359||DEBUG|Program|DorchesterDailyPaymentReport Method is Called , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:53.8359||DEBUG|Program|DorchesterDailyPaymentReport Workign for BillType Treasurer Bill , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:53.9137||DEBUG|Program|DorchesterDailyPaymentReport Workign for BillType Window-Add , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:53.9839||DEBUG|Program|achPayments Count  0 , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:53.9839||DEBUG|Program|ccPayments Count  1 , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:53.9839||DEBUG|Program|ccPayments Count  1 , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:53.9839||DEBUG|Program|ccPayments Working for settledDate  10/10/2026 12:00:00 AM , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:53.9839||DEBUG|Program|output file name :Dorchester_County_Return_Refunds_Payment_Summary_10_13_2026.csv |url: |action: 
+2026-10-13 11:00:53.9839||DEBUG|Program|file store in output path : |url: |action: 
+2026-10-13 11:00:53.9839||DEBUG|Program| ACH Payments Count  0 , Method : PaymentsExport |url: |action: 
+2026-10-13 11:00:55.2076||DEBUG|Program|Status sent to mail to JTurbeville@dorchestercountysc.gov,BWestbury@dorchestercountysc.gov,AHerndon@dorchestercountysc.gov,ttucker@dorchestercountysc.gov |url: |action: 
+2026-10-13 11:00:55.2076||DEBUG|Program|Status sent to mail cc cchitty@dorchestercountysc.gov,tanveer.patel@bestdigitalsolutions.net,nash.patel@bestdigitalsolutions.net |url: |action: 
+2026-10-13 11:00:55.2076||DEBUG|Program|Mail Status : Accepted |url: |action: 
+2026-10-13 11:00:55.3037||DEBUG|Program|file uploaded successfully : True |url: |action: 
+2026-10-13 11:00:55.3037||DEBUG|Program|DorchesterDailyPaymentReport Service End: 10/13/2026 11:00:55 AM |url: |action: 
+2026-10-13 11:00:55.3037||DEBUG|Program|Main Method Is Ended |url: |action: 

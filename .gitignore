@@ -1,0 +1,99 @@
+# ==============================================================================
+# Git Ignore Rules - ServiceLog Intelligence Hub
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment & Sensitive Credentials
+# ------------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+
+# Keep example configuration template tracked
+!.env.example
+
+# ------------------------------------------------------------------------------
+# 2. Python Virtual Environments
+# ------------------------------------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ------------------------------------------------------------------------------
+# 3. Python Bytecode & Cache Directories
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ------------------------------------------------------------------------------
+# 4. Large AI / SLM Model Binaries (Prevents exceeding GitHub's 100MB limit)
+# ------------------------------------------------------------------------------
+models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.onnx
+*.gguf
+
+# ------------------------------------------------------------------------------
+# 5. Local Database Files & SQLite State (Built dynamically on startup)
+# ------------------------------------------------------------------------------
+backend/data/*.db
+backend/data/*.sqlite
+backend/data/*.sqlite3
+backend/data/*.db-wal
+backend/data/*.db-shm
+*.db
+*.sqlite
+*.sqlite3
+
+# Preserve data directory structure
+!backend/data/.gitkeep
+
+# ------------------------------------------------------------------------------
+# 6. Runtime Backend Execution Logs
+# ------------------------------------------------------------------------------
+logs/*.log
+logs/*.log.*
+*.log.1
+*.log.2
+
+# Preserve logs folder structure
+!logs/.gitkeep
+
+# ------------------------------------------------------------------------------
+# 7. IDE & Operating System Artifacts
+# ------------------------------------------------------------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ------------------------------------------------------------------------------
+# 8. Temporary & Build Artifacts
+# ------------------------------------------------------------------------------
+build/
+dist/
+*.egg-info/
+*.tmp
+*.temp
+

@@ -1,0 +1,10 @@
+{
+  "extraPaths": [
+    "backend",
+    "C:/Users/mangesh.bondre/AppData/Local/Programs/Python/Python312/Lib/site-packages"
+  ],
+  "venvPath": ".",
+  "venv": ".venv",
+  "reportMissingImports": "none",
+  "reportMissingTypeStubs": false
+}
