@@ -2,7 +2,7 @@
 ===============================================================================
 ServiceLog Intelligence Hub - Response Generation Timing & Benchmark Tool
 Calculates high-precision time required to generate responses via:
-1. Direct Local Qwen 2.5 3B SLM Inference & RAG Pipeline
+1. Direct Local Qwen 2.5 0.5B SLM Inference & RAG Pipeline
 2. Live HTTP API Endpoint (/api/query) against the active dashboard server
 ===============================================================================
 Usage:
@@ -218,7 +218,7 @@ def run_benchmark():
         benchmark_queries.append((f"what is the latest error in {s}", s))
 
     print("\n" + "=" * 80)
-    print("🏁 [LOCAL QWEN 2.5 3B RESPONSE GENERATION BENCHMARK]")
+    print("🏁 [LOCAL QWEN 2.5 0.5B RESPONSE GENERATION BENCHMARK]")
     print(f"Running {len(benchmark_queries)} representative test queries...")
     print("=" * 80)
 

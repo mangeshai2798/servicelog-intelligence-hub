@@ -21,7 +21,7 @@ let appState = {
     aiSettings: {
         is_configured: true,
         provider: 'qwen',
-        model: 'Qwen/Qwen2.5-3B-Instruct',
+        model: 'Qwen/Qwen2.5-0.5B-Instruct',
         masked_key: 'Local In-Memory (Active)'
     },
     pagination: {
@@ -396,7 +396,7 @@ function updateAIBadges(settings) {
     const badge = document.getElementById('aiConfigBtn');
     if (!badge) return;
 
-    const rawModel = (settings && settings.model) || (appState.config && appState.config.model_name) || 'Qwen/Qwen2.5-3B-Instruct';
+    const rawModel = (settings && settings.model) || (appState.config && appState.config.model_name) || 'Qwen/Qwen2.5-0.5B-Instruct';
     const modelLabel = rawModel.replace(/^Qwen\//i, '');
     badge.className = "px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-300 text-xs font-bold text-emerald-800 transition-all flex items-center gap-1.5 shadow-xs cursor-pointer";
     badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span><span>QWEN: ${modelLabel}</span>`;
@@ -408,7 +408,7 @@ function openAISettingsModal() {
     if (!modal) return;
 
     const modelInput = document.getElementById('aiModelInput');
-    const defaultModel = (appState.config && appState.config.model_name) || 'Qwen/Qwen2.5-3B-Instruct';
+    const defaultModel = (appState.config && appState.config.model_name) || 'Qwen/Qwen2.5-0.5B-Instruct';
     if (modelInput) modelInput.value = defaultModel;
 
     const endpointInput = document.getElementById('aiEndpointInput');
@@ -433,7 +433,7 @@ async function handleSaveAISettings(e) {
     e.preventDefault();
     const statusMsg = document.getElementById('aiSaveStatus');
     if (statusMsg) {
-        statusMsg.innerText = 'Verified: Local In-Memory Qwen 2.5 3B is active.';
+        statusMsg.innerText = 'Verified: Local In-Memory Qwen 2.5 0.5B is active.';
         statusMsg.className = 'text-xs text-emerald-700 font-bold';
     }
     setTimeout(() => {

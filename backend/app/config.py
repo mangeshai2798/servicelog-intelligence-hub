@@ -32,6 +32,6 @@ SLA_TARGET_PERCENT = float(os.getenv("SLA_TARGET_PERCENT", "95.0"))
 
 # Local In-Memory SLM Configuration
 DEFAULT_PROVIDER = os.getenv("PROVIDER", "qwen")
-DEFAULT_QWEN_MODEL = os.getenv("LOCAL_MODEL", "Qwen/Qwen2.5-3B-Instruct")
-MODEL_PATH = os.getenv("MODEL_PATH", "models/Qwen2.5-3B-Instruct")
+DEFAULT_QWEN_MODEL = os.getenv("LOCAL_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
+MODEL_PATH = os.getenv("MODEL_PATH", "models/Qwen2.5-0.5B-Instruct")
 MAX_NEW_TOKENS = int(os.getenv("MAX_NEW_TOKENS", "220"))

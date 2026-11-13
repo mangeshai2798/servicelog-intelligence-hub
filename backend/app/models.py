@@ -86,7 +86,7 @@ class LogsResponse(BaseModel):
 
 class AISettingsRequest(BaseModel):
     api_key: Optional[str] = ""
-    model: Optional[str] = "Qwen/Qwen2.5-3B-Instruct"
+    model: Optional[str] = "Qwen/Qwen2.5-0.5B-Instruct"
     provider: Optional[str] = "qwen"
     endpoint_url: Optional[str] = "local-in-memory"
 

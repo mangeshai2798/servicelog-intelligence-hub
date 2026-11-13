@@ -2,7 +2,7 @@
 
 ## 1. System Overview
 
-**ServiceLog Intelligence Hub** is an offline-first, dual-path operational log analysis and conversational forensic intelligence platform. It bridges high-throughput log parsing and structured SQLite FTS5 database retrieval with local in-memory small language model (SLM) neural reasoning (`Qwen/Qwen2.5-3B-Instruct`). 
+**ServiceLog Intelligence Hub** is an offline-first, dual-path operational log analysis and conversational forensic intelligence platform. It bridges high-throughput log parsing and structured SQLite FTS5 database retrieval with local in-memory small language model (SLM) neural reasoning (`Qwen/Qwen2.5-0.5B-Instruct`). 
 
 The architecture guarantees:
 - **100% Offline Privacy:** Zero external network egress or third-party cloud LLM dependencies.
@@ -27,7 +27,7 @@ The architecture guarantees:
 | **Frontend** | Markdown Parser | Marked.js (`marked.min.js`) | Renders AI answers with formatted code blocks, tables, and lists. |
 | **Backend** | API Framework | Python 3.10+, FastAPI, Uvicorn | High async concurrency, automatic OpenAPI schemas, native Pydantic v2. |
 | **Database** | Embedded Storage | SQLite3 with FTS5 & WAL mode | Zero setup, ACID-compliant, lightning-fast B-tree and full-text indexes. |
-| **AI / SLM** | Neural Inference | PyTorch, Hugging Face Transformers (`Qwen/Qwen2.5-3B-Instruct`) | High-precision 3B parameter SLM running completely offline in system RAM (~5.5-6.5 GB). |
+| **AI / SLM** | Neural Inference | PyTorch, Hugging Face Transformers (`Qwen/Qwen2.5-0.5B-Instruct`) | Compact 0.5B parameter SLM running completely offline in system RAM (< 1.5 GB). |
 | **Configuration** | Environment | Python `dotenv`, Pydantic Settings | Dynamically loads branding, paths, and SLA targets with zero hardcoding. |
 
 ---
@@ -73,7 +73,7 @@ flowchart TD
     subgraph DataTier["Data & Model Storage"]
         DiskLogs["Raw Service Logs (service_logs/*.log)"]
         SQLiteDB["SQLite Database (logs & FTS5 Virtual Table)"]
-        LocalSLM["Local Qwen 2.5 3B SLM (PyTorch In-Memory)"]
+        LocalSLM["Local Qwen 2.5 0.5B SLM (PyTorch In-Memory)"]
     end
 
     UI -->|HTTP GET /api/config| Router
@@ -142,7 +142,7 @@ Logs_Monitoring_Project/
 │       ├── analyzer.py               # Statistical aggregator & RCA analyzer
 │       ├── db.py                     # SQLite engine & FTS5 full-text queries
 │       ├── query_engine.py           # Dual-path query coordinator & refusal guard
-│       └── ai_service.py             # PyTorch Local Qwen 2.5 3B inference engine
+│       └── ai_service.py             # PyTorch Local Qwen 2.5 0.5B inference engine
 ├── frontend/
 │   ├── index.html                    # Single-Page Application dashboard
 │   ├── css/
@@ -184,7 +184,7 @@ Logs_Monitoring_Project/
 
 | Decision | Context | Alternatives Considered | Rationale |
 | :--- | :--- | :--- | :--- |
-| **Local In-Memory Qwen 2.5 3B** | Need high-accuracy conversational reasoning without cloud API costs or data leakage. | OpenAI GPT-4, Llama 3 8B, Ollama daemon. | Qwen 2.5 3B delivers state-of-the-art causal reasoning, consumes ~5.5-6.5 GB RAM, and runs directly in PyTorch on CPU without external daemon processes. |
+| **Local In-Memory Qwen 2.5 0.5B** | Need conversational reasoning without cloud API costs or data leakage. | External cloud APIs, separate local daemon processes. | Qwen 2.5 0.5B requires only ~1.2 GB RAM, executes on CPU in 1-2 seconds, and requires zero external daemon processes. |
 | **SQLite FTS5 Virtual Table** | Full-text keyword search across 100K+ log lines. | Elasticsearch, PostgreSQL, in-memory Python list grep. | SQLite is zero-maintenance, embeds directly inside the Python process, and FTS5 yields BM25 ranking in under 10ms. |
 | **Dual-Path Fallback Guard** | Models can occasionally emit generic cop-out phrases on ambiguous queries. | Pure SLM generation, pure regex templates. | Provides the fluid reasoning of an LLM while guaranteeing 100% deterministic forensic accuracy if the model falters. |
 | **Dynamic Configuration (.env)** | User requires universal reusability across any client domain. | Hardcoded company names, separate config files. | All UI text, SLA thresholds, and paths are read dynamically; zero code edits needed for rebranding. |

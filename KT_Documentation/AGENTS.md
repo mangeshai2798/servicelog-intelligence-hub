@@ -5,7 +5,7 @@
 - **Project:** ServiceLog Intelligence Hub (Universal Enterprise Edition)
 - **Purpose:** Provide an offline-first, ultra-generic, high-performance operational log monitoring, root cause analysis (RCA), and natural language query intelligence platform.
 - **Primary Users:** Site Reliability Engineers (SREs), DevOps Engineers, and Software Developers.
-- **Core Technology:** Python 3.10+, FastAPI, SQLite with FTS5, PyTorch, Hugging Face Transformers (`Qwen/Qwen2.5-3B-Instruct`), Vanilla HTML5/CSS/JavaScript.
+- **Core Technology:** Python 3.10+, FastAPI, SQLite with FTS5, PyTorch, Hugging Face Transformers (`Qwen/Qwen2.5-0.5B-Instruct`), Vanilla HTML5/CSS/JavaScript.
 
 ---
 

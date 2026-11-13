@@ -37,7 +37,7 @@
     "app_org_name": "LogTrax Enterprise",
     "app_nav_badge": "Observability Hub",
     "sla_target_percent": 95.0,
-    "model_name": "Qwen/Qwen2.5-3B-Instruct",
+    "model_name": "Qwen/Qwen2.5-0.5B-Instruct",
     "provider": "qwen"
   }
   ```
@@ -57,7 +57,7 @@
     "status": "ok",
     "service": "ServiceLog Intelligence Hub",
     "version": "1.0.0",
-    "model": "Qwen/Qwen2.5-3B-Instruct",
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
     "provider": "qwen",
     "local_llm_ready": true
   }
@@ -212,7 +212,7 @@
 
 ### 8. `POST /api/query`
 
-- **Purpose:** Submits an operational question to the dual-path query engine (Local Qwen 2.5 3B SLM grounded with SQLite FTS5 RAG).
+- **Purpose:** Submits an operational question to the dual-path query engine (Local Qwen 2.5 0.5B SLM grounded with SQLite FTS5 RAG).
 - **Required Permission:** Public / Operator
 - **Request Body:**
   ```json
@@ -226,9 +226,9 @@
   {
     "query": "Why did PaymentGatewayService fail at 14:22?",
     "answer": "At 14:22:15, PaymentGatewayService encountered an unhandled HTTP 504 Gateway Timeout while dispatching transaction TX-99410 to the external banking partner.\n\n#### 🔍 Exact Line Context Window (File: `PaymentGatewayService.log`)\n```text\nLine  3410: [14:22:14] [INFO ] Sending payment authorization request\nLine  3411: [14:22:14] [DEBUG] Awaiting gateway handshake on socket #12\n▶ Line 3412: [14:22:15] [ERROR] Transaction failed: Bank response code 504 Gateway Timeout\nLine  3413: [14:22:15] [WARN ] Retrying connection attempt 1 of 3\n```",
-    "category": "Local Qwen 2.5 (Qwen/Qwen2.5-3B-Instruct)",
+    "category": "Local Qwen 2.5 (Qwen/Qwen2.5-0.5B-Instruct)",
     "metrics": {
-      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "model": "Qwen/Qwen2.5-0.5B-Instruct",
       "provider": "qwen",
       "total_records": 48200,
       "successful_records": 46500,
@@ -336,11 +336,11 @@
   ```json
   {
     "is_configured": true,
-    "model": "Qwen/Qwen2.5-3B-Instruct",
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
     "masked_key": "local-in-memory",
     "provider": "qwen",
     "endpoint_url": "local-in-memory",
-    "message": "Local Qwen 2.5 3B model is active and running in-memory."
+    "message": "Local Qwen 2.5 0.5B model is active and running in-memory."
   }
   ```
 

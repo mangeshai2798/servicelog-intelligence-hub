@@ -2,13 +2,13 @@
 
 An enterprise-grade, ultra-generic **Service Log Monitoring, Automated Root Cause Analysis (RCA), and Autonomous Diagnostic Q&A Platform**.
 
-Designed for high-volume distributed microservices, financial settlement pipelines, and mission-critical enterprise systems. Powered by a high-throughput **FastAPI backend**, an indexed **SQLite WAL & FTS5 full-text engine**, a **100% offline Local In-Memory Qwen 2.5 3B Small Language Model (SLM)**, and a modern **Executive UI Dashboard** with real-time telemetry, visual charts, and sub-millisecond forensic search.
+Designed for high-volume distributed microservices, financial settlement pipelines, and mission-critical enterprise systems. Powered by a high-throughput **FastAPI backend**, an indexed **SQLite WAL & FTS5 full-text engine**, a **100% offline Local In-Memory Qwen 2.5 0.5B Small Language Model (SLM)**, and a modern **Executive UI Dashboard** with real-time telemetry, visual charts, and sub-millisecond forensic search.
 
 ---
 
 ## 🌟 Key Highlights & System Capabilities
 
-* **100% Offline & Privacy-Compliant**: Powered by an in-memory `Qwen/Qwen2.5-3B-Instruct` model running locally in PyTorch via CPU tensors. Zero external API calls, zero cloud dependencies, and zero data leakage.
+* **100% Offline & Privacy-Compliant**: Powered by an in-memory `Qwen/Qwen2.5-0.5B-Instruct` model running locally in PyTorch via CPU tensors. Zero external API calls, zero cloud dependencies, and zero data leakage.
 * **Ultra-Generic Architecture**: No hardcoded service names, file names, or UI text. Everything is driven dynamically from the log content, database metadata, and the centralized [`.env`](file:///.env) configuration file.
 * **Multi-Gigabyte Scalability (O(1) RAM Ingestion)**: Streams log files line-by-line using Python generator iterators without loading entire files into memory. Handles gigabytes of logs in constant memory (< 35 MB RAM).
 * **Forensic SQLite & FTS5 Search**: Sub-millisecond lookups for line-by-line inspection (with surrounding 8-line context windows), end-to-end transaction lifecycle tracing, time intervals, and token-level BM25 full-text search.
@@ -61,7 +61,7 @@ Logs_Monitoring_Project/
 │   │   ├── parser.py                            # O(1) RAM streaming log parser & regex extractor
 │   │   ├── analyzer.py                          # Dynamic KPI aggregation, metrics & RCA engine
 │   │   ├── db.py                                # SQLite WAL, B-Tree indexes & FTS5 full-text engine
-│   │   ├── ai_service.py                        # In-memory Local Qwen 2.5 3B SLM & StreamCapture
+│   │   ├── ai_service.py                        # In-memory Local Qwen 2.5 0.5B SLM & StreamCapture
 │   │   ├── query_engine.py                      # Multi-intent query deconstructor, RAG & safeguards
 │   │   └── main.py                              # FastAPI REST API, lifespan handler & static mounts
 │   └── data/
@@ -77,7 +77,7 @@ Logs_Monitoring_Project/
 ├── logs/
 │   └── backend.log                              # Rotating backend execution log file
 └── models/
-    └── Qwen2.5-3B-Instruct/                     # Project-local weights for offline neural inference
+    └── Qwen2.5-0.5B-Instruct/                   # Project-local weights for offline neural inference
 ```
 
 ---
@@ -147,8 +147,8 @@ DATA_DIR=backend/data
 
 # Strictly Offline Local In-Memory Qwen 2.5 SLM Configuration
 PROVIDER=qwen
-LOCAL_MODEL=Qwen/Qwen2.5-3B-Instruct
-MODEL_PATH=models/Qwen2.5-3B-Instruct
+LOCAL_MODEL=Qwen/Qwen2.5-0.5B-Instruct
+MODEL_PATH=models/Qwen2.5-0.5B-Instruct
 MAX_NEW_TOKENS=220
 ```
 

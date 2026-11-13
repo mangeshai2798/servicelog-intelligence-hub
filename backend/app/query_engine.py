@@ -26,7 +26,7 @@ class QueryEngine:
     def answer_query(self, query: str, service: Optional[str] = None) -> QueryResponse:
         """
         Dynamic, RAG-grounded query processor.
-        Combines SQLite FTS5 database retrieval with Local Qwen 2.5 3B in-memory SLM reasoning.
+        Combines SQLite FTS5 database retrieval with Local Qwen 2.5 0.5B in-memory SLM reasoning.
         Context-aware: dynamically customizes answers to the active UI service selection.
         """
         start_t = time.time()
@@ -133,7 +133,7 @@ class QueryEngine:
             f"{len(dynamic_matches)} dynamic matches (prep: {(time.time() - start_t)*1000.0:.1f}ms)"
         )
 
-        # 4. Primary Path: Local Qwen 2.5 3B Autonomous SLM Reasoning
+        # 4. Primary Path: Local Qwen 2.5 0.5B Autonomous SLM Reasoning
         llm_answer: Optional[str] = None
         ttft_s: Optional[float] = None
         gen_time_s: Optional[float] = None

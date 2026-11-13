@@ -22,7 +22,7 @@ Authorization is strictly verified server-side in API route dependencies.
 ## 3. Secrets Management & Zero-Hardcoding Principles
 
 1. **No Hardcoded Secrets:** Credentials, database passwords, and API keys must **never** be hardcoded anywhere in the codebase.
-2. **Local AI Execution (Zero Keys Required):** The primary neural reasoning engine (`Qwen/Qwen2.5-3B-Instruct`) runs strictly offline in local RAM. **No OpenAI, Anthropic, or cloud API keys are required or sent over the network.**
+2. **Local AI Execution (Zero Keys Required):** The primary neural reasoning engine (`Qwen/Qwen2.5-0.5B-Instruct`) runs strictly offline in local RAM. **No OpenAI, Anthropic, or cloud API keys are required or sent over the network.**
 3. **Source Control Hygiene:** All secrets, `.env` files, temporary logs, and SQLite database files (`*.db`, `*.sqlite`, `*.log`) are explicitly listed in `.gitignore`.
 4. **Environment Isolation:** Configuration parameters are loaded exclusively at runtime via `python-dotenv` into `backend/app/config.py`.
 
@@ -41,7 +41,7 @@ Authorization is strictly verified server-side in API route dependencies.
 | `LOGS_DIR` | Private (Infra) | `service_logs` | Local path to ingested log files. |
 | `DATA_DIR` | Private (Infra) | `backend/data` | Path to embedded SQLite database. |
 | `PROVIDER` | Private (AI) | `qwen` | Inference provider identifier. |
-| `LOCAL_MODEL` | Private (AI) | `Qwen/Qwen2.5-3B-Instruct` | Local Hugging Face model identifier. |
+| `LOCAL_MODEL` | Private (AI) | `Qwen/Qwen2.5-0.5B-Instruct` | Local Hugging Face model identifier. |
 
 ---
 

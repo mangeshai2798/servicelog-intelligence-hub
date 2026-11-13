@@ -100,8 +100,8 @@ To achieve **100% accurate, line-by-line intelligence without memory errors or h
 
 ### Pillar 5: Zero-Hallucination SLM Grounding & Refusal Interception
 * **Location:** [`backend/app/ai_service.py`](file:///backend/app/ai_service.py) & [`backend/app/query_engine.py`](file:///backend/app/query_engine.py)
-* **Direct Ground Truth Injection:** The local Qwen 2.5 3B model is fed pre-calculated, verified mathematical facts, exact line numbers, and error signatures.
-* **Refusal Interception:** While the 3B model has vastly superior instruction following and reasoning over 0.5B models, the Query Engine maintains proactive safeguards against conversational refusals:
+* **Direct Ground Truth Injection:** The local Qwen 2.5 0.5B model is fed pre-calculated, verified mathematical facts, exact line numbers, and error signatures.
+* **Refusal Interception:** Tiny language models (0.5B parameters) may produce conversational refusals when overwhelmed (e.g. *"Please provide me with the logs"*). The Query Engine monitors the output:
   - If a generic refusal phrase is detected, it automatically elevates the response to the deterministic dynamic diagnostic engine.
   - Verifiable markdown tables and line-by-line context boxes are automatically appended to the final response.
 

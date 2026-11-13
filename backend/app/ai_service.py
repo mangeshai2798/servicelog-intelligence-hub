@@ -1,7 +1,7 @@
 # pyright: reportMissingImports=false
 # pyright: reportMissingTypeStubs=false
 """
-Local In-Memory Qwen 2.5 3B Intelligence Engine
+Local In-Memory Qwen 2.5 0.5B Intelligence Engine
 Dedicated offline SLM reasoning service for multi-service log observability.
 Runs 100% locally via PyTorch and Hugging Face Transformers.
 """
@@ -35,7 +35,7 @@ else:
                 self.next_tokens_are_prompt = False
             def put(self, value): pass
 
-DEFAULT_QWEN_MODEL = os.getenv("LOCAL_MODEL", "Qwen/Qwen2.5-3B-Instruct")
+DEFAULT_QWEN_MODEL = os.getenv("LOCAL_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
 DEFAULT_MODEL = DEFAULT_QWEN_MODEL
 DEFAULT_PROVIDER = "qwen"
 
@@ -63,7 +63,7 @@ class StreamCapture(TextStreamer):  # type: ignore
 
 # In-memory local Qwen pipeline loader & runner (Singleton)
 class LocalQwenEngine:
-    """In-memory singleton runner for Qwen 2.5 (3B / 0.5B) using PyTorch & Transformers."""
+    """In-memory singleton runner for Qwen 2.5 0.5B using PyTorch & Transformers."""
     _instance: Any = None
     _tokenizer: Any = None
     _model: Any = None
@@ -89,13 +89,7 @@ class LocalQwenEngine:
             from transformers import AutoTokenizer, AutoModelForCausalLM
 
             project_root = Path(__file__).resolve().parent.parent.parent
-            clean_name = self.model_id.split("/")[-1]
-            local_model_path = project_root / "models" / clean_name
-            if not (local_model_path.exists() and (local_model_path / "model.safetensors").exists()):
-                for candidate in [project_root / "models" / "Qwen2.5-3B-Instruct", project_root / "models" / "Qwen2.5-0.5B-Instruct"]:
-                    if candidate.exists() and (candidate / "model.safetensors").exists():
-                        local_model_path = candidate
-                        break
+            local_model_path = project_root / "models" / "Qwen2.5-0.5B-Instruct"
 
             target_path = str(local_model_path) if local_model_path.exists() and (local_model_path / "model.safetensors").exists() else self.model_id
             logger.info(f"[LOCAL-QWEN] Loading '{target_path}' into memory (torch.float32)...")
@@ -197,7 +191,7 @@ class LocalQwenEngine:
 
 
 class AIService:
-    """Strictly Local In-Memory Qwen 2.5 3B AI Service."""
+    """Strictly Local In-Memory Qwen 2.5 0.5B AI Service."""
     def __init__(self):
         self.provider: str = DEFAULT_PROVIDER
         self.model_name: str = DEFAULT_QWEN_MODEL
@@ -359,7 +353,7 @@ Provide a comprehensive answer covering all {svc_count} active pipelines.
 If asked for the latest error across all services, report the most recent error in the system: [{err_time}] in '{err_svc}': "{err_msg[:120]}".
 """
 
-        system_prompt = f"""You are an Autonomous Site Reliability Engineering (SRE) & Observability AI Agent powered by Local Qwen 2.5 3B ({self.model_name}).
+        system_prompt = f"""You are an Autonomous Site Reliability Engineering (SRE) & Observability AI Agent powered by Local Qwen 2.5 0.5B ({self.model_name}).
 You analyze service execution logs, diagnostic metrics, record throughput, and errors.
 You do NOT rely on fixed templates or hardcoded answers. You dynamically inspect the verified ground-truth context provided below and autonomously reason about how to answer the user's question.
 

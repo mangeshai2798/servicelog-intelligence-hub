@@ -79,7 +79,7 @@ sequenceDiagram
 - **Success State:**
   - Stopwatch stops and displays total duration (e.g., `2.15s`).
   - Telemetry badges render:
-    - **Model Pill:** `Local Qwen 2.5 (Qwen/Qwen2.5-3B-Instruct)`
+    - **Model Pill:** `Local Qwen 2.5 (Qwen/Qwen2.5-0.5B-Instruct)`
     - **Scope Pill:** `PaymentGatewayService`
     - **Speed Pill:** `58.4 tok/s | TTFT: 0.285s`
     - **Duration Pill:** `2.15 s (2,150.4 ms)`

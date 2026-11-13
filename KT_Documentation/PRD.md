@@ -3,7 +3,7 @@
 ## 1. Product Overview
 
 - **Product Name:** ServiceLog Intelligence Hub (Universal Enterprise Edition)
-- **One-Line Description:** An ultra-generic, offline-first operational log monitoring, root cause analysis (RCA), and autonomous forensic query intelligence platform powered by SQLite FTS5 and a local in-memory small language model (Qwen 2.5 3B).
+- **One-Line Description:** An ultra-generic, offline-first operational log monitoring, root cause analysis (RCA), and autonomous forensic query intelligence platform powered by SQLite FTS5 and a local in-memory small language model (Qwen 2.5 0.5B).
 - **Product Type:** Internal Observability Tool / SRE Diagnostic Platform / Enterprise Log Analyzer
 - **Primary Platform:** Web (Desktop-optimized responsive Single-Page Dashboard with a high-performance Python FastAPI backend)
 
@@ -32,7 +32,7 @@ Mean Time to Resolution (MTTR) during mission-critical outages directly impacts 
 Provide an ultra-generic, plug-and-play log intelligence engine where an operator can drop *any* structured or semi-structured log file from *any* domain into a designated directory (`service_logs/`) or upload via UI, and immediately receive automated statistical telemetry, error signature clustering, break-flow detection, and sub-second natural language forensic query answers without hardcoded schemas or cloud dependencies.
 
 ### Secondary Goals
-1. **100% Offline Data Sovereignty:** Run local neural inference (`Qwen/Qwen2.5-3B-Instruct` via PyTorch) completely in-memory with zero cloud API keys or external network egress.
+1. **100% Offline Data Sovereignty:** Run local neural inference (`Qwen/Qwen2.5-0.5B-Instruct` via PyTorch) completely in-memory with zero cloud API keys or external network egress.
 2. **Sub-Millisecond Ground Truth Retrieval:** Utilize an embedded SQLite Full-Text Search (FTS5) index for sub-10ms exact-match target line lookups, transaction audits, and surrounding context windows.
 3. **Zero-Hardcoding Dynamic Customization:** Ensure all application branding, SLA targets, service discovery, and telemetry parameters are driven dynamically via `.env` configuration and backend APIs.
 4. **Transparent Telemetry & Forensic Auditability:** Display live generation statistics (Time to First Token, tokens per second, neural generation latency, total pipeline latency) alongside line-level source code evidence.
@@ -90,7 +90,7 @@ Provide an ultra-generic, plug-and-play log intelligence engine where an operato
   1. User types an operational question in the dashboard search bar (with optional service scope filter).
   2. Backend query engine analyzes query intent (line lookup, transaction audit, time window, break flow, general RCA).
   3. Sub-millisecond SQLite queries pull exact ground-truth facts.
-  4. Local `Qwen/Qwen2.5-3B-Instruct` model synthesizes the answer with dynamic metrics capture.
+  4. Local `Qwen/Qwen2.5-0.5B-Instruct` model synthesizes the answer with dynamic metrics capture.
   5. If model attempts generic refusal, a deterministic safeguard automatically substitutes structured database evidence.
 - **Inputs:** Natural language query string, service filter (optional).
 - **Outputs:** Markdown answer, telemetry badges (TTFT, tokens/sec, latency), verifiable forensic log snippets/audit tables.
@@ -130,7 +130,7 @@ The following are explicitly **NOT** in scope for this version:
 - [x] Dynamic `.env` configuration for branding, SLA thresholds, and model parameters.
 - [x] Universal multi-pattern log parser supporting timestamps, levels, components, and transaction IDs.
 - [x] SQLite database with FTS5 full-text indexing and B-tree indexes.
-- [x] Local in-memory Qwen 2.5 3B neural inference engine running via PyTorch.
+- [x] Local in-memory Qwen 2.5 0.5B neural inference engine running via PyTorch.
 - [x] Automated refusal interceptor substituting deterministic forensic evidence.
 - [x] Dashboard UI with stat cards, dynamic service filter pills, Chart.js visualizations, and responsive query interface.
 - [x] File upload endpoint with automatic parsing and database reindexing.
@@ -163,7 +163,7 @@ The following are explicitly **NOT** in scope for this version:
 ## 10. Constraints
 
 - **Technical Constraints:** Must run on standard developer laptops (16GB RAM, quad-core CPU, Windows/macOS/Linux) without requiring dedicated Nvidia GPUs.
-- **Memory Footprint:** Qwen 2.5 3B model occupies ~5.5 to 6.5 GB of system RAM, operating smoothly within standard 16GB developer laptops.
+- **Memory Footprint:** Qwen 2.5 0.5B model occupies less than 1.5 GB of system RAM, operating with minimal CPU resource overhead.
 - **Frameworks:** Python 3.10+, FastAPI, PyTorch, Hugging Face Transformers, SQLite3, HTML5/Tailwind/Vanilla JS.
 - **Design Constraints:** Zero external CDN dependencies in production; all vendor libraries (`chart.umd.min.js`, `lucide.min.js`, `marked.min.js`, `tailwindcss.js`) bundled locally.
 

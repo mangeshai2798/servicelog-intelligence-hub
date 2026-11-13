@@ -1,7 +1,7 @@
 # ServiceLog Intelligence Hub: End-to-End Response Generation Architecture & Real-World Query Execution
 
 > **Document Version:** 2.0  
-> **Target System:** ServiceLog Intelligence Hub (FastAPI, SQLite FTS5, Local In-Memory Qwen 2.5 3B SLM, Tailwind UI)  
+> **Target System:** ServiceLog Intelligence Hub (FastAPI, SQLite FTS5, Local In-Memory Qwen 2.5 0.5B SLM, Tailwind UI)  
 > **Dataset Ingested:** Mission-critical financial payment and settlement logs (35,860 entries across 4 services)  
 > **Execution Mode:** 100% Offline, Single-Process In-Memory PyTorch Inference, Zero Cloud API Calls  
 
@@ -44,7 +44,7 @@ flowchart TD
     end
 
     subgraph Neural_Inference ["5. In-Memory Local Qwen 2.5 Inference & Stream Capture"]
-        Q --> R["LocalQwenEngine.generate()\nQwen/Qwen2.5-3B-Instruct in PyTorch"]
+        Q --> R["LocalQwenEngine.generate()\nQwen/Qwen2.5-0.5B-Instruct in PyTorch"]
         R --> S["StreamCapture Hook\nRecords Start Time & Time to First Token (TTFT)"]
         S --> T["Greedy Token Decoding (max_new_tokens=220)"]
         T --> U["Compute Generation Speed (tok/s) & Token Count"]
@@ -121,7 +121,7 @@ The [`QueryEngine`](file:///backend/app/query_engine.py) parses the natural lang
 1. **HTTP Response**: FastAPI returns a [`QueryResponse`](file:///backend/app/models.py#L66) containing `answer`, `category`, `duration_ms`, `duration_s`, `ttft_s`, `generation_time_s`, `tokens_per_sec`, and `tokens_count`.
 2. **Stopwatch Synchronization**: The frontend clears the interval timer, calculates final elapsed time, and replaces the skeleton with formatted HTML compiled by `Marked.js`.
 3. **Badge Updates**: Renders visual metadata badges:
-   - **Model Badge**: `Local Qwen 2.5 (Qwen2.5-3B-Instruct)`
+   - **Model Badge**: `Local Qwen 2.5 (Qwen2.5-0.5B-Instruct)`
    - **Scope Badge**: `ALL SERVICES` or specific service scope
    - **Latency Badge**: e.g., `⚡ 0.84s (842ms)`
    - **Performance Pill**: e.g., `🚀 85.2 tok/s · TTFT: 0.124s · 74 tokens`
@@ -130,7 +130,7 @@ The [`QueryEngine`](file:///backend/app/query_engine.py) parses the natural lang
 
 ## 3. Real-World Execution: 10 Benchmark Queries Tested in the Live Environment
 
-All 10 queries below were executed against the active system running the Dorchester County dataset (35,860 entries) and processed by the in-memory `Qwen2.5-3B-Instruct` model.
+All 10 queries below were executed against the active system running the Dorchester County dataset (35,860 entries) and processed by the in-memory `Qwen2.5-0.5B-Instruct` model.
 
 ---
 

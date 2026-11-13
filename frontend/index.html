@@ -122,7 +122,7 @@
                     class="px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-300 text-xs font-bold text-emerald-800 transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
                     title="Configure AI Model / Qwen / Local LLM">
                     <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
-                    <span id="aiConfigBtnText">QWEN: Qwen2.5-3B (Local)</span>
+                    <span id="aiConfigBtnText">QWEN: Qwen2.5-0.5B (Local)</span>
                 </button>
 
                 <!-- Backend Logs Viewer -->
@@ -374,7 +374,7 @@
                                     <span id="aiAssistantScopeText">ALL SERVICES (System-Wide)</span>
                                 </span>
                             </div>
-                            <p class="text-[10.5px] text-slate-500">Autonomous log reasoning and automated root cause triage via SQLite RAG &amp; Local Qwen 2.5 3B</p>
+                            <p class="text-[10.5px] text-slate-500">Autonomous log reasoning and automated root cause triage via SQLite RAG &amp; Local Qwen 2.5 0.5B</p>
                         </div>
                     </div>
 
@@ -907,7 +907,7 @@
         </div>
     </div>
 
-    <!-- Dedicated Local In-Memory Qwen 2.5 3B Status & Verification Modal -->
+    <!-- Dedicated Local In-Memory Qwen 2.5 0.5B Status & Verification Modal -->
     <div id="aiSettingsModal"
         class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
         <div
@@ -920,7 +920,7 @@
                     </span>
                     <div>
                         <h3 class="font-heading font-bold text-white text-sm">Local SLM Engine Status</h3>
-                        <p class="text-[11px] text-white/70">Strictly Local In-Memory Qwen 2.5 (3B) Engine</p>
+                        <p class="text-[11px] text-white/70">Strictly Local In-Memory Qwen 2.5 (0.5B) Engine</p>
                     </div>
                 </div>
                 <button type="button" onclick="closeAISettingsModal()"
@@ -938,7 +938,7 @@
                     <div>
                         <div class="font-bold text-xs mb-0.5">In-Memory Local Engine Active</div>
                         <div class="text-[11px] text-emerald-700 leading-relaxed">
-                            The system is strictly configured to execute on the local <strong>Qwen 2.5 3B Instruct</strong> model. No external network requests or third-party cloud APIs are used.
+                            The system is strictly configured to execute on the local <strong>Qwen 2.5 0.5B Instruct</strong> model. No external network requests or third-party cloud APIs are used.
                         </div>
                     </div>
                 </div>
@@ -948,8 +948,8 @@
                         <label class="block text-slate-700 font-semibold mb-1 text-xs">Model Identifier</label>
                         <input type="text" id="aiModelInput" readonly
                             class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-[#091E3E] select-none"
-                            value="Qwen/Qwen2.5-3B-Instruct">
-                        <p class="text-[10px] text-slate-500 mt-1">Project-local weights: <span class="font-mono text-slate-600">models/Qwen2.5-3B-Instruct</span></p>
+                            value="Qwen/Qwen2.5-0.5B-Instruct">
+                        <p class="text-[10px] text-slate-500 mt-1">Project-local weights: <span class="font-mono text-slate-600">models/Qwen2.5-0.5B-Instruct</span></p>
                     </div>
 
                     <div>
