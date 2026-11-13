@@ -2,7 +2,7 @@
 ===============================================================================
 ServiceLog Intelligence Hub - Response Generation Timing & Benchmark Tool
 Calculates high-precision time required to generate responses via:
-1. Direct Local Qwen 2.5 0.5B SLM Inference & RAG Pipeline
+1. Direct Local Qwen SLM (0.5B / 1.5B / 3B) Inference & RAG Pipeline
 2. Live HTTP API Endpoint (/api/query) against the active dashboard server
 ===============================================================================
 Usage:

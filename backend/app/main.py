@@ -66,10 +66,10 @@ async def lifespan(app: FastAPI):
         f"Total Records: {overview.total_records_processed:,} | Success Rate: {overview.success_rate_percent}%"
     )
 
-    # Pre-warm local Qwen 2.5 0.5B model
+    # Pre-warm local Qwen SLM model
     try:
         from app.ai_service import LocalQwenEngine
-        logger.info("[STARTUP-WARMUP] Pre-initializing and warming up Local Qwen 2.5 0.5B SLM...")
+        logger.info(f"[STARTUP-WARMUP] Pre-initializing and warming up Local Qwen SLM ({ai_service.model_name})...")
         LocalQwenEngine.get_instance(ai_service.model_name).load_model()
     except Exception as ex:
         logger.warning(f"[STARTUP-WARMUP-FAILED] Qwen warmup error: {ex}")
@@ -187,6 +187,8 @@ def get_ai_settings():
 
 @app.post("/api/settings/ai", response_model=AISettingsResponse)
 def update_ai_settings(req: AISettingsRequest):
+    if req.model:
+        ai_service.set_model(req.model)
     status = ai_service.get_status()
     return AISettingsResponse(
         is_configured=True,
@@ -194,7 +196,7 @@ def update_ai_settings(req: AISettingsRequest):
         masked_key=status["masked_key"],
         provider="qwen",
         endpoint_url="local-in-memory",
-        message="Local Qwen 2.5 0.5B model is active and running in-memory."
+        message=f"Local Qwen model ({status['model']}) is active and running in-memory."
     )
 
 @app.post("/api/query", response_model=QueryResponse)

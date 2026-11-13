@@ -416,7 +416,7 @@ function openAISettingsModal() {
 
     const statusMsg = document.getElementById('aiSaveStatus');
     if (statusMsg) {
-        statusMsg.innerText = 'Local in-memory Qwen engine is active and warmed up.';
+        statusMsg.innerText = `Local in-memory Qwen engine (${defaultModel}) is active and warmed up.`;
         statusMsg.className = 'text-xs text-emerald-700 font-semibold';
     }
 
@@ -431,9 +431,10 @@ function closeAISettingsModal() {
 
 async function handleSaveAISettings(e) {
     e.preventDefault();
+    const defaultModel = (appState.config && appState.config.model_name) || 'Qwen/Qwen2.5-0.5B-Instruct';
     const statusMsg = document.getElementById('aiSaveStatus');
     if (statusMsg) {
-        statusMsg.innerText = 'Verified: Local In-Memory Qwen 2.5 0.5B is active.';
+        statusMsg.innerText = `Verified: Local In-Memory Qwen (${defaultModel}) is active.`;
         statusMsg.className = 'text-xs text-emerald-700 font-bold';
     }
     setTimeout(() => {
