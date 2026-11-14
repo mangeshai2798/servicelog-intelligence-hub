@@ -835,22 +835,26 @@ function switchInspectorTab(tab) {
     const servicesSection = document.getElementById('servicesSection');
     const rcaSection = document.getElementById('errorCausesSection');
     const logsSection = document.getElementById('logsExplorerSection');
+    const templatesSection = document.getElementById('templatesSection');
     const tabBtnServices = document.getElementById('tabBtnServices');
     const tabBtnRca = document.getElementById('tabBtnRca');
     const tabBtnLogs = document.getElementById('tabBtnLogs');
+    const tabBtnTemplates = document.getElementById('tabBtnTemplates');
 
     const activeClasses = 'bt-tab-pill active flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-all';
     const inactiveClasses = 'bt-tab-pill flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-all text-slate-600 hover:text-[#00468e]';
 
-    // Hide all 3 panes first
+    // Hide all panes first
     if (servicesSection) servicesSection.classList.add('hidden');
     if (rcaSection) rcaSection.classList.add('hidden');
     if (logsSection) logsSection.classList.add('hidden');
+    if (templatesSection) templatesSection.classList.add('hidden');
 
-    // Deactivate all 3 buttons
+    // Deactivate all buttons
     if (tabBtnServices) tabBtnServices.className = inactiveClasses;
     if (tabBtnRca) tabBtnRca.className = inactiveClasses;
     if (tabBtnLogs) tabBtnLogs.className = inactiveClasses;
+    if (tabBtnTemplates) tabBtnTemplates.className = inactiveClasses;
 
     if (tab === 'services') {
         if (servicesSection) servicesSection.classList.remove('hidden');
@@ -861,8 +865,109 @@ function switchInspectorTab(tab) {
     } else if (tab === 'logs') {
         if (logsSection) logsSection.classList.remove('hidden');
         if (tabBtnLogs) tabBtnLogs.className = activeClasses;
+    } else if (tab === 'templates') {
+        if (templatesSection) templatesSection.classList.remove('hidden');
+        if (tabBtnTemplates) tabBtnTemplates.className = activeClasses;
+        fetchAndRenderTemplates();
     }
     lucide.createIcons();
+}
+
+async function fetchAndRenderTemplates() {
+    const tableBody = document.getElementById('templatesTableBody');
+    const badge = document.getElementById('templatesCountBadge');
+    const tabLabel = document.getElementById('tabBtnTemplatesLabel');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="5" class="py-8 text-center text-slate-400">
+                <div class="flex items-center justify-center gap-2">
+                    <i data-lucide="loader-2" class="w-5 h-5 animate-spin text-[#FF9C1D]"></i>
+                    <span>Mining Drain3 structural log templates...</span>
+                </div>
+            </td>
+        </tr>
+    `;
+    lucide.createIcons();
+
+    try {
+        const svcParam = appState.filters.service && appState.filters.service !== 'ALL' ? `?service=${encodeURIComponent(appState.filters.service)}` : '';
+        const res = await fetch(`${API_BASE}/api/templates${svcParam}`);
+        const templates = await res.json();
+
+        if (badge) badge.innerText = `${templates.length} Clusters Mined`;
+        if (tabLabel) tabLabel.innerText = `Drain3 (${templates.length} Templates)`;
+
+        if (!templates || templates.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="py-8 text-center text-slate-400">No log templates mined yet. Upload or reindex logs to generate patterns.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        tableBody.innerHTML = templates.map((t) => {
+            const patternFormatted = escapeHtml(t.template)
+                .replace(/(&lt;IP&gt;)/g, '<span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-mono text-[10px] font-bold">$1</span>')
+                .replace(/(&lt;UUID&gt;)/g, '<span class="px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 font-mono text-[10px] font-bold">$1</span>')
+                .replace(/(&lt;NUM&gt;)/g, '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-mono text-[10px] font-bold">$1</span>')
+                .replace(/(&lt;HEX&gt;)/g, '<span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-mono text-[10px] font-bold">$1</span>')
+                .replace(/(&lt;TIMESTAMP&gt;)/g, '<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold">$1</span>')
+                .replace(/(&lt;PATH&gt;)/g, '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-800 font-mono text-[10px] font-bold">$1</span>')
+                .replace(/(&lt;ENTITY_ID&gt;)/g, '<span class="px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 font-mono text-[10px] font-bold">$1</span>');
+
+            const servicesPills = (t.services || []).map(s => 
+                `<span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold text-[9.5px] border border-slate-200">${escapeHtml(s)}</span>`
+            ).join(' ');
+
+            const searchKey = t.template.replace(/<[^>]+>/g, '').trim().split(/\s+/).filter(w => w.length > 3)[0] || '';
+
+            return `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="py-2.5 px-3 font-mono font-bold text-slate-700">
+                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px]">#${t.cluster_id}</span>
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="font-mono text-xs text-[#091E3E] leading-relaxed break-words">${patternFormatted}</div>
+                        <div class="text-[10.5px] text-slate-400 font-sans mt-0.5 truncate max-w-xl">Sample: "${escapeHtml(t.sample_message || '')}"</div>
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold font-mono bg-blue-50 text-[#00468E] border border-blue-200">
+                            ${Number(t.count).toLocaleString()}
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="flex flex-wrap gap-1">${servicesPills || '<span class="text-slate-400">All</span>'}</div>
+                    </td>
+                    <td class="py-2.5 px-3 text-right">
+                        <button type="button" onclick="filterLogsByTemplateCluster('${t.cluster_id}', '${escapeHtml(searchKey)}')"
+                            class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[10px] transition-colors inline-flex items-center gap-1 shadow-2xs cursor-pointer">
+                            <i data-lucide="filter" class="w-3 h-3 text-[#00468e]"></i> Filter
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        lucide.createIcons();
+    } catch (err) {
+        console.error('Failed to fetch templates:', err);
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="py-8 text-center text-rose-600">Failed to load templates: ${escapeHtml(err.message)}</td>
+            </tr>
+        `;
+    }
+}
+
+function filterLogsByTemplateCluster(clusterId, keyword) {
+    appState.filters.search = keyword || '';
+    appState.pagination.page = 1;
+    const searchInput = document.getElementById('searchQuery');
+    if (searchInput) searchInput.value = keyword || '';
+    switchInspectorTab('logs');
+    fetchLogs();
 }
 
 // ================= KPI MISSION CONTROL CARD CLICKS ================= //
@@ -1901,4 +2006,6 @@ window.resetKPIDrilldown = resetKPIDrilldown;
 window.closeAISettingsModal = closeAISettingsModal;
 window.openAISettingsModal = openAISettingsModal;
 window.copyBackendLogsToClipboard = copyBackendLogsToClipboard;
+window.fetchAndRenderTemplates = fetchAndRenderTemplates;
+window.filterLogsByTemplateCluster = filterLogsByTemplateCluster;
 

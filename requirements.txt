@@ -14,6 +14,9 @@ transformers>=4.40.0
 accelerate>=0.30.0
 safetensors>=0.4.0
 
+# Log Template Mining & Neuro-Symbolic Ingestion
+drain3>=0.9.11
+
 # HTTP & System Utilities
 requests>=2.31.0
 psutil>=5.9.0

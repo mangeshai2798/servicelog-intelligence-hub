@@ -7,6 +7,7 @@ from typing import List, Dict, Any, Optional
 from app.config import LOGS_DIR
 from app.models import LogEntry
 from app.logger import logger
+from app.template_miner import template_miner
 
 class LogParser:
     def __init__(self, logs_dir: Path = LOGS_DIR):
@@ -93,6 +94,16 @@ class LogParser:
         logger.debug(f"[PARSER-SERVICE-DETECT] '{file_name}' using fallback stem -> '{fallback_svc}'")
         return fallback_svc
 
+    def _create_log_entry(self, entry_dict: Dict[str, Any]) -> LogEntry:
+        """
+        Mines the log template with Drain3, extracting cluster_id and masked template.
+        """
+        msg = entry_dict.get("message", "")
+        cluster_id, template_mined = template_miner.mine(msg)
+        entry_dict["template_id"] = cluster_id
+        entry_dict["template_mined"] = template_mined
+        return LogEntry(**entry_dict)
+
     def parse_all(self, force: bool = False) -> List[LogEntry]:
         if not force and not self.needs_reparse() and self.cached_entries:
             logger.debug(f"[PARSER-CACHE-HIT] Serving {len(self.cached_entries)} parsed entries from cache.")
@@ -141,7 +152,7 @@ class LogParser:
                     m = pattern_pipe.match(line)
                     if m:
                         if current_entry:
-                            all_entries.append(LogEntry(**current_entry))
+                            all_entries.append(self._create_log_entry(current_entry))
                             entry_id += 1
                             file_entries_count += 1
 
@@ -183,7 +194,7 @@ class LogParser:
                         m2 = pattern_std.match(line)
                         if m2:
                             if current_entry:
-                                all_entries.append(LogEntry(**current_entry))
+                                all_entries.append(self._create_log_entry(current_entry))
                                 entry_id += 1
                                 file_entries_count += 1
 
@@ -216,7 +227,7 @@ class LogParser:
                                     current_entry["message"] += "\n" + stripped_line
 
             if current_entry:
-                all_entries.append(LogEntry(**current_entry))
+                all_entries.append(self._create_log_entry(current_entry))
                 entry_id += 1
                 file_entries_count += 1
 

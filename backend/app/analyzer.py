@@ -304,18 +304,25 @@ class LogAnalyzer:
     def get_error_causes(self, service: Optional[str] = None) -> List[ErrorCauseSummary]:
         start_t = time.time()
         entries = self.parser.parse_all()
-        error_entries = [e for e in entries if e.level == "ERROR"]
+        error_entries = [
+            e for e in entries
+            if e.level == "ERROR" and (not service or service.upper() == "ALL" or e.service.lower() == service.lower())
+        ]
 
-        # Dynamic error clustering
+        # Dynamic error clustering powered by Drain3 template IDs
         clusters: Dict[str, List[LogEntry]] = defaultdict(list)
         for e in error_entries:
             exc_m = re.search(r'([A-Za-z0-9_.]*(?:Exception|Error|Fault))', e.message)
             exc_type = exc_m.group(1) if exc_m else "GeneralError"
             
-            first_line = e.message.split("\n")[0]
-            norm = re.sub(r'\b[A-Za-z0-9]{12,}\b', '<ID>', first_line)
-            norm = re.sub(r'\b\d+\b', '<NUM>', norm)
-            key = f"{e.service}:{exc_type}:{norm[:65]}"
+            t_id = getattr(e, "template_id", 0) or 0
+            if t_id > 0:
+                key = f"{e.service}:T{t_id}:{exc_type}"
+            else:
+                first_line = e.message.split("\n")[0]
+                norm = re.sub(r'\b[A-Za-z0-9]{12,}\b', '<ID>', first_line)
+                norm = re.sub(r'\b\d+\b', '<NUM>', norm)
+                key = f"{e.service}:{exc_type}:{norm[:65]}"
             clusters[key].append(e)
 
         causes: List[ErrorCauseSummary] = []

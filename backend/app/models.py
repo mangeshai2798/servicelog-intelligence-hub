@@ -18,6 +18,15 @@ class LogEntry(BaseModel):
     transaction_id: Optional[str] = None
     status: Optional[str] = None
     batch_date: Optional[str] = None
+    template_id: Optional[int] = None
+    template_mined: Optional[str] = None
+
+class LogTemplateSummary(BaseModel):
+    cluster_id: int
+    template: str
+    count: int
+    sample_message: str
+    services: List[str] = []
 
 class ErrorCauseSummary(BaseModel):
     cause_id: str

@@ -28,7 +28,7 @@ def init_db():
     conn = get_connection()
     try:
         with conn:
-            conn.executescript("""
+            conn.execute("""
             CREATE TABLE IF NOT EXISTS service_logs (
                 id INTEGER PRIMARY KEY,
                 file_name TEXT NOT NULL,
@@ -45,9 +45,23 @@ def init_db():
                 line_number INTEGER,
                 transaction_id TEXT,
                 status TEXT NOT NULL,
-                batch_date TEXT NOT NULL
+                batch_date TEXT NOT NULL,
+                template_id INTEGER DEFAULT 0,
+                template_mined TEXT DEFAULT ''
             );
+            """)
 
+            # Ensure migration if table existed before template columns were added
+            try:
+                conn.execute("ALTER TABLE service_logs ADD COLUMN template_id INTEGER DEFAULT 0;")
+            except sqlite3.OperationalError:
+                pass
+            try:
+                conn.execute("ALTER TABLE service_logs ADD COLUMN template_mined TEXT DEFAULT '';")
+            except sqlite3.OperationalError:
+                pass
+
+            conn.executescript("""
             CREATE INDEX IF NOT EXISTS idx_service_date ON service_logs(service, batch_date);
             CREATE INDEX IF NOT EXISTS idx_level ON service_logs(level);
             CREATE INDEX IF NOT EXISTS idx_status ON service_logs(status);
@@ -56,6 +70,8 @@ def init_db():
             CREATE INDEX IF NOT EXISTS idx_tx_id ON service_logs(transaction_id);
             CREATE INDEX IF NOT EXISTS idx_file_line ON service_logs(file_name, line_number);
             CREATE INDEX IF NOT EXISTS idx_timestamp ON service_logs(timestamp);
+            CREATE INDEX IF NOT EXISTS idx_template_id ON service_logs(template_id);
+            CREATE INDEX IF NOT EXISTS idx_template_service ON service_logs(service, template_id);
 
             -- Scalable Ingestion Tracker for multi-GB log streaming
             CREATE TABLE IF NOT EXISTS ingestion_state (
@@ -110,6 +126,7 @@ def init_db():
                 VALUES (new.id, new.message, new.stack_trace, new.component, new.service, new.transaction_id);
             END;
             """)
+
         logger.info(f"[SQLITE-INIT] Database initialized successfully at: {DB_PATH}")
     finally:
         conn.close()
@@ -190,6 +207,8 @@ def sync_logs_to_db(entries: List[LogEntry], force: bool = False) -> int:
         rows = []
         for e in entries:
             tx_id, status = extract_metadata(e)
+            t_id = getattr(e, "template_id", 0) or 0
+            t_mined = getattr(e, "template_mined", "") or ""
             rows.append((
                 e.id,
                 e.file_name,
@@ -206,7 +225,9 @@ def sync_logs_to_db(entries: List[LogEntry], force: bool = False) -> int:
                 e.line_number,
                 tx_id,
                 status,
-                e.date
+                e.date,
+                t_id,
+                t_mined
             ))
 
         with conn:
@@ -218,8 +239,8 @@ def sync_logs_to_db(entries: List[LogEntry], force: bool = False) -> int:
                 INSERT INTO service_logs (
                     id, file_name, timestamp, date, time, level, component,
                     message, service, url, action, stack_trace, line_number,
-                    transaction_id, status, batch_date
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    transaction_id, status, batch_date, template_id, template_mined
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """,
                 rows
             )
@@ -325,7 +346,7 @@ def query_logs_from_db(
         query_sql = f"""
             SELECT id, file_name, timestamp, date, time, level, component,
                    message, service, url, action, stack_trace, line_number,
-                   transaction_id, status, batch_date
+                   transaction_id, status, batch_date, template_id, template_mined
             FROM service_logs
             {where_sql}
             ORDER BY id ASC
@@ -665,5 +686,96 @@ def get_component_breakdown(service: Optional[str] = None) -> List[Dict[str, Any
             LIMIT 15;
         """, svc_params)
         return [dict(r) for r in cur.fetchall()]
+    finally:
+        conn.close()
+
+def get_mined_templates_summary(service: Optional[str] = None, limit: int = 25) -> List[Dict[str, Any]]:
+    """Returns top mined log templates and their frequency breakdown from SQLite."""
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        if service and service.upper() != "ALL":
+            cur.execute("""
+                SELECT template_id as cluster_id, template_mined as template, COUNT(*) as count,
+                       service, MIN(timestamp) as first_seen, MAX(timestamp) as last_seen,
+                       MIN(message) as sample_message
+                FROM service_logs
+                WHERE LOWER(service) = LOWER(?) AND template_id > 0
+                GROUP BY template_id
+                ORDER BY count DESC
+                LIMIT ?;
+            """, (service, limit))
+            rows = cur.fetchall()
+            return [
+                {
+                    "cluster_id": r["cluster_id"],
+                    "template": r["template"],
+                    "count": r["count"],
+                    "services": [r["service"]],
+                    "first_seen": r["first_seen"],
+                    "last_seen": r["last_seen"],
+                    "sample_message": r["sample_message"]
+                }
+                for r in rows
+            ]
+        else:
+            cur.execute("""
+                SELECT template_id as cluster_id, template_mined as template, COUNT(*) as count,
+                       GROUP_CONCAT(DISTINCT service) as services, MIN(timestamp) as first_seen, MAX(timestamp) as last_seen,
+                       MIN(message) as sample_message
+                FROM service_logs
+                WHERE template_id > 0
+                GROUP BY template_id
+                ORDER BY count DESC
+                LIMIT ?;
+            """, (limit,))
+            rows = cur.fetchall()
+            return [
+                {
+                    "cluster_id": r["cluster_id"],
+                    "template": r["template"],
+                    "count": r["count"],
+                    "services": [s.strip() for s in (r["services"] or "").split(",") if s.strip()],
+                    "first_seen": r["first_seen"],
+                    "last_seen": r["last_seen"],
+                    "sample_message": r["sample_message"]
+                }
+                for r in rows
+            ]
+    finally:
+        conn.close()
+
+def get_error_templates_summary(service: Optional[str] = None, limit: int = 8) -> List[Dict[str, Any]]:
+    """Returns top failing/error template clusters for RCA and Qwen SLM evidence dossier."""
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        query = """
+            SELECT template_id as cluster_id, template_mined as template, COUNT(*) as count,
+                   service, MIN(message) as sample_message,
+                   GROUP_CONCAT(DISTINCT transaction_id) as affected_txs
+            FROM service_logs
+            WHERE (level = 'ERROR' OR status LIKE '%FAIL%' OR status LIKE '%BREAK%')
+              AND template_id > 0
+        """
+        params: List[Any] = []
+        if service and service.upper() != "ALL":
+            query += " AND LOWER(service) = LOWER(?)"
+            params.append(service)
+        query += " GROUP BY template_id ORDER BY count DESC LIMIT ?"
+        params.append(limit)
+        cur.execute(query, tuple(params))
+        rows = cur.fetchall()
+        return [
+            {
+                "cluster_id": r["cluster_id"],
+                "template": r["template"],
+                "count": r["count"],
+                "service": r["service"],
+                "sample_message": r["sample_message"],
+                "affected_txs": [t.strip() for t in (r["affected_txs"] or "").split(",") if t.strip() and t.strip() != "None"][:5]
+            }
+            for r in rows
+        ]
     finally:
         conn.close()

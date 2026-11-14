@@ -16,7 +16,9 @@ from app.db import (
     get_transaction_lifecycle,
     get_time_window_logs,
     get_error_signatures_summary,
-    get_component_breakdown
+    get_component_breakdown,
+    get_error_templates_summary,
+    get_mined_templates_summary
 )
 
 class QueryEngine:
@@ -106,6 +108,7 @@ class QueryEngine:
 
         error_signatures = get_error_signatures_summary(service=detected_service)
         component_breakdown = get_component_breakdown(service=detected_service)
+        error_templates = get_error_templates_summary(service=detected_service, limit=8)
 
         # 3. Package ground-truth RAG context
         context_data = {
@@ -124,7 +127,8 @@ class QueryEngine:
             "target_tx_id": target_tx_id,
             "time_window_logs": time_window_logs,
             "error_signatures": error_signatures,
-            "component_breakdown": component_breakdown
+            "component_breakdown": component_breakdown,
+            "error_templates": error_templates
         }
 
         logger.debug(

@@ -368,6 +368,14 @@ class AIService:
             for comp in component_breakdown[:6]:
                 component_text += f"• {comp.get('component')} ({comp.get('service')}): {comp.get('total_events')} events | {comp.get('error_events')} errors ({comp.get('error_rate_pct')}% failure rate)\n"
 
+        error_templates = context.get("error_templates", [])
+        templates_text = ""
+        if error_templates:
+            templates_text = "\n11. DRAIN3 MINED STRUCTURAL ERROR TEMPLATES (Normalized Patterns):\n"
+            for t in error_templates[:6]:
+                txs = f" (Sample TXs: {', '.join(t.get('affected_txs', []))})" if t.get('affected_txs') else ""
+                templates_text += f"• [Template #{t.get('cluster_id')}] ({t.get('count')} occurrences in {t.get('service')}): {t.get('template')}{txs}\n"
+
         active_service = context.get('active_service') or context.get('detected_service')
         services_list = context.get('services', [])
         if active_service:
@@ -434,6 +442,7 @@ You do NOT rely on fixed templates or hardcoded answers. You dynamically inspect
 {tx_lifecycle_text}
 {signatures_text}
 {component_text}
+{templates_text}
 ==================================================================================
 
 {scope_instructions}

@@ -35,7 +35,7 @@ from app.parser import parser
 from app.analyzer import analyzer
 from app.query_engine import query_engine
 from app.ai_service import ai_service
-from app.db import init_db, sync_logs_to_db, query_logs_from_db
+from app.db import init_db, sync_logs_to_db, query_logs_from_db, get_mined_templates_summary
 from app.models import (
     OverviewMetrics,
     ServiceSummary,
@@ -45,7 +45,8 @@ from app.models import (
     LogsResponse,
     LogEntry,
     AISettingsRequest,
-    AISettingsResponse
+    AISettingsResponse,
+    LogTemplateSummary
 )
 
 # Modern FastAPI Lifespan Handler
@@ -180,6 +181,17 @@ def get_error_causes(service: Optional[str] = Query(None)):
 @app.get("/api/timeline")
 def get_timeline(service: Optional[str] = Query(None)):
     return analyzer.get_timeline(service=service)
+
+@app.get("/api/templates", response_model=List[LogTemplateSummary])
+def get_log_templates(
+    service: Optional[str] = Query(None),
+    limit: int = Query(25, ge=5, le=100)
+):
+    """
+    Returns mined log templates discovered by Drain3 online template miner.
+    Masks high-cardinality noise (IPs, UUIDs, IDs) and clusters structural message types.
+    """
+    return get_mined_templates_summary(service=service, limit=limit)
 
 @app.get("/api/settings/ai")
 def get_ai_settings():
