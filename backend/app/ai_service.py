@@ -56,6 +56,11 @@ class StreamCapture(TextStreamer):  # type: ignore
         if not self.next_tokens_are_prompt and self.first_token_t is None and self.start_t is not None:
             self.first_token_t = time.perf_counter()
         super().put(value)
+        try:
+            import sys
+            sys.stdout.flush()
+        except Exception:
+            pass
 
     @property
     def ttft(self):
@@ -72,16 +77,35 @@ class LocalQwenEngine:
     _model_id: str = DEFAULT_QWEN_MODEL
 
     @classmethod
+    def unload_model(cls):
+        """Strictly unloads model and tokenizer from memory and forces garbage collection."""
+        if cls._model is not None or cls._tokenizer is not None:
+            logger.info(f"[LOCAL-QWEN] Unloading active model '{cls._model_id}' from memory...")
+        cls._model = None
+        cls._tokenizer = None
+        cls._is_warmed_up = False
+        cls._instance = None
+        import gc
+        gc.collect()
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except Exception:
+            pass
+        logger.info("[LOCAL-QWEN] Model unloaded and RAM cleared.")
+
+    @classmethod
     def get_instance(cls, model_id: Optional[str] = None):
         chosen_id = model_id or os.getenv("LOCAL_MODEL", DEFAULT_QWEN_MODEL)
         if cls._instance is None:
+            cls._model_id = chosen_id
             cls._instance = cls(model_id=chosen_id)
         elif chosen_id != cls._instance.model_id:
             # When model switches, clear cached in-memory instances to reload the target model
-            cls._tokenizer = None
-            cls._model = None
-            cls._is_warmed_up = False
-            cls._instance.model_id = chosen_id
+            cls.unload_model()
+            cls._model_id = chosen_id
+            cls._instance = cls(model_id=chosen_id)
         return cls._instance
 
     def __init__(self, model_id: str = DEFAULT_QWEN_MODEL):
@@ -99,13 +123,16 @@ class LocalQwenEngine:
 
             target_path = None
 
-            # 1. Check explicit MODEL_PATH from .env
+            # 1. Check explicit MODEL_PATH from .env only if compatible with requested model
             if env_model_path:
                 cand = Path(env_model_path)
                 if not cand.is_absolute():
                     cand = project_root / cand
+                short_id = self.model_id.split("/")[-1].lower()
+                env_model_id = os.getenv("LOCAL_MODEL", "").strip().lower()
                 if cand.exists() and ((cand / "config.json").exists() or any(cand.glob("*.safetensors"))):
-                    target_path = str(cand)
+                    if short_id in str(cand).lower() or self.model_id.lower() == env_model_id:
+                        target_path = str(cand)
 
             # 2. Check candidate local folder under models/ derived from model_id
             if not target_path:
@@ -242,11 +269,17 @@ class AIService:
         logger.info(f"[LOCAL-AI-INIT] Initialized Local Qwen Engine: Model='{self.model_name}' (Offline In-Memory)")
 
     def set_model(self, model_name: str):
-        """Allows dynamically switching the model at runtime."""
+        """Allows dynamically switching the model at runtime, ensuring previous model is unloaded first."""
         if model_name and model_name != self.model_name:
+            logger.info(f"[LOCAL-AI-SWITCH] Switching active model from '{self.model_name}' to '{model_name}'")
+            LocalQwenEngine.unload_model()
             self.model_name = model_name
             engine = LocalQwenEngine.get_instance(model_name)
             logger.info(f"[LOCAL-AI-SWITCH] Switched active model to: '{self.model_name}'")
+
+    def unload_model(self):
+        """Strictly unloads active model from memory and frees RAM."""
+        LocalQwenEngine.unload_model()
 
     def is_configured(self) -> bool:
         """Local in-memory Qwen model is always configured and available offline."""
@@ -476,7 +509,8 @@ CORE INSTRUCTIONS:
         try:
             logger.info(f"[LOCAL-QWEN-CALL] Dispatching query to Local In-Memory Qwen engine ({self.model_name})...")
             engine = LocalQwenEngine.get_instance(self.model_name)
-            res = engine.generate(system_prompt, augmented_user_query, max_new_tokens=220)
+            max_tokens = int(os.getenv("MAX_NEW_TOKENS", "220"))
+            res = engine.generate(system_prompt, augmented_user_query, max_new_tokens=max_tokens)
             if res and res.get("text"):
                 latency_ms = res["total_time"] * 1000.0
                 log_llm_call_complete(self.model_name, latency_ms, len(res["text"]), None)

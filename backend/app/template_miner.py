@@ -103,3 +103,4 @@ class LogTemplateMiner:
 
 # Global singleton instance
 template_miner = LogTemplateMiner.get_instance()
+

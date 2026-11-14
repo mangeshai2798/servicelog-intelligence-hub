@@ -110,7 +110,26 @@ python backend/calculate_response_time.py "what happened on line 435"
 python backend/calculate_response_time.py --benchmark
 ```
 
-### 3. Inspect Live Backend Logs
+### 3. Evaluate Models with Strict Sequential Isolation (0.5B, 1.5B, 3B)
+A dedicated benchmarking engine evaluates working efficiency, throughput, TTFT, and RAM consumption across models in **strict sequential isolation** (one model in memory at a time):
+```powershell
+# 1. Run automated memory isolation and benchmark unit test suite
+python backend/test_models_benchmark.py
+
+# 2. Run fast smoke benchmark across 0.5B model (3 queries, concise tokens)
+python backend/benchmark_models.py --models 0.5B --quick --max-tokens 80
+
+# 3. Run full 10-query SRE evaluation benchmark on 0.5B
+python backend/benchmark_models.py --models 0.5B --num-queries 10 --max-tokens 100
+
+# 4. Compare multiple models sequentially (unloads previous model before loading next)
+python backend/benchmark_models.py --models 0.5B,3B --quick
+
+# 5. View the executive presentation report generated for management
+# Location: KT_Documents/MODEL_BENCHMARK_REPORT.md
+```
+
+### 4. Inspect Live Backend Logs
 Every startup event, HTTP request, SQLite index operation, query classification, and LLM token timing is recorded in `logs/backend.log`:
 - **In Dashboard UI:** Click **"Backend Logs"** in the navigation bar to open the live terminal viewer with real-time polling.
 - **In PowerShell:**
