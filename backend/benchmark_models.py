@@ -494,10 +494,11 @@ def generate_markdown_report(benchmark_data: Dict[str, Any], filepath: Path):
 
 def main():
     parser = argparse.ArgumentParser(description="ServiceLog Intelligence Hub Model Evaluation Suite")
-    parser.add_argument("--models", type=str, default="0.5B,3B", help="Comma-separated model keys to evaluate (e.g. 0.5B, 3B, 1.5B)")
+    parser.add_argument("--models", type=str, default="0.5B,1.5B,3B", help="Comma-separated model keys to evaluate (e.g. 0.5B, 1.5B, 3B - default: all three)")
     parser.add_argument("--quick", action="store_true", help="Run quick 3-query benchmark instead of full 10 queries")
     parser.add_argument("--num-queries", type=int, default=10, help="Number of queries to run per model (1-10)")
-    parser.add_argument("--max-tokens", type=int, default=120, help="Maximum generated tokens per query (default: 120)")
+    parser.add_argument("--max-tokens", type=int, default=100, help="Maximum generated tokens per query (default: 100)")
+    parser.add_argument("--download-missing", action="store_true", help="Download missing model weights from HuggingFace Hub if not cached locally")
     parser.add_argument("--output", type=str, default=str(BACKEND_DIR / "data" / "benchmark_results.json"), help="Output JSON results path")
     parser.add_argument("--report", type=str, default=str(PROJECT_ROOT / "KT_Documents" / "MODEL_BENCHMARK_REPORT.md"), help="Output Markdown report path")
     args = parser.parse_args()
@@ -538,9 +539,18 @@ def main():
 
         # Check availability
         if not is_model_locally_available(m_info):
-            print(f"⚠️ Model '{m_info['display_name']}' is not yet downloaded or cached locally.")
-            print(f"   To run this model, ensure its weights are in '{m_info['local_path']}' or HuggingFace cache.")
-            continue
+            if getattr(args, "download_missing", False):
+                print(f"📥 [AUTO-DOWNLOAD] Attempting download for '{m_info['display_name']}' from HuggingFace...")
+                try:
+                    from huggingface_hub import snapshot_download
+                    snapshot_download(m_info["model_id"])
+                except Exception as dl_err:
+                    print(f"❌ [DOWNLOAD-FAILED] Could not auto-download: {dl_err}")
+
+            if not is_model_locally_available(m_info):
+                print(f"⚠️ Model '{m_info['display_name']}' is not yet downloaded or cached locally.")
+                print(f"   To run this model, ensure its weights are in '{m_info['local_path']}' or HuggingFace cache.")
+                continue
 
         result = run_benchmark_for_model(m_key, m_info, active_queries)
         all_model_results.append(result)

@@ -161,7 +161,9 @@ class LocalQwenEngine:
             if not target_path:
                 target_path = self.model_id
 
-            logger.info(f"[LOCAL-QWEN] Loading '{target_path}' into memory (torch.float32)...")
+            # Select optimal dtype: bfloat16 for 1.5B/3B to cut RAM by 50% and prevent page-thrashing; float32 for 0.5B
+            chosen_dtype = torch.bfloat16 if ("3b" in self.model_id.lower() or "1.5b" in self.model_id.lower() or "1b" in self.model_id.lower()) else torch.float32
+            logger.info(f"[LOCAL-QWEN] Loading '{target_path}' into memory ({chosen_dtype})...")
 
             try:
                 tokenizer = AutoTokenizer.from_pretrained(target_path, local_files_only=True)
@@ -169,9 +171,9 @@ class LocalQwenEngine:
                 tokenizer = AutoTokenizer.from_pretrained(target_path)
 
             try:
-                model = AutoModelForCausalLM.from_pretrained(target_path, dtype=torch.float32, local_files_only=True)
+                model = AutoModelForCausalLM.from_pretrained(target_path, dtype=chosen_dtype, local_files_only=True)
             except Exception:
-                model = AutoModelForCausalLM.from_pretrained(target_path, dtype=torch.float32)
+                model = AutoModelForCausalLM.from_pretrained(target_path, dtype=chosen_dtype)
 
             if tokenizer is None or model is None:
                 logger.error(f"[LOCAL-QWEN-LOAD-FAILED] Failed to initialize tokenizer or model for '{self.model_id}'")
