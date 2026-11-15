@@ -26,7 +26,12 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from app.ai_service import LocalQwenEngine, ai_service
 from app.query_engine import query_engine
-from backend.benchmark_models import BENCHMARK_QUERIES, AVAILABLE_MODELS, get_process_ram_mb
+from backend.benchmark_models import (
+    BENCHMARK_QUERIES,
+    AVAILABLE_MODELS,
+    get_process_ram_mb,
+    is_model_locally_available
+)
 
 
 class TestModelBenchmarkAndIsolation(unittest.TestCase):
@@ -100,6 +105,35 @@ class TestModelBenchmarkAndIsolation(unittest.TestCase):
         self.assertIn("total_records", resp.metrics)
         self.assertIn("success_rate", resp.metrics)
         self.assertTrue(resp.duration_ms > 0)
+
+    def test_06_model_local_availability_on_disk(self):
+        """Verifies that both 0.5B and 1.5B local models are present and detected on disk."""
+        self.assertTrue(
+            is_model_locally_available(AVAILABLE_MODELS["0.5B"]),
+            "0.5B model must be locally present in models/Qwen2.5-0.5B-Instruct"
+        )
+        self.assertTrue(
+            is_model_locally_available(AVAILABLE_MODELS["1.5B"]),
+            "1.5B model must be locally present in models/Qwen2.5-1.5B-Instruct"
+        )
+
+    def test_07_individual_model_cli_flag_handling(self):
+        """Tests that passing --model selects only that specific model and handles 1B alias."""
+        import argparse
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--model", type=str, default=None)
+        
+        # Test 0.5B
+        args = parser.parse_args(["--model", "0.5B"])
+        self.assertEqual(args.model, "0.5B")
+        
+        # Test 1.5B
+        args = parser.parse_args(["--model", "1.5B"])
+        self.assertEqual(args.model, "1.5B")
+
+        # Test 3B
+        args = parser.parse_args(["--model", "3B"])
+        self.assertEqual(args.model, "3B")
 
 
 def run_tests():

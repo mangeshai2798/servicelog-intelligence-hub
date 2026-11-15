@@ -110,23 +110,40 @@ python backend/calculate_response_time.py "what happened on line 435"
 python backend/calculate_response_time.py --benchmark
 ```
 
-### 3. Evaluate Models with Strict Sequential Isolation (0.5B, 1.5B, 3B)
-A dedicated benchmarking engine evaluates working efficiency, throughput, TTFT, and RAM consumption across models in **strict sequential isolation** (one model in memory at a time):
+### 3. Evaluate Models in Separate Tests (0.5B, 1.5B, 3B)
+A dedicated benchmarking engine evaluates working efficiency, throughput, TTFT, and RAM consumption across models in **strict sequential isolation** (one model in memory at a time). You can test each model individually in separate terminal runs:
+
 ```powershell
-# 1. Run automated memory isolation and benchmark unit test suite
+# Step 1: Download any missing model weights locally (e.g. 1.5B or 3B)
+python backend/download_model.py --model 1.5B
+
+# Step 2: Run automated memory isolation and test suite (7 tests)
 python backend/test_models_benchmark.py
 
-# 2. Run fast smoke benchmark across 0.5B model (3 queries, concise tokens)
-python backend/benchmark_models.py --models 0.5B --quick --max-tokens 80
+# Step 3: Test individual models one at a time in separate terminal commands:
+# Run Qwen 2.5 0.5B evaluation (Ultra-fast, ~1 GB RAM footprint)
+python backend/benchmark_models.py --model 0.5B
 
-# 3. Run full 10-query SRE evaluation benchmark on 0.5B
-python backend/benchmark_models.py --models 0.5B --num-queries 10 --max-tokens 100
+# Run Qwen 2.5 1.5B evaluation (Balanced speed & reasoning, ~3 GB RAM footprint)
+python backend/benchmark_models.py --model 1.5B
 
-# 4. Compare multiple models sequentially (unloads previous model before loading next)
-python backend/benchmark_models.py --models 0.5B,3B --quick
+# Run Qwen 2.5 3B evaluation (Deep forensic reasoning in bfloat16, ~6 GB RAM footprint)
+python backend/benchmark_models.py --model 3B
 
-# 5. View the executive presentation report generated for management
-# Location: KT_Documents/MODEL_BENCHMARK_REPORT.md
+# Optional: Run quick smoke test (3 queries instead of 10) on any model
+python backend/benchmark_models.py --model 0.5B --quick --max-tokens 50
+python backend/benchmark_models.py --model 1.5B --quick --max-tokens 50
+python backend/benchmark_models.py --model 3B --quick --max-tokens 50
+
+# Step 4: Inspect the generated reports for your manager:
+# - Dedicated single-model reports:
+#   * KT_Documents/BENCHMARK_0.5B.md
+#   * KT_Documents/BENCHMARK_1.5B.md
+#   * KT_Documents/BENCHMARK_3B.md
+# - Consolidated master comparison report:
+#   * KT_Documents/MODEL_BENCHMARK_REPORT.md
+# - Structured machine-readable metrics:
+#   * backend/data/benchmark_results.json
 ```
 
 ### 4. Inspect Live Backend Logs
