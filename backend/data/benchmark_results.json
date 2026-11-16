@@ -5,8 +5,8 @@
     "cpu_count_logical": 12,
     "cpu_count_physical": 8,
     "total_ram_gb": 15.59,
-    "available_ram_gb": 2.9,
-    "timestamp": "2026-11-15 18:40:12"
+    "available_ram_gb": 6.8,
+    "timestamp": "2026-11-15 18:55:30"
   },
   "models": [
     {
@@ -16,40 +16,40 @@
       "parameters": "0.49 Billion",
       "tier": "Ultra-Lightweight / Edge",
       "status": "COMPLETED",
-      "load_time_s": 4.26,
-      "ram_baseline_mb": 461.52,
-      "ram_loaded_mb": 2448.93,
-      "ram_footprint_mb": 1987.41,
-      "peak_ram_mb": 2546.11,
-      "ram_post_unload_mb": 2473.23,
-      "queries_executed": 3,
+      "load_time_s": 3.32,
+      "ram_baseline_mb": 464.34,
+      "ram_loaded_mb": 2451.49,
+      "ram_footprint_mb": 1987.15,
+      "peak_ram_mb": 2561.72,
+      "ram_post_unload_mb": 2489.09,
+      "queries_executed": 10,
       "query_results": [
         {
           "query_id": 1,
           "category": "System Health & KPI Overview",
           "query_text": "What is the overall system health, total processed records, and success rate across all services?",
           "scope": "ALL",
-          "ttft_s": 17.338,
-          "gen_time_s": 24.07,
-          "speed_tok_s": 1.7,
-          "tokens_count": 40,
-          "total_latency_s": 30.55,
-          "ram_mb": 2532.83,
-          "answer_length": 131,
-          "answer_snippet": "To summarize the overall system health, we need to look at the following:\n\n1. **Total Log Files**: 4\n2. **Total Log Lines**: 35,860"
+          "ttft_s": 15.335,
+          "gen_time_s": 29.36,
+          "speed_tok_s": 3.4,
+          "tokens_count": 100,
+          "total_latency_s": 35.99,
+          "ram_mb": 2537.52,
+          "answer_length": 302,
+          "answer_snippet": "To summarize the overall system health, we need to look at the following:  1. **Total Log Files**: 4 2. **Total Log Lines**: 35,860 3. **Tot..."
         },
         {
           "query_id": 2,
           "category": "Latest Error Detection",
           "query_text": "Show me the latest error across all services and which file it occurred in.",
           "scope": "ALL",
-          "ttft_s": 16.659,
-          "gen_time_s": 22.69,
-          "speed_tok_s": 1.8,
-          "tokens_count": 40,
-          "total_latency_s": 28.27,
-          "ram_mb": 2546.11,
-          "answer_length": 202,
+          "ttft_s": 14.663,
+          "gen_time_s": 28.05,
+          "speed_tok_s": 3.6,
+          "tokens_count": 100,
+          "total_latency_s": 35.43,
+          "ram_mb": 2561.72,
+          "answer_length": 356,
           "answer_snippet": "To show you the latest error across all services and where it occurred, I need to gather information about each service individually. Howeve..."
         },
         {
@@ -57,21 +57,119 @@
           "category": "Service Break & Root Cause Analysis",
           "query_text": "Why did DorchesterPaymentExport break or fail to continue processing?",
           "scope": "DorchesterPaymentExport",
-          "ttft_s": 13.147,
-          "gen_time_s": 19.23,
-          "speed_tok_s": 2.1,
-          "tokens_count": 40,
-          "total_latency_s": 26.14,
-          "ram_mb": 2535.97,
-          "answer_length": 228,
+          "ttft_s": 11.215,
+          "gen_time_s": 18.21,
+          "speed_tok_s": 3.1,
+          "tokens_count": 56,
+          "total_latency_s": 24.13,
+          "ram_mb": 2549.25,
+          "answer_length": 307,
           "answer_snippet": "The DorchesterPaymentExport service broke or failed to process records because it encountered an unhandled exception while querying for a re..."
+        },
+        {
+          "query_id": 4,
+          "category": "Exception Diagnostics & Stack Trace",
+          "query_text": "What caused the Base64 FormatException in IntelliPaySettledPayments?",
+          "scope": "IntelliPaySettledPayments",
+          "ttft_s": 12.324,
+          "gen_time_s": 25.52,
+          "speed_tok_s": 3.9,
+          "tokens_count": 100,
+          "total_latency_s": 31.99,
+          "ram_mb": 2540.98,
+          "answer_length": 487,
+          "answer_snippet": "To troubleshoot the Base64 FormatException in IntelliPaySettledPayments, we need to ensure that the input data is correctly formatted and va..."
+        },
+        {
+          "query_id": 5,
+          "category": "Transaction Lifecycle Tracing",
+          "query_text": "Audit the transaction lifecycle for customer/transaction ID C49527762P89519320.",
+          "scope": "ALL",
+          "ttft_s": 16.676,
+          "gen_time_s": 30.3,
+          "speed_tok_s": 3.3,
+          "tokens_count": 100,
+          "total_latency_s": 36.56,
+          "ram_mb": 2556.02,
+          "answer_length": 767,
+          "answer_snippet": "### Audit of Transaction Lifecycle for Customer/Transaction ID C49527762P89519320  #### Detailed Analysis:  **Log File:** `log-2026-09-22_Pa..."
+        },
+        {
+          "query_id": 6,
+          "category": "Deep Forensic Line Context",
+          "query_text": "Inspect line 438 in DorchesterPaymentExport and explain the error context.",
+          "scope": "DorchesterPaymentExport",
+          "ttft_s": 12.658,
+          "gen_time_s": 24.5,
+          "speed_tok_s": 4.1,
+          "tokens_count": 100,
+          "total_latency_s": 31.29,
+          "ram_mb": 2541.55,
+          "answer_length": 956,
+          "answer_snippet": "In the line `Line 438: [14:00:26.0655] [DEBUG] [Program] DorchesterPaymentExport Service End: 9/22/2026 2:00:26 PM`, there is an error messa..."
+        },
+        {
+          "query_id": 7,
+          "category": "Component-Level Failure Breakdown",
+          "query_text": "What are the component error rates and failure statistics for ACHStatusUpdate?",
+          "scope": "ACHStatusUpdate",
+          "ttft_s": 6.806,
+          "gen_time_s": 17.38,
+          "speed_tok_s": 5.8,
+          "tokens_count": 100,
+          "total_latency_s": 23.15,
+          "ram_mb": 2525.14,
+          "answer_length": 374,
+          "answer_snippet": "```markdown **Component Error Rates and Failure Statistics for ACHStatusUpdate**  | Component Name | Errors | Failed Operations | |---------..."
+        },
+        {
+          "query_id": 8,
+          "category": "Drain3 Structural Log Templates",
+          "query_text": "Show me the top structural log templates discovered by Drain3 mining.",
+          "scope": "ALL",
+          "ttft_s": 12.308,
+          "gen_time_s": 21.16,
+          "speed_tok_s": 3.6,
+          "tokens_count": 77,
+          "total_latency_s": 26.51,
+          "ram_mb": 2549.4,
+          "answer_length": 244,
+          "answer_snippet": "```markdown | Template | Number of Occurrences | | --- | --- | | [Template #79](#IntelliPaySettledPayments) | 56 occurrences | | [Template #..."
+        },
+        {
+          "query_id": 9,
+          "category": "SLA Compliance & Reliability",
+          "query_text": "Which service has the lowest SLA compliance and how many errors did it accumulate?",
+          "scope": "ALL",
+          "ttft_s": 0.0,
+          "gen_time_s": 27.94,
+          "speed_tok_s": 0.0,
+          "tokens_count": 0,
+          "total_latency_s": 27.94,
+          "ram_mb": 2549.05,
+          "answer_length": 613,
+          "answer_snippet": "### \ud83d\udcca System-Wide Error Log & Failure Breakdown (4 Services)  - **Total Explicit ERROR Logs:** **57**    - **DorchesterPaymentExport**: **1 ..."
+        },
+        {
+          "query_id": 10,
+          "category": "Executive Synthesis & Remediation",
+          "query_text": "Provide an executive summary and recommended remediation steps for all critical service failures.",
+          "scope": "ALL",
+          "ttft_s": 11.994,
+          "gen_time_s": 23.02,
+          "speed_tok_s": 4.3,
+          "tokens_count": 100,
+          "total_latency_s": 29.21,
+          "ram_mb": 2547.0,
+          "answer_length": 535,
+          "answer_snippet": "### Executive Summary  All critical service failures have been identified and addressed through various measures:  1. **IntelliPaySettledPay..."
         }
       ],
       "averages": {
-        "avg_ttft_s": 15.715,
-        "avg_speed_tok_s": 1.9,
-        "avg_latency_s": 28.32,
-        "avg_tokens_count": 40.0
+        "avg_ttft_s": 12.664,
+        "avg_speed_tok_s": 3.9,
+        "avg_latency_s": 30.22,
+        "avg_tokens_count": 83.3
       }
     }
   ],
@@ -96,6 +194,55 @@
       "query": "Why did DorchesterPaymentExport break or fail to continue processing?",
       "service": "DorchesterPaymentExport",
       "description": "Tests service break detection, halting line identification, preceding flow analysis, and technical root cause."
+    },
+    {
+      "id": 4,
+      "category": "Exception Diagnostics & Stack Trace",
+      "query": "What caused the Base64 FormatException in IntelliPaySettledPayments?",
+      "service": "IntelliPaySettledPayments",
+      "description": "Tests deep stack trace comprehension, exception cause extraction, and code fix recommendation."
+    },
+    {
+      "id": 5,
+      "category": "Transaction Lifecycle Tracing",
+      "query": "Audit the transaction lifecycle for customer/transaction ID C49527762P89519320.",
+      "service": null,
+      "description": "Tests cross-index multi-event entity correlation and chronological transaction progression."
+    },
+    {
+      "id": 6,
+      "category": "Deep Forensic Line Context",
+      "query": "Inspect line 438 in DorchesterPaymentExport and explain the error context.",
+      "service": "DorchesterPaymentExport",
+      "description": "Tests line-by-line inspection, surrounding context window analysis, and error classification."
+    },
+    {
+      "id": 7,
+      "category": "Component-Level Failure Breakdown",
+      "query": "What are the component error rates and failure statistics for ACHStatusUpdate?",
+      "service": "ACHStatusUpdate",
+      "description": "Tests component failure rate aggregation, reliability ranking, and event counting."
+    },
+    {
+      "id": 8,
+      "category": "Drain3 Structural Log Templates",
+      "query": "Show me the top structural log templates discovered by Drain3 mining.",
+      "service": null,
+      "description": "Tests template mining integration, parameter wildcard masking verification, and cluster counting."
+    },
+    {
+      "id": 9,
+      "category": "SLA Compliance & Reliability",
+      "query": "Which service has the lowest SLA compliance and how many errors did it accumulate?",
+      "service": null,
+      "description": "Tests comparative cross-service SLA ranking, threshold breach calculation, and error accumulation."
+    },
+    {
+      "id": 10,
+      "category": "Executive Synthesis & Remediation",
+      "query": "Provide an executive summary and recommended remediation steps for all critical service failures.",
+      "service": null,
+      "description": "Tests multi-service holistic synthesis, actionable SRE recommendations, and executive reporting."
     }
   ]
 }

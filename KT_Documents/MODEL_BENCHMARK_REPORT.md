@@ -1,5 +1,5 @@
 # 📊 Local SLM Benchmark & Working Efficiency Evaluation Report
-**Date:** 2026-11-15 18:40:12 | **Author:** Autonomous SRE Intelligence Benchmark Suite
+**Date:** 2026-11-15 18:55:30 | **Author:** Autonomous SRE Intelligence Benchmark Suite
 **Host Machine:** `Windows-11-10.0.26300-SP0` | **Logical Cores:** `12` | **Total RAM:** `15.59 GB`
 
 ## 1. Executive Summary & Purpose
@@ -15,13 +15,13 @@ This evaluation benchmarks the local operational efficiency, memory consumption,
 | :--- | :--- | :--- | :--- |
 | **Parameter Count** | 0.49 Billion | 1.54 Billion | 3.09 Billion |
 | **Target Environment** | Developer Laptops / Edge | Balanced Cloud VMs | Dedicated SRE Workstations / GPU |
-| **Model Load Time** | 4.26 s | N/A | N/A |
-| **Process Peak RAM** | 2546.11 MB | N/A | N/A |
-| **RAM Footprint (Delta)** | +1987.41 MB | +N/A | +N/A |
-| **Avg Time to First Token (TTFT)** | **15.715 s** | N/A | N/A |
-| **Avg Generation Speed** | **1.9 tok/s** | N/A | N/A |
-| **Avg Query Latency** | **28.32 s** | N/A | N/A |
-| **Avg Generated Tokens** | 40.0 tokens | N/A | N/A |
+| **Model Load Time** | 3.32 s | N/A | N/A |
+| **Process Peak RAM** | 2561.72 MB | N/A | N/A |
+| **RAM Footprint (Delta)** | +1987.15 MB | +N/A | +N/A |
+| **Avg Time to First Token (TTFT)** | **12.664 s** | N/A | N/A |
+| **Avg Generation Speed** | **3.9 tok/s** | N/A | N/A |
+| **Avg Query Latency** | **30.22 s** | N/A | N/A |
+| **Avg Generated Tokens** | 83.3 tokens | N/A | N/A |
 
 ## 3. Operational Performance Analysis & Trade-offs
 
@@ -49,16 +49,16 @@ Each model was evaluated against 10 operational SRE scenarios across our ingeste
 
 | ID | Query Intent / SRE Focus | 0.5B Latency | 1.5B Latency | 3B Latency | Scope |
 | :-: | :--- | :---: | :---: | :---: | :--- |
-| 1 | **System Health & KPI Overview**<br>_What is the overall system health, total processed records, and success rate across all services?_ | `30.55s` | `N/A` | `N/A` | `ALL` |
-| 2 | **Latest Error Detection**<br>_Show me the latest error across all services and which file it occurred in._ | `28.27s` | `N/A` | `N/A` | `ALL` |
-| 3 | **Service Break & Root Cause Analysis**<br>_Why did DorchesterPaymentExport break or fail to continue processing?_ | `26.14s` | `N/A` | `N/A` | `DorchesterPaymentExport` |
-| 4 | **Exception Diagnostics & Stack Trace**<br>_What caused the Base64 FormatException in IntelliPaySettledPayments?_ | `N/A` | `N/A` | `N/A` | `IntelliPaySettledPayments` |
-| 5 | **Transaction Lifecycle Tracing**<br>_Audit the transaction lifecycle for customer/transaction ID C49527762P89519320._ | `N/A` | `N/A` | `N/A` | `ALL` |
-| 6 | **Deep Forensic Line Context**<br>_Inspect line 438 in DorchesterPaymentExport and explain the error context._ | `N/A` | `N/A` | `N/A` | `DorchesterPaymentExport` |
-| 7 | **Component-Level Failure Breakdown**<br>_What are the component error rates and failure statistics for ACHStatusUpdate?_ | `N/A` | `N/A` | `N/A` | `ACHStatusUpdate` |
-| 8 | **Drain3 Structural Log Templates**<br>_Show me the top structural log templates discovered by Drain3 mining._ | `N/A` | `N/A` | `N/A` | `ALL` |
-| 9 | **SLA Compliance & Reliability**<br>_Which service has the lowest SLA compliance and how many errors did it accumulate?_ | `N/A` | `N/A` | `N/A` | `ALL` |
-| 10 | **Executive Synthesis & Remediation**<br>_Provide an executive summary and recommended remediation steps for all critical service failures._ | `N/A` | `N/A` | `N/A` | `ALL` |
+| 1 | **System Health & KPI Overview**<br>_What is the overall system health, total processed records, and success rate across all services?_ | `35.99s` | `N/A` | `N/A` | `ALL` |
+| 2 | **Latest Error Detection**<br>_Show me the latest error across all services and which file it occurred in._ | `35.43s` | `N/A` | `N/A` | `ALL` |
+| 3 | **Service Break & Root Cause Analysis**<br>_Why did DorchesterPaymentExport break or fail to continue processing?_ | `24.13s` | `N/A` | `N/A` | `DorchesterPaymentExport` |
+| 4 | **Exception Diagnostics & Stack Trace**<br>_What caused the Base64 FormatException in IntelliPaySettledPayments?_ | `31.99s` | `N/A` | `N/A` | `IntelliPaySettledPayments` |
+| 5 | **Transaction Lifecycle Tracing**<br>_Audit the transaction lifecycle for customer/transaction ID C49527762P89519320._ | `36.56s` | `N/A` | `N/A` | `ALL` |
+| 6 | **Deep Forensic Line Context**<br>_Inspect line 438 in DorchesterPaymentExport and explain the error context._ | `31.29s` | `N/A` | `N/A` | `DorchesterPaymentExport` |
+| 7 | **Component-Level Failure Breakdown**<br>_What are the component error rates and failure statistics for ACHStatusUpdate?_ | `23.15s` | `N/A` | `N/A` | `ACHStatusUpdate` |
+| 8 | **Drain3 Structural Log Templates**<br>_Show me the top structural log templates discovered by Drain3 mining._ | `26.51s` | `N/A` | `N/A` | `ALL` |
+| 9 | **SLA Compliance & Reliability**<br>_Which service has the lowest SLA compliance and how many errors did it accumulate?_ | `27.94s` | `N/A` | `N/A` | `ALL` |
+| 10 | **Executive Synthesis & Remediation**<br>_Provide an executive summary and recommended remediation steps for all critical service failures._ | `29.21s` | `N/A` | `N/A` | `ALL` |
 
 ## 5. Decision Matrix & Engineering Recommendation for Management
 
