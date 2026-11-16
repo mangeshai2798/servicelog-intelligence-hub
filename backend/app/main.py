@@ -256,6 +256,7 @@ def reindex_logs():
     logger.info("[REINDEX-API] Manual reindex requested via API.")
     entries = parser.parse_all(force=True)
     sync_logs_to_db(entries, force=True)
+    analyzer.clear_cache()
     overview = analyzer.get_overview()
     return {
         "status": "success",
@@ -278,6 +279,7 @@ async def upload_log_file(file: UploadFile = File(...)):
     # Force reindex and sync to SQLite
     entries = parser.parse_all(force=True)
     sync_logs_to_db(entries, force=True)
+    analyzer.clear_cache()
     logger.info(f"[UPLOAD-API] Ingestion complete. Database updated to {len(entries)} total entries.")
     return {
         "status": "uploaded",

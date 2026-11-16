@@ -115,333 +115,73 @@ class LogAnalyzer:
             logger.warning(f"[ANALYZER-BREAK-DETECTED] '{file_name}' suffered service break at {res.timestamp}: {res.message[:120]}")
         return res
 
+    def clear_cache(self):
+        """Clears all in-memory caches when new logs are ingested."""
+        self._cached_overview = None
+        self._cached_services = None
+        self._cached_causes.clear()
+        self._metrics_cache.clear()
+        self._metrics_len_cache.clear()
+        self._break_cache.clear()
+        self._last_entries_len = 0
+        logger.debug("[ANALYZER-CACHE] In-memory analysis caches cleared.")
+
     def get_overview(self, service: Optional[str] = None) -> OverviewMetrics:
-        entries = self.parser.parse_all()
-        files = self.parser.get_log_files()
-
-        # Group entries by file once
-        entries_by_file: Dict[str, List[LogEntry]] = defaultdict(list)
-        for e in entries:
-            entries_by_file[e.file_name].append(e)
-
-        if not service or service == "ALL":
-            if self._cached_overview and len(entries) == self._last_entries_len:
+        """
+        Retrieves system KPIs directly from indexed SQLite database.
+        Zero multi-file parsing or regex iteration.
+        """
+        from app.db import get_overview_from_db
+        if not service or service.upper() == "ALL":
+            if self._cached_overview is not None:
                 logger.debug("[ANALYZER-CACHE-HIT] Serving OverviewMetrics from cache.")
                 return self._cached_overview
-
             start_t = time.time()
-            logger.info(f"[ANALYZER-OVERVIEW-START] Synthesizing system KPIs across {len(files)} files and {len(entries)} lines")
-
-            dates = sorted(list(set(e.date for e in entries)))
-            latest_date = dates[-1] if dates else "N/A"
-            current_system_date = datetime.now().strftime("%Y-%m-%d")
-
-            records_processed = 0
-            successful_records = 0
-            failed_records = 0
-            error_logs_count = sum(1 for e in entries if e.level == "ERROR")
-            service_breaks_count = 0
-
-            for f in files:
-                svc_entries = entries_by_file.get(f.name, [])
-                tot, succ, fail = self._calculate_file_metrics(f.name, svc_entries)
-                records_processed += tot
-                successful_records += succ
-                failed_records += fail
-
-                if self._detect_service_break(f.name, svc_entries):
-                    service_breaks_count += 1
-
-            success_rate = (successful_records / records_processed * 100) if records_processed > 0 else 100.0
-
-            overview = OverviewMetrics(
-                total_log_files=len(files),
-                total_log_lines=len(entries),
-                total_records_processed=records_processed,
-                successful_records=successful_records,
-                failed_records=failed_records,
-                success_rate_percent=round(success_rate, 2),
-                total_error_logs=error_logs_count,
-                service_breaks_count=service_breaks_count,
-                services_count=len(set(e.service for e in entries)),
-                dates_available=dates,
-                latest_log_date=latest_date,
-                current_system_date=current_system_date
-            )
-
+            overview = get_overview_from_db(service=None)
             self._cached_overview = overview
-            self._last_entries_len = len(entries)
-            
             dur_ms = (time.time() - start_t) * 1000.0
-            logger.info(
-                f"[ANALYZER-OVERVIEW-COMPLETE] Processed: {records_processed:,} | Succ: {successful_records:,} "
-                f"({overview.success_rate_percent}%) | Fail: {failed_records:,} | Errors: {error_logs_count} | Breaks: {service_breaks_count} "
-                f"(computed in {dur_ms:.1f}ms)"
-            )
+            logger.info(f"[ANALYZER-OVERVIEW-COMPLETE] Generated Overview from DB in {dur_ms:.1f}ms")
             return overview
-        else:
-            # Service-specific overview
-            svc_entries = [e for e in entries if e.service == service]
-            svc_files = [f for f in files if any(e.service == service for e in entries_by_file.get(f.name, []))]
-
-            dates = sorted(list(set(e.date for e in svc_entries)))
-            latest_date = dates[-1] if dates else "N/A"
-            current_system_date = datetime.now().strftime("%Y-%m-%d")
-
-            records_processed = 0
-            successful_records = 0
-            failed_records = 0
-            error_logs_count = sum(1 for e in svc_entries if e.level == "ERROR")
-            service_breaks_count = 0
-
-            for f in svc_files:
-                f_entries = entries_by_file.get(f.name, [])
-                tot, succ, fail = self._calculate_file_metrics(f.name, f_entries)
-                records_processed += tot
-                successful_records += succ
-                failed_records += fail
-
-                if self._detect_service_break(f.name, f_entries):
-                    service_breaks_count += 1
-
-            success_rate = (successful_records / records_processed * 100) if records_processed > 0 else 100.0
-
-            return OverviewMetrics(
-                total_log_files=len(svc_files),
-                total_log_lines=len(svc_entries),
-                total_records_processed=records_processed,
-                successful_records=successful_records,
-                failed_records=failed_records,
-                success_rate_percent=round(success_rate, 2),
-                total_error_logs=error_logs_count,
-                service_breaks_count=service_breaks_count,
-                services_count=1,
-                dates_available=dates,
-                latest_log_date=latest_date,
-                current_system_date=current_system_date
-            )
+        return get_overview_from_db(service=service)
 
     def get_services_summary(self) -> List[ServiceSummary]:
-        entries = self.parser.parse_all()
-        if self._cached_services and len(entries) == self._last_entries_len:
+        """
+        Retrieves service summaries directly from indexed SQLite database.
+        Zero multi-file parsing or regex iteration.
+        """
+        from app.db import get_services_summary_from_db
+        if self._cached_services is not None:
             logger.debug("[ANALYZER-CACHE-HIT] Serving ServiceSummary from cache.")
             return self._cached_services
-
         start_t = time.time()
-        files = self.parser.get_log_files()
-        summaries: List[ServiceSummary] = []
-
-        entries_by_file: Dict[str, List[LogEntry]] = defaultdict(list)
-        for e in entries:
-            entries_by_file[e.file_name].append(e)
-
-        for f in files:
-            svc_entries = entries_by_file.get(f.name, [])
-            total_lines = len(svc_entries)
-            error_count = sum(1 for e in svc_entries if e.level == "ERROR")
-            warn_count = sum(1 for e in svc_entries if e.level in ["WARN", "WARNING"])
-            last_entry = svc_entries[-1] if svc_entries else None
-            last_run = last_entry.timestamp if last_entry else "N/A"
-            svc_name = svc_entries[0].service if svc_entries else self.parser.detect_service_name(f.name)
-
-            tot, succ, fail = self._calculate_file_metrics(f.name, svc_entries)
-            breaking_error = self._detect_service_break(f.name, svc_entries)
-
-            if breaking_error:
-                status = "CRITICAL_BREAK"
-            elif error_count > 0:
-                status = "WARNING"
-            elif fail > 0:
-                status = "HEALTHY"
-            else:
-                status = "OPTIMAL"
-
-            # Dynamic output files extraction
-            output_files = []
-            for e in svc_entries:
-                if "output file name :" in e.message:
-                    m = re.search(r'output file name\s*:\s*([^\r\n|]+)', e.message)
-                    if m:
-                        fname = m.group(1).strip()
-                        if fname and fname not in output_files:
-                            output_files.append(fname)
-
-            # Dynamic key notes synthesis
-            key_notes = []
-            if breaking_error:
-                first_line = breaking_error.message.split("\n")[0]
-                key_notes.append(f"Service broke due to: {first_line[:100]}")
-            
-            entity_types = list(set(re.findall(r'(?:BillType|DataType|RecordType|Category|Type|Action|EntityType|Resource|Table|Queue|Topic)\s*[:= ]\s*([A-Za-z0-9_-]+)', " ".join(e.message for e in svc_entries), re.I)))
-            if entity_types:
-                key_notes.append(f"Entity types processed: {', '.join(entity_types)}.")
-
-            batches = len(re.findall(r'Service Start\b', " ".join(e.message for e in svc_entries), re.I))
-            if batches > 1:
-                key_notes.append(f"Executed across {batches} scheduled batches.")
-
-            if succ > 0:
-                key_notes.append(f"{succ:,} operations completed successfully.")
-            if fail > 0:
-                key_notes.append(f"{fail:,} operations failed or rejected.")
-
-            if not key_notes:
-                key_notes.append(f"Processed {tot:,} records with status {status}.")
-
-            summaries.append(ServiceSummary(
-                name=svc_name,
-                file_name=f.name,
-                status=status,
-                last_run=last_run,
-                total_lines=total_lines,
-                records_processed=tot,
-                successful_records=succ,
-                failed_records=fail,
-                errors_count=error_count,
-                warnings_count=warn_count,
-                output_files=output_files,
-                key_notes=key_notes
-            ))
-
-        dur_ms = (time.time() - start_t) * 1000.0
+        summaries = get_services_summary_from_db()
         self._cached_services = summaries
-        self._last_entries_len = len(entries)
-        logger.info(f"[ANALYZER-SERVICES-COMPLETE] Generated summaries for {len(summaries)} service(s) in {dur_ms:.1f}ms")
+        dur_ms = (time.time() - start_t) * 1000.0
+        logger.info(f"[ANALYZER-SERVICES-COMPLETE] Generated summaries for {len(summaries)} service(s) from DB in {dur_ms:.1f}ms")
         return summaries
 
     def get_error_causes(self, service: Optional[str] = None) -> List[ErrorCauseSummary]:
-        entries = self.parser.parse_all()
+        """
+        Discovers error causes directly using SQLite indexed queries and template clusters.
+        Zero multi-file parsing or regex iteration.
+        """
+        from app.db import get_error_causes_from_db
         cache_key = (service or "ALL").lower()
-        if cache_key in self._cached_causes and len(entries) == self._last_entries_len:
+        if cache_key in self._cached_causes:
             logger.debug(f"[ANALYZER-CACHE-HIT] Serving ErrorCauses for '{cache_key}' from cache.")
             return self._cached_causes[cache_key]
-
         start_t = time.time()
-        error_entries = [
-            e for e in entries
-            if e.level == "ERROR" and (not service or service.upper() == "ALL" or e.service.lower() == service.lower())
-        ]
-
-        # Dynamic error clustering powered by Drain3 template IDs
-        clusters: Dict[str, List[LogEntry]] = defaultdict(list)
-        for e in error_entries:
-            exc_m = re.search(r'([A-Za-z0-9_.]*(?:Exception|Error|Fault))', e.message)
-            exc_type = exc_m.group(1) if exc_m else "GeneralError"
-            
-            t_id = getattr(e, "template_id", 0) or 0
-            if t_id > 0:
-                key = f"{e.service}:T{t_id}:{exc_type}"
-            else:
-                first_line = e.message.split("\n")[0]
-                norm = re.sub(r'\b[A-Za-z0-9]{12,}\b', '<ID>', first_line)
-                norm = re.sub(r'\b\d+\b', '<NUM>', norm)
-                key = f"{e.service}:{exc_type}:{norm[:65]}"
-            clusters[key].append(e)
-
-        causes: List[ErrorCauseSummary] = []
-        cause_idx = 1
-
-        for key, grp_entries in clusters.items():
-            sample_entry = grp_entries[0]
-            svc = sample_entry.service
-            first_line = sample_entry.message.split("\n")[0]
-            
-            exc_m = re.search(r'([A-Za-z0-9_.]*(?:Exception|Error|Fault))', sample_entry.message)
-            exc_type = exc_m.group(1) if exc_m else "ApplicationException"
-
-            is_break = any(self._detect_service_break(sample_entry.file_name, [e]) is not None for e in grp_entries)
-
-            all_text = " ".join([e.message for e in grp_entries])
-            tx_ids = list(set(re.findall(r'(?:TransactionId|paymentid|Account Number|Invoice)\s*[:=]\s*["\']?([A-Za-z0-9_-]+)', all_text, re.I)))[:8]
-
-            if "FormatException" in exc_type or "Base64" in first_line:
-                title = f"Base64 / String Format Exception in {svc}"
-                root_cause = "Non-encoded or invalid string payload was passed directly to a format converter (e.g. Convert.FromBase64String) without validation."
-                recommendation = "Validate string format / Base-64 signature before decoding, or wrap conversion in a defensive try/catch block."
-            elif "NotFound" in first_line or "Not Found" in first_line or is_break:
-                title = f"Service Halting Exception: Entity Not Found in {svc}"
-                root_cause = f"Repository queried for a record that was absent from the database, throwing an unhandled {exc_type} that aborted the batch."
-                recommendation = "Implement defensive null/existence checking before accessing entity records, and isolate records to prevent whole-batch failure."
-            elif "Timeout" in exc_type or "Connection" in exc_type:
-                title = f"Network / Timeout Error in {svc}"
-                root_cause = "Remote endpoint or database connection failed or timed out during execution."
-                recommendation = "Check remote endpoint health and configure resilient exponential backoff retry policies."
-            else:
-                title = f"{exc_type} in {svc}"
-                root_cause = f"Application encountered: {first_line[:120]}"
-                recommendation = "Inspect application stack trace at the referenced file and line number and add defensive handling."
-
-            causes.append(ErrorCauseSummary(
-                cause_id=f"ERR-{cause_idx:02d}",
-                title=title,
-                error_type=exc_type + (" (Critical Break)" if is_break else ""),
-                service=svc,
-                count=len(grp_entries),
-                affected_transactions=tx_ids,
-                description=f"Recorded {len(grp_entries)} occurrence(s) in {svc}. Message: {first_line[:140]}.",
-                root_cause=root_cause,
-                recommendation=recommendation,
-                sample_stack_trace=sample_entry.stack_trace or first_line
-            ))
-            cause_idx += 1
-
-        # Check for business rejections / return codes dynamically
-        re_biz = re.compile(r'(?:returncode|rejectcode|failurecode|updated to failed)', re.I)
-        biz_failed_entries = [e for e in entries if re_biz.search(e.message)]
-        if biz_failed_entries:
-            all_biz_text = " ".join([e.message for e in biz_failed_entries])
-            return_codes = list(set(re.findall(r'(?:returncode|rejectcode|reason)\s*[:=]\s*["\']?([A-Za-z0-9]+)["\']?', all_biz_text, re.I)))
-            tx_ids = list(set(re.findall(r'(?:TransactionId|RecordId|OrderId|paymentid)\s*[:=]?\s*["\']?([A-Za-z0-9_-]+)', all_biz_text, re.I)))[:8]
-            
-            codes_str = ", ".join(return_codes) if return_codes else "Business Rejections"
-            causes.append(ErrorCauseSummary(
-                cause_id=f"ERR-{cause_idx:02d}",
-                title=f"Business Network Return Failures ({codes_str})",
-                error_type="Business Rejection (External Flow Return)",
-                service=biz_failed_entries[0].service,
-                count=len(biz_failed_entries),
-                affected_transactions=tx_ids,
-                description=f"Received {len(biz_failed_entries)} business network rejection(s) with return codes: {codes_str}.",
-                root_cause="External network/clearinghouse rejects or business rule exceptions. The service handled these by updating transaction status to failed.",
-                recommendation="Investigate business reject codes with counterparties or notify originating parties to remediate account/data issues.",
-                sample_stack_trace="External Network Return (No software stack trace)."
-            ))
-
-        # Filter by service if specified
-        if service and service != "ALL":
-            causes = [c for c in causes if c.service == service]
-
-        dur_ms = (time.time() - start_t) * 1000.0
+        causes = get_error_causes_from_db(service=service)
         self._cached_causes[cache_key] = causes
-        self._last_entries_len = len(entries)
-        logger.info(f"[ANALYZER-RCA-COMPLETE] Discovered {len(causes)} root causes (service={service}) in {dur_ms:.1f}ms")
+        dur_ms = (time.time() - start_t) * 1000.0
+        logger.info(f"[ANALYZER-RCA-COMPLETE] Discovered {len(causes)} root causes (service={service}) from DB in {dur_ms:.1f}ms")
         return causes
 
     def get_timeline(self, service: Optional[str] = None) -> List[Dict[str, Any]]:
-        entries = self.parser.parse_all()
-        if service and service != "ALL":
-            entries = [e for e in entries if e.service == service]
-
-        buckets = defaultdict(lambda: {"total": 0, "errors": 0, "infos": 0, "debugs": 0})
-
-        for e in entries:
-            hour = e.time.split(":")[0] if ":" in e.time else "00"
-            key = f"{e.date} {hour}:00"
-            buckets[key]["total"] += 1
-            if e.level == "ERROR":
-                buckets[key]["errors"] += 1
-            elif e.level == "INFO":
-                buckets[key]["infos"] += 1
-            elif e.level == "DEBUG":
-                buckets[key]["debugs"] += 1
-
-        timeline = []
-        for k in sorted(buckets.keys()):
-            timeline.append({
-                "time_bucket": k,
-                **buckets[k]
-            })
-        logger.debug(f"[ANALYZER-TIMELINE] Generated {len(timeline)} chronological timeline buckets (service={service}).")
-        return timeline
+        """
+        Generates chronological timeline buckets directly from indexed SQLite database.
+        """
+        from app.db import get_timeline_from_db
+        return get_timeline_from_db(service=service)
 
 analyzer = LogAnalyzer()
