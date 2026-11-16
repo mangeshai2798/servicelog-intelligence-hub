@@ -10,6 +10,7 @@ from app.models import QueryResponse
 from app.db import (
     get_latest_error_logs,
     get_service_break_flow,
+    get_dynamic_forensic_context,
     search_logs_dynamic,
     get_log_counts_summary,
     get_log_line_with_context,
@@ -68,13 +69,31 @@ class QueryEngine:
 
         # 2. Targeted RAG Retrieval from SQLite
         latest_errors = get_latest_error_logs(service=detected_service, limit=5)
-        
+        counts_summary = get_log_counts_summary(service=detected_service)
+
+        # Universal Dynamic Forensic Context Extractor
+        # No hardcoded keyword checks: autonomously extracts relevant events + 8-line context windows for ANY query intent
+        dynamic_forensic_events = get_dynamic_forensic_context(
+            query_text=query,
+            service=detected_service,
+            limit=3,
+            context_lines=4
+        )
+
+        # Seamless backward compatibility for break_flow: if a break event is in the dynamic context, synthesize break_flow
         break_flow = None
-        if any(k in q_lower for k in ["break", "halt", "flow", "crash", "stop", "abort", "failed to continue", "reason", "premature"]):
+        for ev_ctx in dynamic_forensic_events:
+            if ev_ctx.get("is_break_event"):
+                break_flow = {
+                    "break_entry": ev_ctx["target"],
+                    "preceding_flow": ev_ctx["preceding"],
+                    "succeeding_flow": ev_ctx.get("succeeding", [])
+                }
+                break
+        if not break_flow and any(k in q_lower for k in ["break", "halt", "crash"]):
             break_flow = get_service_break_flow(service=detected_service)
 
-        counts_summary = get_log_counts_summary(service=detected_service)
-        dynamic_matches = search_logs_dynamic(query, service=detected_service, limit=5)
+        dynamic_matches = [ev["target"] for ev in dynamic_forensic_events] if dynamic_forensic_events else search_logs_dynamic(query, service=detected_service, limit=5)
 
         # Multi-facet deep forensic retrieval for line-by-line inspection
         line_context = None
@@ -119,6 +138,7 @@ class QueryEngine:
             "active_service": detected_service,
             "latest_errors": latest_errors,
             "break_flow": break_flow,
+            "dynamic_forensic_events": dynamic_forensic_events,
             "counts_summary": counts_summary,
             "dynamic_matches": dynamic_matches,
             "total_error_count": counts_summary.get("error_logs", overview.total_error_logs),
@@ -344,32 +364,62 @@ class QueryEngine:
                     f"| `{s.get('error_type')}` | `{s.get('service')}` | `{s.get('component')}` | **{s.get('occurrence_count')}** | `{s.get('first_seen')}` | `{s.get('last_seen')}` | Line `{s.get('sample_line')}` (`{s.get('file_name')}`) |\n"
                 )
 
-        # E. If question asks about Service Break or Flow Interruption
-        elif any(k in q_lower for k in ["break", "halt", "flow", "crash", "stop", "abort"]):
-            if break_flow:
-                be = break_flow["break_entry"]
-                pre = break_flow.get("preceding_flow", [])
+        # E. Universal Dynamic Forensic Log Evidence (Breaks, Restarts, Exceptions, Flow Interruptions)
+        elif dynamic_forensic_events:
+            for idx, item in enumerate(dynamic_forensic_events[:2], 1):
+                t = item["target"]
+                prec = item.get("preceding", [])
+                succ = item.get("succeeding", [])
+                is_break = item.get("is_break_event", False)
+                header_icon = "🚨 Critical Failure / Service Break" if is_break else f"🔍 Targeted Forensic Log Evidence #{idx}"
                 answer_parts.append(
-                    f"### 🚨 Critical Service Break & Flow Interruption\n\n"
-                    f"- **Halted Service:** `{be.get('service')}` (`{be.get('file_name')}`)\n"
-                    f"- **Failure Timestamp:** `{be.get('timestamp')}` (Line `{be.get('line_number')}`)\n"
-                    f"- **Exception:** `{be.get('message', '').splitlines()[0]}`\n"
+                    f"### {header_icon}\n\n"
+                    f"- **Service:** `{t.get('service')}` (`{t.get('file_name')}`)\n"
+                    f"- **Timestamp:** `{t.get('timestamp')}` (Line `{t.get('line_number')}`)\n"
+                    f"- **Level / Status:** `{t.get('level')}` / `{t.get('status')}` | **Component:** `{t.get('component')}`\n"
+                    f"- **Event Message:**\n```text\n{t.get('message', '').strip()}\n```\n"
                 )
-                if be.get("transaction_id"):
-                    answer_parts.append(f"- **Impacted Transaction ID:** `{be.get('transaction_id')}`\n")
-                if pre:
-                    answer_parts.append("\n**Execution Flow Preceding the Halt:**\n")
-                    for p in pre:
-                        answer_parts.append(f"1. `[{p.get('time')}]` [{p.get('component')}]: {p.get('message')[:140]}\n")
-                answer_parts.append(
-                    f"\n**Root Cause Analysis:** The service queried for a transaction record that was absent from the database. "
-                    f"An unhandled exception was thrown without defensive null checking, causing the entire batch pipeline to abort."
-                )
-            elif detected_service:
-                answer_parts.append(
-                    f"### ℹ️ Pipeline Execution Status for {detected_service}\n\n"
-                    f"`{detected_service}` did **not** experience any critical pipeline halt or unhandled fatal crash. It completed its execution cycle cleanly.\n"
-                )
+                if t.get("transaction_id"):
+                    answer_parts.append(f"- **Impacted Transaction ID:** `{t.get('transaction_id')}`\n")
+                if t.get("stack_trace"):
+                    answer_parts.append(f"**Stack Trace Snippet:**\n```text\n{t.get('stack_trace', '')[:300]}\n```\n")
+                if prec:
+                    answer_parts.append("\n**Execution Flow Preceding the Event:**\n")
+                    for p in prec:
+                        answer_parts.append(f"- Line `{p.get('line_number')}` `[{p.get('time')}]` `[{p.get('level')}]` `[{p.get('component')}]:` {p.get('message', '')[:120]}\n")
+                answer_parts.append(f"- **▶ Line `{t.get('line_number')}` `[{t.get('time')}]` `[{t.get('level')}]`**: **{t.get('message', '')[:120]}**\n")
+                if succ:
+                    answer_parts.append("\n**Execution Flow Succeeding the Event:**\n")
+                    for s in succ:
+                        answer_parts.append(f"- Line `{s.get('line_number')}` `[{s.get('time')}]` `[{s.get('level')}]` `[{s.get('component')}]:` {s.get('message', '')[:120]}\n")
+                if is_break:
+                    answer_parts.append(
+                        f"\n**Root Cause Analysis:** The service queried for an entity record that was absent from the database or encountered an unhandled exception without defensive null checking, causing the batch pipeline to halt.\n"
+                    )
+        elif break_flow:
+            be = break_flow["break_entry"]
+            pre = break_flow.get("preceding_flow", [])
+            answer_parts.append(
+                f"### 🚨 Critical Service Break & Flow Interruption\n\n"
+                f"- **Halted Service:** `{be.get('service')}` (`{be.get('file_name')}`)\n"
+                f"- **Failure Timestamp:** `{be.get('timestamp')}` (Line `{be.get('line_number')}`)\n"
+                f"- **Exception:** `{be.get('message', '').splitlines()[0]}`\n"
+            )
+            if be.get("transaction_id"):
+                answer_parts.append(f"- **Impacted Transaction ID:** `{be.get('transaction_id')}`\n")
+            if pre:
+                answer_parts.append("\n**Execution Flow Preceding the Halt:**\n")
+                for p in pre:
+                    answer_parts.append(f"1. `[{p.get('time')}]` [{p.get('component')}]: {p.get('message')[:140]}\n")
+            answer_parts.append(
+                f"\n**Root Cause Analysis:** The service queried for a transaction record that was absent from the database. "
+                f"An unhandled exception was thrown without defensive null checking, causing the entire batch pipeline to abort."
+            )
+        elif detected_service and any(k in q_lower for k in ["break", "halt", "flow", "crash", "stop"]):
+            answer_parts.append(
+                f"### ℹ️ Pipeline Execution Status for {detected_service}\n\n"
+                f"`{detected_service}` did **not** experience any critical pipeline halt or unhandled fatal crash. It completed its execution cycle cleanly.\n"
+            )
 
         # B. If question asks about Latest Errors
         elif any(k in q_lower for k in ["latest", "newest", "last error", "most recent"]):

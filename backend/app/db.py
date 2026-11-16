@@ -439,6 +439,166 @@ def get_service_break_flow(service: Optional[str] = None) -> Optional[Dict[str, 
     finally:
         conn.close()
 
+STOP_WORDS = {
+    "a", "about", "above", "after", "again", "against", "all", "am", "an", "and",
+    "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being",
+    "below", "between", "both", "but", "by", "can", "can't", "cannot", "could",
+    "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down",
+    "during", "each", "explain", "few", "find", "for", "from", "further", "get",
+    "give", "had", "hadn't", "has", "hasn't", "have", "haven't", "having", "he",
+    "her", "here", "hers", "herself", "him", "himself", "his", "how", "i", "if",
+    "in", "into", "is", "isn't", "it", "it's", "its", "itself", "let", "log", "logs",
+    "me", "more", "most", "mustn't", "my", "myself", "no", "nor", "not", "of", "off",
+    "on", "once", "only", "or", "other", "ought", "our", "ours", "ourselves", "out",
+    "over", "own", "please", "same", "service", "services", "shan't", "she", "should",
+    "shouldn't", "show", "so", "some", "such", "tell", "than", "that", "the", "their",
+    "theirs", "them", "themselves", "then", "there", "these", "they", "this", "those",
+    "through", "to", "too", "under", "until", "up", "very", "was", "wasn't", "we",
+    "were", "weren't", "what", "when", "where", "which", "while", "who", "whom",
+    "why", "with", "won't", "would", "wouldn't", "you", "your", "yours", "yourself",
+    "yourselves"
+}
+
+def get_dynamic_forensic_context(
+    query_text: str,
+    service: Optional[str] = None,
+    limit: int = 3,
+    context_lines: int = 4
+) -> List[Dict[str, Any]]:
+    """
+    Universal Dynamic Forensic Context Extractor.
+    Autonomously discovers relevant operational log events matching user query intent
+    (e.g., service breaks, restarts, halts, memory spikes, deadlocks, timeouts, SSL errors,
+    base64 format exceptions, transaction lifecycles) without any hardcoded keyword lists.
+    
+    For each matched event, extracts an 8-line chronological context window (4 lines preceding,
+    4 lines succeeding) within the same log file for deep line-by-line forensic grounding.
+    """
+    if not query_text or not query_text.strip():
+        return []
+
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        clean = query_text.strip()
+
+        # Tokenize and filter out non-informative English stop words & interrogatives
+        raw_tokens = re.findall(r'[a-zA-Z0-9_\.]+', clean.lower())
+        meaningful = [t for t in raw_tokens if t not in STOP_WORDS and len(t) > 1 and not t.isdigit()]
+
+        # Generate morphological stems (e.g., breaked -> break, halted -> halt, crashed -> crash)
+        stems = []
+        for t in meaningful:
+            stemmed = re.sub(r'(ed|ing|es|s)$', '', t)
+            if len(stemmed) >= 3 and stemmed != t:
+                stems.append(stemmed)
+
+        search_terms = list(dict.fromkeys(meaningful + stems))
+
+        where_parts = []
+        params: List[Any] = []
+
+        if service and service.lower() != "all":
+            where_parts.append("LOWER(service) = LOWER(?)")
+            params.append(service)
+
+        # High-precision detection of real transaction IDs or GUIDs
+        tx_id = None
+        guid_match = re.search(r'\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b', clean)
+        if guid_match:
+            tx_id = guid_match.group(0)
+        else:
+            tx_labeled = re.search(r'(?:transactionid|transaction id|txid|tx_id|paymentid|orderid)\s*[:=]?\s*([a-zA-Z0-9_-]+)', clean, re.I)
+            if tx_labeled:
+                tx_id = tx_labeled.group(1)
+            else:
+                alnum_match = re.search(r'\b(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9_-]{8,}\b', clean)
+                if alnum_match:
+                    tx_id = alnum_match.group(0)
+
+        if tx_id:
+            where_parts.append("(transaction_id = ? OR message LIKE ?)")
+            params.extend([tx_id, f"%{tx_id}%"])
+        elif search_terms:
+            fts_expr = " OR ".join(f'"{t}"*' for t in search_terms[:6])
+            fts_clause = "id IN (SELECT rowid FROM service_logs_fts WHERE service_logs_fts MATCH ?)"
+            params.append(fts_expr)
+
+            # Direct column match fallback for status, message, and component
+            status_msg_clauses = []
+            for term in search_terms[:4]:
+                status_msg_clauses.append("LOWER(status) LIKE ? OR LOWER(message) LIKE ? OR LOWER(component) LIKE ?")
+                params.extend([f"%{term}%", f"%{term}%", f"%{term}%"])
+
+            combined = f"({fts_clause} OR {' OR '.join(status_msg_clauses)})"
+            where_parts.append(combined)
+
+        where_sql = "WHERE " + " AND ".join(where_parts) if where_parts else ""
+
+        # Order by operational criticality first (breaks, errors, warnings), then chronological ID
+        sql = f"""
+            SELECT id, file_name, timestamp, date, time, level, component,
+                   message, service, stack_trace, line_number, transaction_id, status
+            FROM service_logs
+            {where_sql}
+            ORDER BY
+                CASE 
+                    WHEN status = 'SERVICE_BREAK' THEN 1
+                    WHEN level = 'ERROR' THEN 2
+                    WHEN level = 'WARN' THEN 3
+                    ELSE 4
+                END,
+                id ASC
+            LIMIT ?;
+        """
+
+        cur.execute(sql, params + [limit])
+        matched_events = [dict(r) for r in cur.fetchall()]
+
+        # Reconstruct execution context windows (preceding and succeeding lines)
+        forensic_results = []
+        for ev in matched_events:
+            fname = ev["file_name"]
+            ev_id = ev["id"]
+
+            cur.execute("""
+                SELECT id, time, level, component, message, line_number, transaction_id
+                FROM service_logs
+                WHERE file_name = ? AND id < ?
+                ORDER BY id DESC
+                LIMIT ?;
+            """, (fname, ev_id, context_lines))
+            preceding = [dict(r) for r in reversed(cur.fetchall())]
+
+            cur.execute("""
+                SELECT id, time, level, component, message, line_number, transaction_id
+                FROM service_logs
+                WHERE file_name = ? AND id > ?
+                ORDER BY id ASC
+                LIMIT ?;
+            """, (fname, ev_id, context_lines))
+            succeeding = [dict(r) for r in cur.fetchall()]
+
+            msg_lower = ev.get("message", "").lower()
+            is_break = (
+                ev.get("status") == "SERVICE_BREAK"
+                or "fatal" in msg_lower
+                or "unhandled" in msg_lower
+                or "system.exception" in msg_lower
+                or "panic" in msg_lower
+            )
+
+            forensic_results.append({
+                "target": ev,
+                "preceding": preceding,
+                "succeeding": succeeding,
+                "is_break_event": is_break
+            })
+
+        return forensic_results
+    finally:
+        conn.close()
+
 def search_logs_dynamic(query_text: str, service: Optional[str] = None, limit: int = 10) -> List[Dict[str, Any]]:
     """
     Dynamically finds ground-truth log entries matching user terms or transaction IDs.

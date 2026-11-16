@@ -26,6 +26,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from app.ai_service import LocalQwenEngine, ai_service
 from app.query_engine import query_engine
+from app.db import get_dynamic_forensic_context
 from backend.benchmark_models import (
     BENCHMARK_QUERIES,
     AVAILABLE_MODELS,
@@ -134,6 +135,31 @@ class TestModelBenchmarkAndIsolation(unittest.TestCase):
         # Test 3B
         args = parser.parse_args(["--model", "3B"])
         self.assertEqual(args.model, "3B")
+
+    def test_08_dynamic_forensic_log_extraction(self):
+        """Verifies universal dynamic forensic extraction across distinct operational intents without hardcoding."""
+        # 1. Break / crash intent
+        break_events = get_dynamic_forensic_context("How does this service breaked?")
+        self.assertTrue(len(break_events) > 0, "Should dynamically discover break event")
+        top_break = break_events[0]
+        self.assertEqual(top_break["target"]["line_number"], 434)
+        self.assertEqual(top_break["target"]["service"], "DorchesterPaymentExport")
+        self.assertEqual(top_break["target"]["status"], "SERVICE_BREAK")
+        self.assertEqual(len(top_break["preceding"]), 4, "Should extract 4 preceding context lines")
+        self.assertEqual(len(top_break["succeeding"]), 4, "Should extract 4 succeeding context lines")
+
+        # 2. Base64 format exception intent
+        b64_events = get_dynamic_forensic_context("Why did base64 decode fail?")
+        self.assertTrue(len(b64_events) > 0, "Should dynamically discover base64 exception")
+        top_b64 = b64_events[0]
+        self.assertIn("Base-64", top_b64["target"]["message"])
+        self.assertEqual(len(top_b64["preceding"]), 4)
+        self.assertEqual(len(top_b64["succeeding"]), 4)
+
+        # 3. Component method intent
+        method_events = get_dynamic_forensic_context("What happened with GetSettledPayments?")
+        self.assertTrue(len(method_events) > 0, "Should dynamically discover method event")
+        self.assertIn("GetSettledPayments", method_events[0]["target"]["message"])
 
 
 def run_tests():

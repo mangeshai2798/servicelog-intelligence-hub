@@ -341,9 +341,38 @@ class AIService:
             err_lines.append(f"• [{e.get('timestamp')}] [{e.get('service')}] {e.get('message')[:200]}")
         recent_errors_text = "\n".join(err_lines) if err_lines else "No recent errors recorded."
 
+        dynamic_forensic_events = context.get("dynamic_forensic_events", [])
+        forensic_events_text = ""
+        if dynamic_forensic_events:
+            forensic_events_text = "\n5. DYNAMIC FORENSIC EVIDENCE & SURROUNDING EXECUTION CONTEXT (AUTONOMOUS LOG DISCOVERY):\n"
+            for idx, item in enumerate(dynamic_forensic_events[:3], 1):
+                t = item["target"]
+                prec = item.get("preceding", [])
+                succ = item.get("succeeding", [])
+                is_break = item.get("is_break_event", False)
+                forensic_events_text += (
+                    f"--- [Forensic Discovery #{idx}{' (CRITICAL BREAK / HALT)' if is_break else ''}] ---\n"
+                    f"Service: {t.get('service')} (File: {t.get('file_name')} | Line: {t.get('line_number')})\n"
+                    f"Timestamp: {t.get('timestamp')} | Level: {t.get('level')} | Status: {t.get('status')} | Component: {t.get('component')}\n"
+                    f"Message: {t.get('message', '').strip()}\n"
+                )
+                if t.get("transaction_id"):
+                    forensic_events_text += f"Transaction ID: {t.get('transaction_id')}\n"
+                if t.get("stack_trace"):
+                    forensic_events_text += f"Stack Trace: {t.get('stack_trace', '')[:250]}\n"
+                if prec:
+                    forensic_events_text += "Preceding Execution Flow in Batch:\n"
+                    for p in prec:
+                        forensic_events_text += f"  Line {p.get('line_number')}: [{p.get('time')}] [{p.get('level')}] [{p.get('component')}]: {p.get('message', '')[:110]}\n"
+                if succ:
+                    forensic_events_text += "Succeeding Execution Flow in Batch:\n"
+                    for s in succ:
+                        forensic_events_text += f"  Line {s.get('line_number')}: [{s.get('time')}] [{s.get('level')}] [{s.get('component')}]: {s.get('message', '')[:110]}\n"
+                forensic_events_text += "\n"
+
         break_flow = context.get("break_flow")
         break_flow_text = ""
-        if break_flow:
+        if break_flow and not dynamic_forensic_events:
             be = break_flow.get("break_entry", {})
             pre = break_flow.get("preceding_flow", [])
             break_flow_text = (
@@ -471,6 +500,7 @@ You do NOT rely on fixed templates or hardcoded answers. You dynamically inspect
 
 4. RECENT ERROR LOG ENTRIES & TRACES:
 {recent_errors_text}
+{forensic_events_text}
 {break_flow_text}
 {matches_text}
 {line_context_text}
@@ -486,7 +516,7 @@ CORE INSTRUCTIONS:
 1. Autonomously analyze the user's question, determine its intent, and synthesize a clear, helpful, professional response in GitHub-flavored Markdown.
 2. Rely strictly on the ground truth provided above. Cite specific service names, filenames, numbers, timestamps, error types, line numbers, and transaction IDs when relevant.
 3. If the user asks for numbers (e.g. records processed, successes, failures, counts), provide the exact numbers and use markdown tables or bulleted breakdowns.
-4. If the user asks why a service broke, crashed, or errored, explain the technical root cause, stack trace location, and code remediation.
+4. If the user asks why a service broke, crashed, halted, restarted, or failed, or asks about specific operational events, analyze the DYNAMIC FORENSIC EVIDENCE & SURROUNDING EXECUTION CONTEXT to explain the exact root cause, execution flow leading up to the event, and remediation.
 5. If the user asks about 'today' or dates, compare today's date ({overview.get('current_system_date')}) with the latest recorded date ({overview.get('latest_log_date')}).
 6. You can answer ANY question the user asks about this system—general, specific, comparative, forensic, or statistical.
 """
@@ -494,6 +524,12 @@ CORE INSTRUCTIONS:
         # Build direct focus hint for tiny SLM to prevent conversational refusals
         direct_hints = []
         q_lower = user_query.lower()
+        if dynamic_forensic_events:
+            top_ev = dynamic_forensic_events[0]["target"]
+            direct_hints.append(
+                f"Direct Ground Truth: Matched operational log event in '{top_ev.get('service')}' at line {top_ev.get('line_number')} "
+                f"([{top_ev.get('level')}], Status: {top_ev.get('status')}): \"{top_ev.get('message', '')[:100]}\"."
+            )
         if "component" in q_lower or "method" in q_lower:
             comp_list = context.get("component_breakdown", [])
             if comp_list:
