@@ -1,19 +1,21 @@
 # 📘 Technical Architecture Review & Senior Presentation Guide
+
 ## ServiceLog Intelligence Hub: Autonomous Observability, Automated Root Cause Analysis (RCA) & Offline SLM Intelligence
 
-**Author:** Engineering Team  
-**Date:** November 2026  
-**Audience:** Technical Leadership, Senior Architects, Engineering Management, and SRE Leads  
-**Repository:** `Logs_Monitoring_Project`  
-**Active Git Branch:** `feature/dev`  
+**Author:** Engineering Team
+**Date:** November 2026
+**Audience:** Technical Leadership, Senior Architects, Engineering Management, and SRE Leads
+**Repository:** `Logs_Monitoring_Project`
+**Active Git Branch:** `feature/dev`
 
 ---
 
 ## Executive Summary
 
-The **ServiceLog Intelligence Hub** is an enterprise-grade, privacy-compliant log observability and diagnostic triage platform designed for mission-critical distributed microservices and financial transaction pipelines. 
+The **ServiceLog Intelligence Hub** is an enterprise-grade, privacy-compliant log observability and diagnostic triage platform designed for mission-critical distributed microservices and financial transaction pipelines.
 
 Modern enterprise logs generate gigabytes of unstructured telemetry across multiple distributed nodes. Traditional monitoring solutions either:
+
 1. Require expensive cloud ingestion pipelines (Datadog, Splunk, Dynatrace) that transmit sensitive financial data externally.
 2. Rely on naive scripts or basic keyword search (`grep`, `awk`) that cannot correlate cross-service transactions or synthesize multi-file failure cascades.
 3. Attempt to feed raw logs directly into remote cloud LLMs (OpenAI, Anthropic), causing prohibitive token costs, security/compliance violations, and frequent context-window exhaustion.
@@ -75,31 +77,32 @@ Raw Logs (*.log) ──▶ Streaming Parser ──▶ SQLite WAL + FTS5 + Drain3
 
 The table below summarizes every core technology in the stack, its exact role, and where it lives in the codebase:
 
-| Technology | Category | Implementation File | Key Features & Implementation Pattern |
-| :--- | :--- | :--- | :--- |
-| **FastAPI & Uvicorn** | Web Framework & ASGI Server | [`backend/app/main.py`](file:///backend/app/main.py) | Async REST API, startup/shutdown lifespan lifecycle, CORS middleware, static file mounting. |
-| **Pydantic v2** | Data Validation & Schemas | [`backend/app/models.py`](file:///backend/app/models.py) | Strongly typed request/response models, field constraints, JSON serialization. |
-| **Python Streaming Generators** | High-Throughput Ingestion | [`backend/app/parser.py`](file:///backend/app/parser.py) | $O(1)$ RAM line-by-line file iteration, regex entity extraction, multi-format fallback. |
-| **SQLite 3 (WAL Mode)** | Primary Relational Datastore | [`backend/app/db.py`](file:///backend/app/db.py) | Write-Ahead Logging, `PRAGMA synchronous=NORMAL`, B-Tree composite indexes. |
-| **SQLite FTS5** | Full-Text Search Engine | [`backend/app/db.py`](file:///backend/app/db.py) | Virtual table with BM25 ranking for unstructured message and stack-trace search. |
-| **Drain3** | Online Log Template Mining | [`backend/app/analyzer.py`](file:///backend/app/analyzer.py) | Prefix tree clustering, parameter wildcard masking (`<:*:>`), structural log clustering. |
-| **Qwen 2.5 SLM** | Local Language Model | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py) | Offline in-memory inference via Hugging Face `transformers`, chat templating, prompt engineering. |
-| **PyTorch (`torch.bfloat16`)** | Deep Learning Runtime | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py) | Half-precision CPU execution, memory reduction by 50%, KV-cache inference mode. |
-| **Strict Memory Isolation** | Memory Management | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py) | Explicit `unload_model()` method, `gc.collect()`, `torch.cuda.empty_cache()` equivalent for RAM. |
-| **`StreamCapture` (TextStreamer)** | Telemetry & Performance Profiling | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py) | Real-time token streaming, high-precision Time-To-First-Token (TTFT) and token/sec tracking. |
-| **Forensic Query Engine** | Intent Routing & RAG | [`backend/app/query_engine.py`](file:///backend/app/query_engine.py) | Regex intent deconstruction, 8-line context windows, transaction tracing, refusal guards. |
-| **Dynamic Configuration** | Environment Loader | [`backend/app/config.py`](file:///backend/app/config.py) | Zero hardcoding; all branding, thresholds, models, and paths loaded from [`.env`](file:///.env). |
-| **Rotating Execution Logger** | Observability & Audit | [`backend/app/logger.py`](file:///backend/app/logger.py) | UTF-8 safe `RotatingFileHandler` writing structured logs to `logs/backend.log`. |
-| **Chart.js & Tailwind CSS** | Executive UI Dashboard | [`frontend/`](file:///frontend/) | Glassmorphism UI, interactive charts, live stopwatch, service break modals, dark/light theme. |
-| **Automated Benchmarking** | Model Evaluation Suite | [`backend/benchmark_models.py`](file:///backend/benchmark_models.py) | 10 SRE queries, `--model` CLI selection, incremental JSON merging, executive Markdown reports. |
-| **Model Weight Downloader** | Dependency Management | [`backend/download_model.py`](file:///backend/download_model.py) | Automated downloads via `snapshot_download`, symlink-safe for Windows environments. |
-| **Unit & Integration Suite** | Quality Assurance | [`backend/test_models_benchmark.py`](file:///backend/test_models_benchmark.py) | 7 automated unit/integration tests verifying memory release, model switching, and queries. |
+| Technology                                 | Category                          | Implementation File                                                             | Key Features & Implementation Pattern                                                                  |
+| :----------------------------------------- | :-------------------------------- | :------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------- |
+| **FastAPI & Uvicorn**                | Web Framework & ASGI Server       | [`backend/app/main.py`](file:///backend/app/main.py)                           | Async REST API, startup/shutdown lifespan lifecycle, CORS middleware, static file mounting.            |
+| **Pydantic v2**                      | Data Validation & Schemas         | [`backend/app/models.py`](file:///backend/app/models.py)                       | Strongly typed request/response models, field constraints, JSON serialization.                         |
+| **Python Streaming Generators**      | High-Throughput Ingestion         | [`backend/app/parser.py`](file:///backend/app/parser.py)                       | $O(1)$ RAM line-by-line file iteration, regex entity extraction, multi-format fallback.              |
+| **SQLite 3 (WAL Mode)**              | Primary Relational Datastore      | [`backend/app/db.py`](file:///backend/app/db.py)                               | Write-Ahead Logging, `PRAGMA synchronous=NORMAL`, B-Tree composite indexes.                          |
+| **SQLite FTS5**                      | Full-Text Search Engine           | [`backend/app/db.py`](file:///backend/app/db.py)                               | Virtual table with BM25 ranking for unstructured message and stack-trace search.                       |
+| **Drain3**                           | Online Log Template Mining        | [`backend/app/analyzer.py`](file:///backend/app/analyzer.py)                   | Prefix tree clustering, parameter wildcard masking (`<:*:>`), structural log clustering.             |
+| **Qwen 2.5 SLM**                     | Local Language Model              | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py)               | Offline in-memory inference via Hugging Face `transformers`, chat templating, prompt engineering.    |
+| **PyTorch (`torch.bfloat16`)**     | Deep Learning Runtime             | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py)               | Half-precision CPU execution, memory reduction by 50%, KV-cache inference mode.                        |
+| **Strict Memory Isolation**          | Memory Management                 | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py)               | Explicit `unload_model()` method, `gc.collect()`, `torch.cuda.empty_cache()` equivalent for RAM. |
+| **`StreamCapture` (TextStreamer)** | Telemetry & Performance Profiling | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py)               | Real-time token streaming, high-precision Time-To-First-Token (TTFT) and token/sec tracking.           |
+| **Forensic Query Engine**            | Intent Routing & RAG              | [`backend/app/query_engine.py`](file:///backend/app/query_engine.py)           | Regex intent deconstruction, 8-line context windows, transaction tracing, refusal guards.              |
+| **Dynamic Configuration**            | Environment Loader                | [`backend/app/config.py`](file:///backend/app/config.py)                       | Zero hardcoding; all branding, thresholds, models, and paths loaded from [`.env`](file:///.env).      |
+| **Rotating Execution Logger**        | Observability & Audit             | [`backend/app/logger.py`](file:///backend/app/logger.py)                       | UTF-8 safe `RotatingFileHandler` writing structured logs to `logs/backend.log`.                    |
+| **Chart.js & Tailwind CSS**          | Executive UI Dashboard            | [`frontend/`](file:///frontend/)                                               | Glassmorphism UI, interactive charts, live stopwatch, service break modals, dark/light theme.          |
+| **Automated Benchmarking**           | Model Evaluation Suite            | [`backend/benchmark_models.py`](file:///backend/benchmark_models.py)           | 10 SRE queries, `--model` CLI selection, incremental JSON merging, executive Markdown reports.       |
+| **Model Weight Downloader**          | Dependency Management             | [`backend/download_model.py`](file:///backend/download_model.py)               | Automated downloads via `snapshot_download`, symlink-safe for Windows environments.                  |
+| **Unit & Integration Suite**         | Quality Assurance                 | [`backend/test_models_benchmark.py`](file:///backend/test_models_benchmark.py) | 7 automated unit/integration tests verifying memory release, model switching, and queries.             |
 
 ---
 
 ## 3. Deep Dive: Technical Implementation by Component
 
 ### Component 1: $O(1)$ RAM Streaming Log Parser
+
 * **Source:** [`backend/app/parser.py`](file:///backend/app/parser.py)
 * **Problem Addressed:** Naive implementations use `readlines()` or `read()`, allocating Python string objects for every line. For a 5 GB log file, this consumes 15–20 GB of RAM, triggering Out-Of-Memory (OOM) crashes on standard workstations.
 * **Implementation Mechanism:**
@@ -121,6 +124,7 @@ The table below summarizes every core technology in the stack, its exact role, a
 ---
 
 ### Component 2: High-Performance SQLite WAL & FTS5 Indexing
+
 * **Source:** [`backend/app/db.py`](file:///backend/app/db.py)
 * **Problem Addressed:** SQLite is often dismissed as a prototype database that locks on writes. However, in Write-Ahead Logging (WAL) mode with tuned pragmas, SQLite delivers tens of thousands of read transactions per second concurrently while absorbing batch inserts.
 * **Tuned Database Pragmas:**
@@ -144,11 +148,13 @@ The table below summarizes every core technology in the stack, its exact role, a
       content_rowid='id'
   );
   ```
+
   Provides sub-millisecond keyword and exception search with BM25 relevance ranking.
 
 ---
 
 ### Component 3: Drain3 Unsupervised Log Template Mining
+
 * **Source:** [`backend/app/analyzer.py`](file:///backend/app/analyzer.py)
 * **Problem Addressed:** Raw logs are highly repetitive and noisy (thousands of messages differ only by a timestamp, IP, or GUID). Passing raw messages to an LLM wastes context tokens and degrades retrieval quality.
 * **Implementation Mechanism:**
@@ -161,6 +167,7 @@ The table below summarizes every core technology in the stack, its exact role, a
 ---
 
 ### Component 4: Local Offline Qwen 2.5 SLM Engine
+
 * **Source:** [`backend/app/ai_service.py`](file:///backend/app/ai_service.py)
 * **Architecture:**
   - Completely self-contained within the Python runtime.
@@ -186,6 +193,7 @@ The table below summarizes every core technology in the stack, its exact role, a
 ---
 
 ### Component 5: Half-Precision Optimization (`torch.bfloat16`)
+
 * **Problem Addressed:** On a developer laptop with 16 GB physical RAM, loading a 3B model in 32-bit float (`torch.float32`) consumes ~9.2 GB of RAM, causing severe Windows paging and memory thrashing.
 * **Implementation Solution:**
   ```python
@@ -195,12 +203,14 @@ The table below summarizes every core technology in the stack, its exact role, a
   else:
       target_dtype = torch.float32  # 0.5B is ultra-light (~1.1 GB) in float32
   ```
+
   - **Memory Reduction:** Reduces 3B resident memory from **9.2 GB down to 6.2 GB** (a 33% physical savings), keeping system free RAM above 3.5 GB on 16 GB machines.
   - **Inference Speed:** Significantly reduces CPU memory bus bandwidth bottleneck, boosting generation stability.
 
 ---
 
 ### Component 6: Strict Sequential Memory Isolation
+
 * **Source:** [`backend/app/ai_service.py`](file:///backend/app/ai_service.py#L80-L100)
 * **Mechanism:**
   ```python
@@ -224,6 +234,7 @@ The table below summarizes every core technology in the stack, its exact role, a
 ---
 
 ### Component 7: Telemetry Instrumentation & `StreamCapture`
+
 * **Source:** [`backend/app/ai_service.py`](file:///backend/app/ai_service.py#L44-L69)
 * **Implementation Pattern:** Inherits from Hugging Face's `TextStreamer`:
   ```python
@@ -242,6 +253,7 @@ The table below summarizes every core technology in the stack, its exact role, a
 ---
 
 ### Component 8: Multi-Intent Forensic Query Engine (Zero-Hallucination RAG)
+
 * **Source:** [`backend/app/query_engine.py`](file:///backend/app/query_engine.py)
 * **Intent Deconstruction Pathways:**
   1. **Line Forensic Queries (`line 438`):** Queries SQLite for line 438, plus the **preceding 4 lines and succeeding 4 lines** (an 8-line context window) to provide full chronological context leading up to a crash.
@@ -253,6 +265,7 @@ The table below summarizes every core technology in the stack, its exact role, a
 ---
 
 ### Component 9: Executive Dashboard UI
+
 * **Source:** [`frontend/`](file:///frontend/)
 * **Technologies:** Single-Page Architecture (SPA) in modern vanilla JavaScript (ES6+), Tailwind CSS, Lucide icons, Chart.js, and Marked.js.
 * **Capabilities:**
@@ -273,6 +286,7 @@ The table below summarizes every core technology in the stack, its exact role, a
 During previous architectural discussions, five critical design concerns were raised by leadership. Here is how our codebase addresses and resolves each one:
 
 ### Concern 1: "SQLite may become your bottleneck due to concurrency."
+
 * **Resolution:**
   - We enabled SQLite's **Write-Ahead Logging (WAL)** mode with `PRAGMA synchronous = NORMAL`.
   - In WAL mode, **readers do not block writers, and writers do not block readers**.
@@ -280,6 +294,7 @@ During previous architectural discussions, five critical design concerns were ra
   - All read operations are decoupled behind the abstract [`DatabaseManager`](file:///backend/app/db.py) interface. If future volume necessitates PostgreSQL or ClickHouse, only `db.py` needs an adapter change; zero business logic changes are required.
 
 ### Concern 2: "Semantic search needs a vector store, and plain BERT embeddings perform poorly."
+
 * **Resolution:**
   - We replaced brute-force semantic search with a **hybrid deterministic approach**:
     - For exact keyword and stack-trace matching: **SQLite FTS5 full-text virtual table** using BM25 ranking.
@@ -287,16 +302,19 @@ During previous architectural discussions, five critical design concerns were ra
     - For natural language understanding: **Qwen 2.5 SLM**, which natively understands SRE terminology, error codes, and operational KPIs.
 
 ### Concern 3: "Raw logs are noisy and repetitive to embed."
+
 * **Resolution:**
   - Ingested logs are mined in real-time through **Drain3**, which replaces variable parameters (IPs, GUIDs, timestamps, customer IDs) with `<:*:>` wildcards.
   - This compresses 35,860 raw log lines into clean template signatures, ensuring that the AI reasons over distinct failure patterns rather than redundant noise.
 
 ### Concern 4: "Off-the-shelf NER fails on logs (service names, error codes, IPs)."
+
 * **Resolution:**
   - Instead of deploying heavy NER models (like spaCy or BERT-NER) that misclassify service names as places or people, we implemented **custom regex and structural entity extraction** in [`backend/app/parser.py`](file:///backend/app/parser.py).
   - This extraction accurately captures transaction IDs, service names, file names, line numbers, and error signatures with $100\%$ accuracy at zero GPU/CPU inference cost.
 
 ### Concern 5: "RASA is too heavy and complex for operational log queries."
+
 * **Resolution:**
   - RASA requires maintaining custom intent training datasets, dialogue policies, and separate server processes.
   - We replaced RASA with a **deterministic Intent Router** in [`backend/app/query_engine.py`](file:///backend/app/query_engine.py) combined with our local Qwen SLM.
@@ -308,19 +326,20 @@ During previous architectural discussions, five critical design concerns were ra
 
 A side-by-side empirical comparison of the three supported models evaluated on our 12-core host machine with 16 GB RAM:
 
-| Metric | Qwen 2.5 0.5B Instruct | Qwen 2.5 1.5B Instruct | Qwen 2.5 3B Instruct |
-| :--- | :--- | :--- | :--- |
-| **Parameter Count** | 0.49 Billion | 1.54 Billion | 3.09 Billion |
-| **Model Weight Size** | 988 MB | 3.09 GB | 6.1 GB |
-| **Memory Dtype** | `torch.float32` | `torch.bfloat16` | `torch.bfloat16` |
-| **Cold-Start Load Time** | ~3.3–4.2 s | ~8.5–12.0 s | ~17.1 s |
-| **Process Peak RAM** | ~2.5 GB | ~3.8 GB | ~6.4 GB |
-| **RAM Footprint (Net Delta)** | +1.9 GB | +3.1 GB | +5.9 GB |
-| **Avg Generation Speed** | **15–20 tok/s** | **8–12 tok/s** | **3–6 tok/s** |
-| **Avg Query Latency (CPU)** | **< 3.5 seconds** | **~8–15 seconds** | **~25–45 seconds** |
-| **Recommended Deployment** | **Local Developer Laptops & Real-Time UI** | **Automated Staging & Nightly Audits** | **P1 War Rooms & Dedicated GPU Servers** |
+| Metric                              | Qwen 2.5 0.5B Instruct                           | Qwen 2.5 1.5B Instruct                       | Qwen 2.5 3B Instruct                           |
+| :---------------------------------- | :----------------------------------------------- | :------------------------------------------- | :--------------------------------------------- |
+| **Parameter Count**           | 0.49 Billion                                     | 1.54 Billion                                 | 3.09 Billion                                   |
+| **Model Weight Size**         | 988 MB                                           | 3.09 GB                                      | 6.1 GB                                         |
+| **Memory Dtype**              | `torch.float32`                                | `torch.bfloat16`                           | `torch.bfloat16`                             |
+| **Cold-Start Load Time**      | ~3.3–4.2 s                                      | ~8.5–12.0 s                                 | ~17.1 s                                        |
+| **Process Peak RAM**          | ~2.5 GB                                          | ~3.8 GB                                      | ~6.4 GB                                        |
+| **RAM Footprint (Net Delta)** | +1.9 GB                                          | +3.1 GB                                      | +5.9 GB                                        |
+| **Avg Generation Speed**      | **15–20 tok/s**                           | **8–12 tok/s**                        | **3–6 tok/s**                           |
+| **Avg Query Latency (CPU)**   | **< 3.5 seconds**                          | **~8–15 seconds**                     | **~25–45 seconds**                      |
+| **Recommended Deployment**    | **Local Developer Laptops & Real-Time UI** | **Automated Staging & Nightly Audits** | **P1 War Rooms & Dedicated GPU Servers** |
 
 ### Management Recommendation:
+
 1. **For everyday developer workstations and real-time dashboard interaction:** Use **Qwen 2.5 0.5B**. It delivers sub-second TTFT, blazing fast generation, and leaves ample RAM for IDEs and containers.
 2. **For deep forensic incident reports:** Switch to **Qwen 2.5 1.5B** or **3B** via [`.env`](file:///.env) on dedicated servers or machines equipped with GPU acceleration.
 
@@ -331,14 +350,17 @@ A side-by-side empirical comparison of the three supported models evaluated on o
 When presenting to seniors and managers, follow this 6-step walkthrough:
 
 ### Step 1: The Problem & The Solution (2 Minutes)
+
 - **What to say:** *"Currently, diagnosing multi-service failures across gigabytes of logs requires manual searching, expensive cloud tools, or sending sensitive logs to external APIs. We built ServiceLog Intelligence Hub: a 100% offline, local-first platform that indexes multi-gigabyte logs with constant memory, performs automated root-cause analysis, and enables conversational AI diagnostics with zero data leakage."*
 
 ### Step 2: Show the Architecture (3 Minutes)
+
 - Open this document and show the **5-Pillar Architecture Diagram** above.
 - Highlight the **Streaming Parser ($O(1)$ memory)**, **SQLite WAL + FTS5**, and **Drain3 Template Mining**.
 - Emphasize that **nothing is hardcoded**—everything is dynamically derived from `.log` files and configured via [`.env`](file:///.env).
 
 ### Step 3: Live Application Demo (5 Minutes)
+
 1. Launch the application:
    ```powershell
    python run_dashboard.py
@@ -353,6 +375,7 @@ When presenting to seniors and managers, follow this 6-step walkthrough:
    - Point out the **Live Stopwatch**, **Time-To-First-Token (TTFT)**, and **Generation Speed (tok/s)** displayed in the response.
 
 ### Step 4: Show Line-by-Line Forensics (2 Minutes)
+
 - In the search bar or CLI, run:
   ```powershell
   python backend/calculate_response_time.py "what happened on line 438 in DorchesterPaymentExport"
@@ -360,11 +383,13 @@ When presenting to seniors and managers, follow this 6-step walkthrough:
 - Point out the **8-line context window** (4 lines before and 4 lines after line 438) that proves the exact preceding sequence leading to the crash.
 
 ### Step 5: Show Dynamic Model Switching & Strict Memory Isolation (3 Minutes)
+
 - Show how easy it is to switch models: simply change `LOCAL_MODEL` and `MODEL_PATH` in [`.env`](file:///.env).
 - Explain the **Strict Memory Isolation Guarantee**: models are completely evicted from RAM before a new model boots, preventing OOM crashes.
 - Explain the **`torch.bfloat16`** optimization that reduced 3B RAM consumption from 9.2 GB to 6.2 GB.
 
 ### Step 6: Review Benchmarks & Automated Tests (2 Minutes)
+
 1. Show the automated unit test suite passing 7 comprehensive tests:
    ```powershell
    python backend/test_models_benchmark.py
@@ -372,23 +397,24 @@ When presenting to seniors and managers, follow this 6-step walkthrough:
 2. Open the generated executive reports:
    - [MODEL_BENCHMARK_REPORT.md](file:///c:/Users/mangesh.bondre/Desktop/Logs_Monitoring_Project/KT_Documents/MODEL_BENCHMARK_REPORT.md)
    - [BENCHMARK_0.5B.md](file:///c:/Users/mangesh.bondre/Desktop/Logs_Monitoring_Project/KT_Documents/BENCHMARK_0.5B.md)
+
 - Point out the empirical decision matrix demonstrating that our architecture is fully validated and ready for production deployment.
 
 ---
 
 ## 7. Quick Reference: Essential Commands
 
-| Action | Command | Purpose |
-| :--- | :--- | :--- |
-| **Launch Dashboard** | `python run_dashboard.py` | Starts backend, primes SQLite, warms up SLM, opens browser. |
-| **Run Unit Tests** | `python backend/test_models_benchmark.py` | Runs 7 automated tests verifying isolation, switching, and parsing. |
-| **Benchmark 0.5B Model** | `python backend/benchmark_models.py --model 0.5B` | Evaluates 0.5B model across 10 standardized SRE queries. |
-| **Benchmark 1.5B Model** | `python backend/benchmark_models.py --model 1.5B` | Evaluates 1.5B model in isolation across SRE queries. |
-| **Benchmark 3B Model** | `python backend/benchmark_models.py --model 3B` | Evaluates 3B model in bfloat16 across SRE queries. |
-| **Quick Benchmark Test** | `python backend/benchmark_models.py --model 0.5B --quick --max-tokens 50` | Fast 3-query smoke test for any model. |
-| **Download Model Weights** | `python backend/download_model.py --model 1.5B` | Downloads offline model weights directly to `models/`. |
-| **CLI Forensic Query** | `python backend/calculate_response_time.py "what is the latest error"` | High-precision timing and forensic analysis from CLI. |
-| **Inspect Backend Logs** | `Get-Content logs/backend.log -Wait -Tail 30` | Real-time tail of structured backend runtime logs. |
+| Action                           | Command                                                                     | Purpose                                                             |
+| :------------------------------- | :-------------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| **Launch Dashboard**       | `python run_dashboard.py`                                                 | Starts backend, primes SQLite, warms up SLM, opens browser.         |
+| **Run Unit Tests**         | `python backend/test_models_benchmark.py`                                 | Runs 7 automated tests verifying isolation, switching, and parsing. |
+| **Benchmark 0.5B Model**   | `python backend/benchmark_models.py --model 0.5B`                         | Evaluates 0.5B model across 10 standardized SRE queries.            |
+| **Benchmark 1.5B Model**   | `python backend/benchmark_models.py --model 1.5B`                         | Evaluates 1.5B model in isolation across SRE queries.               |
+| **Benchmark 3B Model**     | `python backend/benchmark_models.py --model 3B`                           | Evaluates 3B model in bfloat16 across SRE queries.                  |
+| **Quick Benchmark Test**   | `python backend/benchmark_models.py --model 0.5B --quick --max-tokens 50` | Fast 3-query smoke test for any model.                              |
+| **Download Model Weights** | `python backend/download_model.py --model 1.5B`                           | Downloads offline model weights directly to `models/`.            |
+| **CLI Forensic Query**     | `python backend/calculate_response_time.py "what is the latest error"`    | High-precision timing and forensic analysis from CLI.               |
+| **Inspect Backend Logs**   | `Get-Content logs/backend.log -Wait -Tail 30`                             | Real-time tail of structured backend runtime logs.                  |
 
 ---
 
