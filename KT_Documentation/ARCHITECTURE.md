@@ -1,10 +1,13 @@
+ok so pleae 
+
 # System Architecture
 
 ## 1. System Overview
 
-**ServiceLog Intelligence Hub** is an offline-first, dual-path operational log analysis and conversational forensic intelligence platform. It bridges high-throughput log parsing and structured SQLite FTS5 database retrieval with local in-memory small language model (SLM) neural reasoning (`Qwen/Qwen2.5-0.5B-Instruct`). 
+**ServiceLog Intelligence Hub** is an offline-first, dual-path operational log analysis and conversational forensic intelligence platform. It bridges high-throughput log parsing and structured SQLite FTS5 database retrieval with local in-memory small language model (SLM) neural reasoning (`Qwen/Qwen2.5-0.5B-Instruct`).
 
 The architecture guarantees:
+
 - **100% Offline Privacy:** Zero external network egress or third-party cloud LLM dependencies.
 - **Sub-Second RAG Performance:** Pre-indexed SQLite full-text search (FTS5) filters millions of lines in milliseconds to inject ground-truth evidence into prompts.
 - **Zero Hardcoding:** Complete dynamic configurability driven via `.env` and database-derived service models.
@@ -20,27 +23,29 @@ The architecture guarantees:
 
 ## 3. Technology Stack
 
-| Layer | Component | Technology | Rationale |
-| :--- | :--- | :--- | :--- |
-| **Frontend** | UI Presentation | Vanilla HTML5, CSS3, Tailwind CSS (offline bundle) | Ultra-fast load times, zero build step, no NPM/webpack bloat. |
-| **Frontend** | Visualizations | Chart.js (`chart.umd.min.js`), Lucide Icons | Responsive interactive telemetry charts and crisp SVG icons. |
-| **Frontend** | Markdown Parser | Marked.js (`marked.min.js`) | Renders AI answers with formatted code blocks, tables, and lists. |
-| **Backend** | API Framework | Python 3.10+, FastAPI, Uvicorn | High async concurrency, automatic OpenAPI schemas, native Pydantic v2. |
-| **Database** | Embedded Storage | SQLite3 with FTS5 & WAL mode | Zero setup, ACID-compliant, lightning-fast B-tree and full-text indexes. |
-| **AI / SLM** | Neural Inference | PyTorch, Hugging Face Transformers (`Qwen/Qwen2.5-0.5B-Instruct`) | Compact 0.5B parameter SLM running completely offline in system RAM (< 1.5 GB). |
-| **Configuration** | Environment | Python `dotenv`, Pydantic Settings | Dynamically loads branding, paths, and SLA targets with zero hardcoding. |
+| Layer                   | Component        | Technology                                                          | Rationale                                                                       |
+| :---------------------- | :--------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------ |
+| **Frontend**      | UI Presentation  | Vanilla HTML5, CSS3, Tailwind CSS (offline bundle)                  | Ultra-fast load times, zero build step, no NPM/webpack bloat.                   |
+| **Frontend**      | Visualizations   | Chart.js (`chart.umd.min.js`), Lucide Icons                       | Responsive interactive telemetry charts and crisp SVG icons.                    |
+| **Frontend**      | Markdown Parser  | Marked.js (`marked.min.js`)                                       | Renders AI answers with formatted code blocks, tables, and lists.               |
+| **Backend**       | API Framework    | Python 3.10+, FastAPI, Uvicorn                                      | High async concurrency, automatic OpenAPI schemas, native Pydantic v2.          |
+| **Database**      | Embedded Storage | SQLite3 with FTS5 & WAL mode                                        | Zero setup, ACID-compliant, lightning-fast B-tree and full-text indexes.        |
+| **AI / SLM**      | Neural Inference | PyTorch, Hugging Face Transformers (`Qwen/Qwen2.5-0.5B-Instruct`) | Compact 0.5B parameter SLM running completely offline in system RAM (< 1.5 GB). |
+| **Configuration** | Environment      | Python `dotenv`, Pydantic Settings                                | Dynamically loads branding, paths, and SLA targets with zero hardcoding.        |
 
 ---
 
 ## 4. System Components
 
 ### A. Frontend Layer (`frontend/`)
+
 - **`index.html`:** Single-Page Application (SPA) layout containing Executive Metrics, Service Scope Filters, Dual-Path AI Query Panel, Chart Visualizations, and Interactive Log Explorer.
 - **`js/app.js`:** Orchestrates API communication, dynamic configuration bootstrap (`/api/config`), real-time query stopwatch, markdown rendering, and service filtering.
 - **`js/charts.js`:** Renders dynamic timeline error trends and root cause distribution bar charts using Chart.js.
 - **`css/style.css`:** Custom design system tokens, typography, responsive grid, animations, and dark executive theme.
 
 ### B. Backend API Layer (`backend/app/`)
+
 - **`main.py`:** FastAPI application entrypoint, lifespan event hooks (startup log scan & model pre-warm), CORS setup, and REST API endpoints.
 - **`parser.py`:** High-throughput generic log parser. Extracts timestamps, log levels, service scopes, thread/component IDs, transaction GUIDs, and error messages.
 - **`analyzer.py`:** Calculates statistical aggregations: Total records, successful records, error counts, SLA compliance %, break-flow detection, and error causes.
@@ -98,23 +103,30 @@ flowchart TD
 ## 6. End-to-End Data Flow
 
 ### A. Ingestion & Indexing Flow
+
 1. **Source Log Deposit:** A log file is placed in `service_logs/` or uploaded via `POST /api/upload`.
 2. **Generic Pattern Matching:** `parser.py` scans lines using universal regex patterns to identify timestamp, severity level, service, component, transaction ID, and message.
 3. **Database Transaction:** `db.py` opens a WAL-mode SQLite transaction, populating the `logs` table and updating the `logs_fts` full-text search table.
 4. **Metric Cache Invalidation:** `analyzer.py` re-calculates overall success rate, service breakdown, and failure causes.
 
 ### B. AI Query Execution Flow
-1. **User Input:** User submits query (e.g., *"Why did PaymentService crash at 14:22?"*, *"Did any service restart?"*, or *"Was there a Base64 decode issue?"*) with active service filter.
-2. **Intent Analysis & Dynamic Tokenization:** `query_engine.py` removes hardcoded keyword checks. It passes the inquiry to `get_dynamic_forensic_context()` in `db.py`, which strips stop-words and derives morphological stems.
-3. **Universal Dynamic Forensic Extraction:** 
+
+1. **User Input:** User submits query (e.g., *"Why did PaymentService crash at 14:22?"*) with active service filter.
+2. **Intent Analysis:** `query_engine.py` inspects the text for line numbers, transaction IDs, time windows, or break flows.
+3. **Targeted Forensic Extraction:**
+4. **User Input:** User submits query (e.g., *"Why did PaymentService crash at 14:22?"*, *"Did any service restart?"*, or *"Was there a Base64 decode issue?"*) with active service filter.
+5. **Intent Analysis & Dynamic Tokenization:** `query_engine.py` removes hardcoded keyword checks. It passes the inquiry to `get_dynamic_forensic_context()` in `db.py`, which strips stop-words and derives morphological stems.
+6. **Universal Dynamic Forensic Extraction:**
    - Queries SQLite `service_logs_fts` via BM25 relevance alongside direct `status`, `component`, and `message` column matching.
    - Automatically retrieves an **8-line chronological context window** (4 lines before, 4 lines after) for every matched operational event.
    - Line numbers trigger `get_log_line_with_context()` (target line ± 4 lines).
    - Transaction IDs trigger `get_transaction_lifecycle()` (chronological cross-service audit).
-4. **Prompt Assembly:** Ground-truth evidence, execution flow context, and system instructions are assembled into a structured prompt.
-5. **Local Neural Generation:** `LocalQwenEngine` executes `generate_response()`, recording Time to First Token (TTFT), token count, and tokens/sec.
-6. **Refusal Interception:** If the model produces a refusal phrase (e.g., *"I don't have access to logs"*), the safeguard replaces it with deterministic database findings.
-7. **Formatting & Client Render:** Output is packaged with execution timing metadata and rendered into formatted markdown on the dashboard.
+   - Dynamic terms query `logs_fts` with BM25 ranking.
+7. **Prompt Assembly:** Ground-truth evidence and system instructions are assembled into a structured prompt.
+8. **Prompt Assembly:** Ground-truth evidence, execution flow context, and system instructions are assembled into a structured prompt.
+9. **Local Neural Generation:** `LocalQwenEngine` executes `generate_response()`, recording Time to First Token (TTFT), token count, and tokens/sec.
+10. **Refusal Interception:** If the model produces a refusal phrase (e.g., *"I don't have access to logs"*), the safeguard replaces it with deterministic database findings.
+11. **Formatting & Client Render:** Output is packaged with execution timing metadata and rendered into formatted markdown on the dashboard.
 
 ---
 
@@ -183,12 +195,12 @@ Logs_Monitoring_Project/
 
 ## 9. Key Technical Decisions
 
-| Decision | Context | Alternatives Considered | Rationale |
-| :--- | :--- | :--- | :--- |
-| **Local In-Memory Qwen 2.5 0.5B** | Need conversational reasoning without cloud API costs or data leakage. | External cloud APIs, separate local daemon processes. | Qwen 2.5 0.5B requires only ~1.2 GB RAM, executes on CPU in 1-2 seconds, and requires zero external daemon processes. |
-| **SQLite FTS5 Virtual Table** | Full-text keyword search across 100K+ log lines. | Elasticsearch, PostgreSQL, in-memory Python list grep. | SQLite is zero-maintenance, embeds directly inside the Python process, and FTS5 yields BM25 ranking in under 10ms. |
-| **Dual-Path Fallback Guard** | Models can occasionally emit generic cop-out phrases on ambiguous queries. | Pure SLM generation, pure regex templates. | Provides the fluid reasoning of an LLM while guaranteeing 100% deterministic forensic accuracy if the model falters. |
-| **Dynamic Configuration (.env)** | User requires universal reusability across any client domain. | Hardcoded company names, separate config files. | All UI text, SLA thresholds, and paths are read dynamically; zero code edits needed for rebranding. |
+| Decision                                | Context                                                                    | Alternatives Considered                                | Rationale                                                                                                             |
+| :-------------------------------------- | :------------------------------------------------------------------------- | :----------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| **Local In-Memory Qwen 2.5 0.5B** | Need conversational reasoning without cloud API costs or data leakage.     | External cloud APIs, separate local daemon processes.  | Qwen 2.5 0.5B requires only ~1.2 GB RAM, executes on CPU in 1-2 seconds, and requires zero external daemon processes. |
+| **SQLite FTS5 Virtual Table**     | Full-text keyword search across 100K+ log lines.                           | Elasticsearch, PostgreSQL, in-memory Python list grep. | SQLite is zero-maintenance, embeds directly inside the Python process, and FTS5 yields BM25 ranking in under 10ms.    |
+| **Dual-Path Fallback Guard**      | Models can occasionally emit generic cop-out phrases on ambiguous queries. | Pure SLM generation, pure regex templates.             | Provides the fluid reasoning of an LLM while guaranteeing 100% deterministic forensic accuracy if the model falters.  |
+| **Dynamic Configuration (.env)**  | User requires universal reusability across any client domain.              | Hardcoded company names, separate config files.        | All UI text, SLA thresholds, and paths are read dynamically; zero code edits needed for rebranding.                   |
 
 ---
 
@@ -214,4 +226,3 @@ Logs_Monitoring_Project/
 2. **Local Model Out of Memory (OOM):** If PyTorch fails to allocate memory, the exception is caught, logged, and `query_engine.py` automatically falls back to high-speed deterministic diagnostic retrieval.
 3. **Corrupted or Malformed Log Lines:** The parser logs a warning, tracks the unparsed line count, and continues processing without halting the ingestion batch.
 4. **Large File Uploads:** Uploads stream directly to disk buffer in chunks (`shutil.copyfileobj`), preventing RAM exhaustion on multi-hundred-megabyte files.
-
