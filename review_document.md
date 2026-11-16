@@ -87,13 +87,13 @@ The table below summarizes every core technology in the stack, its exact role, a
 | **PyTorch (`torch.bfloat16`)** | Deep Learning Runtime | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py) | Half-precision CPU execution, memory reduction by 50%, KV-cache inference mode. |
 | **Strict Memory Isolation** | Memory Management | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py) | Explicit `unload_model()` method, `gc.collect()`, `torch.cuda.empty_cache()` equivalent for RAM. |
 | **`StreamCapture` (TextStreamer)** | Telemetry & Performance Profiling | [`backend/app/ai_service.py`](file:///backend/app/ai_service.py) | Real-time token streaming, high-precision Time-To-First-Token (TTFT) and token/sec tracking. |
-| **Forensic Query Engine** | Intent Routing & RAG | [`backend/app/query_engine.py`](file:///backend/app/query_engine.py) | Regex intent deconstruction, 8-line context windows, transaction tracing, refusal guards. |
+| **Forensic Query Engine** | Intent Routing & Universal RAG | [`backend/app/query_engine.py`](file:///backend/app/query_engine.py) | Universal Dynamic Forensic Context Extractor (zero hardcoded keywords, FTS5 BM25 + column matching, 8-line context windows). |
 | **Dynamic Configuration** | Environment Loader | [`backend/app/config.py`](file:///backend/app/config.py) | Zero hardcoding; all branding, thresholds, models, and paths loaded from [`.env`](file:///.env). |
 | **Rotating Execution Logger** | Observability & Audit | [`backend/app/logger.py`](file:///backend/app/logger.py) | UTF-8 safe `RotatingFileHandler` writing structured logs to `logs/backend.log`. |
 | **Chart.js & Tailwind CSS** | Executive UI Dashboard | [`frontend/`](file:///frontend/) | Glassmorphism UI, interactive charts, live stopwatch, service break modals, dark/light theme. |
 | **Automated Benchmarking** | Model Evaluation Suite | [`backend/benchmark_models.py`](file:///backend/benchmark_models.py) | 10 SRE queries, `--model` CLI selection, incremental JSON merging, executive Markdown reports. |
 | **Model Weight Downloader** | Dependency Management | [`backend/download_model.py`](file:///backend/download_model.py) | Automated downloads via `snapshot_download`, symlink-safe for Windows environments. |
-| **Unit & Integration Suite** | Quality Assurance | [`backend/test_models_benchmark.py`](file:///backend/test_models_benchmark.py) | 7 automated unit/integration tests verifying memory release, model switching, and queries. |
+| **Unit & Integration Suite** | Quality Assurance | [`backend/test_models_benchmark.py`](file:///backend/test_models_benchmark.py) | 8 automated unit/integration tests verifying memory release, model switching, queries, and dynamic forensic extraction. |
 
 ---
 
@@ -241,13 +241,19 @@ The table below summarizes every core technology in the stack, its exact role, a
 
 ---
 
-### Component 8: Multi-Intent Forensic Query Engine (Zero-Hallucination RAG)
-* **Source:** [`backend/app/query_engine.py`](file:///backend/app/query_engine.py)
-* **Intent Deconstruction Pathways:**
-  1. **Line Forensic Queries (`line 438`):** Queries SQLite for line 438, plus the **preceding 4 lines and succeeding 4 lines** (an 8-line context window) to provide full chronological context leading up to a crash.
-  2. **Transaction Lifecycle Audits (`C49527762P89519320`):** Cross-indexes all files for the transaction ID and builds a chronological step-by-step lifecycle table.
-  3. **Service Break Detection:** Scans for unhandled exceptions, sudden process cessations, or fatal database lookups.
-  4. **Component Failure Analysis:** Ranks application components (`PaymentExportRepository`, `Program`, etc.) by error counts and failure rates.
+### Component 8: Universal Dynamic Forensic Query Engine (Zero-Hallucination RAG)
+* **Source:** [`backend/app/query_engine.py`](file:///backend/app/query_engine.py) & [`backend/app/db.py`](file:///backend/app/db.py)
+* **Zero Hardcoded Logic:** Eliminates brittle keyword checks (such as `if any(k in query for k in ["break", "halt", ...])`) in favor of an autonomous, generic forensic discovery engine.
+* **Universal Dynamic Forensic Context Extractor (`get_dynamic_forensic_context`):**
+  1. **Stop-Word & Interrogative Filtration:** Automatically cleans user queries by stripping conversational filler (`what`, `why`, `how`, `when`, `does`, `is`, `the`, `service`, `please`, `tell`, etc.).
+  2. **Morphological Stem Matching:** Handles verb and noun inflections (e.g. `breaked` $\rightarrow$ `break`, `crashed` $\rightarrow$ `crash`, `restarted` $\rightarrow$ `restart`, `failed` $\rightarrow$ `fail`).
+  3. **Hybrid FTS5 BM25 + Column Fallback:** Executes an FTS5 full-text query joined with direct `status`, `component`, and `message` matching, prioritized by operational criticality (`SERVICE_BREAK` $\rightarrow$ `ERROR` $\rightarrow$ `WARN`).
+  4. **Dynamic Context Window Expansion:** Automatically fetches an **8-line chronological context window** (4 lines preceding, 4 lines succeeding) in the source file for every matched operational event.
+  5. **Arbitrary Operational Support:** Handles 50+ diverse failure scenarios dynamically—including service breaks, process restarts, unexpected reboots, memory spikes, deadlocks, database connection timeouts, SSL handshake failures, and Base64 format exceptions—without a single manual `if-else` branch.
+* **Specialized Telemetry Pathways:**
+  - **Line Forensic Queries (`line 438`):** Queries SQLite for the exact line plus surrounding context lines.
+  - **Transaction Lifecycle Audits (`C49527762P89519320`):** Cross-indexes all files for the transaction ID and builds a chronological step-by-step lifecycle table.
+  - **Component Failure Analysis:** Ranks application components (`PaymentExportRepository`, `Program`, etc.) by error counts and failure rates.
 * **Refusal Guard:** If an ultra-small SLM returns a generic cop-out (e.g. *"Please provide the logs so I can help"*), the Refusal Guard automatically intercepts the output and replaces it with verified, ground-truth forensic data extracted directly from SQLite.
 
 ---
@@ -301,6 +307,13 @@ During previous architectural discussions, five critical design concerns were ra
   - RASA requires maintaining custom intent training datasets, dialogue policies, and separate server processes.
   - We replaced RASA with a **deterministic Intent Router** in [`backend/app/query_engine.py`](file:///backend/app/query_engine.py) combined with our local Qwen SLM.
   - The Intent Router directly translates user inquiries into SQL queries and context windows in $< 5\text{ ms}$, covering intent recognition, entity extraction, and database retrieval in a single step.
+
+### Concern 6: "Hardcoding keyword checks (like 'break' or 'halt') creates brittle maintenance bottlenecks across 50+ failure types."
+* **Resolution:**
+  - We completely eliminated hardcoded keyword matching arrays in favor of a **Universal Dynamic Forensic Context Extractor** (`get_dynamic_forensic_context` in [`backend/app/db.py`](file:///backend/app/db.py)).
+  - Natural queries pass through stop-word cleaning, morphological stemming, and an FTS5 BM25 search joined with status/component/message column fallbacks.
+  - Any operational intent—whether asking about breaks, reboots, restarts, memory spikes, deadlocks, timeouts, SSL handshake errors, or Base64 parsing failures—dynamically surfaces the most relevant log records and automatically pulls an 8-line execution context window (4 lines before, 4 lines after).
+  - This architecture handles 50+ arbitrary operational failure cases out of the box with zero code changes or new `if-else` branches.
 
 ---
 

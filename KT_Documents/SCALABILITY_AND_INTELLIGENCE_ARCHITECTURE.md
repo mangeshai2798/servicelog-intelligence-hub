@@ -88,13 +88,14 @@ To achieve **100% accurate, line-by-line intelligence without memory errors or h
 
 ---
 
-### Pillar 4: Multi-Facet Forensic Intent Router
-* **Location:** [`backend/app/query_engine.py`](file:///backend/app/query_engine.py)
+### Pillar 4: Multi-Facet Forensic Intent Router & Dynamic Context Extractor
+* **Location:** [`backend/app/query_engine.py`](file:///backend/app/query_engine.py) & [`backend/app/db.py`](file:///backend/app/db.py)
 * Analyzes user inquiries to extract target entities and query types:
-  1. **Line Inquiries (`line 435`, `line #90`):** Retrieves the exact target line plus the **preceding 4 lines and succeeding 4 lines** (Context Window) to show the chronological sequence leading to that line.
-  2. **Transaction Lifecycles (`TransactionId: ...` or Alphanumeric IDs):** Extracts all entries across all service logs matching that transaction and compiles a chronological step-by-step audit table.
-  3. **Temporal Inquiries (`between 14:00 and 14:15`):** Retrieves records within exact time intervals.
-  4. **Component Forensics (`which component had the most errors?`):** Queries component breakdown tables directly.
+  1. **Universal Dynamic Forensic Extractor (`get_dynamic_forensic_context`):** Completely eliminates hardcoded keyword matching arrays (`if "break"`). Filters conversational stop words, stems word inflections (`breaked` $\rightarrow$ `break`, `crashed` $\rightarrow$ `crash`), and performs hybrid FTS5 BM25 + status/component/message column search. Automatically extracts 8-line chronological context windows (4 lines before, 4 lines after) for any operational intent (breaks, reboots, restarts, memory spikes, timeouts, Base64 exceptions).
+  2. **Line Inquiries (`line 435`, `line #90`):** Retrieves the exact target line plus the **preceding 4 lines and succeeding 4 lines** (Context Window) to show the chronological sequence leading to that line.
+  3. **Transaction Lifecycles (`TransactionId: ...` or Alphanumeric IDs):** Extracts all entries across all service logs matching that transaction and compiles a chronological step-by-step audit table.
+  4. **Temporal Inquiries (`between 14:00 and 14:15`):** Retrieves records within exact time intervals.
+  5. **Component Forensics (`which component had the most errors?`):** Queries component breakdown tables directly.
 
 ---
 

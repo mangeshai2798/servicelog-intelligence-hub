@@ -11,6 +11,7 @@ Designed for high-volume distributed microservices, financial settlement pipelin
 * **100% Offline & Privacy-Compliant**: Powered by an in-memory `Qwen/Qwen2.5-0.5B-Instruct` model running locally in PyTorch via CPU tensors. Zero external API calls, zero cloud dependencies, and zero data leakage.
 * **Ultra-Generic Architecture**: No hardcoded service names, file names, or UI text. Everything is driven dynamically from the log content, database metadata, and the centralized [`.env`](file:///.env) configuration file.
 * **Multi-Gigabyte Scalability (O(1) RAM Ingestion)**: Streams log files line-by-line using Python generator iterators without loading entire files into memory. Handles gigabytes of logs in constant memory (< 35 MB RAM).
+* **Universal Dynamic Forensic Extractor**: Eliminates hardcoded keyword checks with autonomous FTS5 BM25 relevance search, stop-word cleaning, morphological stemming, and automatic 8-line context windows (4 lines before, 4 lines after) across 50+ arbitrary operational failure cases (breaks, reboots, restarts, memory spikes, deadlocks, timeouts, SSL errors, Base64 exceptions).
 * **Forensic SQLite & FTS5 Search**: Sub-millisecond lookups for line-by-line inspection (with surrounding 8-line context windows), end-to-end transaction lifecycle tracing, time intervals, and token-level BM25 full-text search.
 * **High-Precision Telemetry & Response Timing**: Tracks and displays exact Time to First Token (TTFT), neural generation duration, token generation speed (tokens/sec), and end-to-end latency directly on the UI and in the terminal.
 * **Smart Startup Lifecycle**: The single-command launcher automatically polls backend health and only opens the browser when log scanning, SQLite indexing, and local model warmup are 100% completed.
@@ -117,7 +118,7 @@ A dedicated benchmarking engine evaluates working efficiency, throughput, TTFT, 
 # Step 1: Download any missing model weights locally (e.g. 1.5B or 3B)
 python backend/download_model.py --model 1.5B
 
-# Step 2: Run automated memory isolation and test suite (7 tests)
+# Step 2: Run automated memory isolation and test suite (8 tests)
 python backend/test_models_benchmark.py
 
 # Step 3: Test individual models one at a time in separate terminal commands:

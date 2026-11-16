@@ -33,6 +33,7 @@ The test suite guarantees the reliability, latency thresholds, and accuracy of t
 
 | Tool | Purpose | Usage / Invocation |
 | :--- | :--- | :--- |
+| **`test_models_benchmark.py`** | Memory isolation, SLM switching & dynamic RAG test suite (8 tests) | `python backend/test_models_benchmark.py` |
 | **Python `unittest` / `pytest`** | Unit & integration test execution | `pytest tests/` or `python -m unittest discover` |
 | **`calculate_response_time.py`** | Performance benchmarking tool | `python backend/calculate_response_time.py --benchmark` |
 | **`python -m py_compile`** | Python syntax validation | `python -m py_compile backend/app/<module>.py` |
@@ -47,6 +48,8 @@ The test suite guarantees the reliability, latency thresholds, and accuracy of t
 Logs_Monitoring_Project/
 ├── backend/
 │   ├── calculate_response_time.py   # Latency benchmark suite & live API tester
+│   ├── test_models_benchmark.py     # 8 unit/integration tests for memory, switching & dynamic RAG
+│   ├── benchmark_models.py          # 10 SRE query benchmark suite with --model CLI selection
 │   └── tests/                        # Automated test suite
 │       ├── __init__.py
 │       ├── test_parser.py           # Unit tests for log format regexes
@@ -81,6 +84,11 @@ Logs_Monitoring_Project/
   1. Send `POST /api/query` with `{"query": "trace transaction TX-9021"}`.
 - **Expected Result:** Answer renders a chronological markdown audit table showing step-by-step service, component, line number, and event messages.
 
+### Flow 5: Universal Dynamic Forensic Extraction
+- **Steps:**
+  1. Run `get_dynamic_forensic_context()` with operational inquiries (`"How does this service breaked?"`, `"Why did base64 decode fail?"`, `"What happened with GetSettledPayments?"`).
+- **Expected Result:** Dynamic discovery of exact line numbers (e.g. line 434 for break, line 94 for base64) with 4 preceding and 4 succeeding lines without hardcoding.
+
 ---
 
 ## 6. Coverage Targets & Priority Matrix
@@ -88,30 +96,40 @@ Logs_Monitoring_Project/
 - **Overall Coverage Target:** > 80% across core backend modules.
 - **High Priority (Must be 100% verified):**
   - `parser.py`: Zero unhandled exceptions on unexpected log strings.
-  - `query_engine.py`: Refusal interception logic and fallback substitution.
-  - `db.py`: Parameterized SQL statement execution and FTS5 synchronization.
-  - `ai_service.py`: Memory safety and graceful fallback when offline model is unavailable.
+  - `query_engine.py`: Refusal interception logic, dynamic forensic extraction, and fallback substitution.
+  - `db.py`: Parameterized SQL statement execution, FTS5 synchronization, and dynamic forensic context windows.
+  - `ai_service.py`: Memory safety, sequential isolation, and graceful fallback when offline model is unavailable.
 
 ---
 
 ## 7. Quality Assurance Commands
 
-### 1. Syntax & Compilation Check
+### 1. Comprehensive Model Benchmark & Memory Isolation Test Suite (8 Tests)
+```powershell
+python backend/test_models_benchmark.py
+```
+
+### 2. Syntax & Compilation Check
 ```powershell
 python -m py_compile backend/app/main.py backend/app/query_engine.py backend/app/db.py backend/app/parser.py backend/app/analyzer.py backend/app/ai_service.py
 ```
 
-### 2. Live Performance Benchmark (Direct SLM + RAG)
+### 3. Individual Model Benchmark Run
+```powershell
+python backend/benchmark_models.py --model 0.5B
+```
+
+### 4. Live Performance Benchmark (Direct SLM + RAG)
 ```powershell
 python backend/calculate_response_time.py --benchmark
 ```
 
-### 3. Live HTTP API Endpoint Test
+### 5. Live HTTP API Endpoint Test
 ```powershell
 python backend/calculate_response_time.py --api
 ```
 
-### 4. Direct Single-Query Verification
+### 6. Direct Single-Query Verification
 ```powershell
 python backend/calculate_response_time.py "Why did PaymentGatewayService fail?"
 ```

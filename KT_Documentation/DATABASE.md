@@ -162,6 +162,17 @@ B-tree indexes are tailored to support sub-10ms query execution across high-freq
 | `idx_tx_id` | `(transaction_id)` | Enables instantaneous cross-service transaction lifecycle queries. |
 | `idx_file_line` | `(file_name, line_number)` | Powers line context window lookups (target line ± 4 lines). |
 | `idx_timestamp` | `(timestamp)` | Optimizes time-window queries (e.g., between 14:10 and 14:30). |
+| `idx_template_id` | `(template_id)` | Speeds up Drain3 template clustering and mining queries. |
+| `idx_template_service` | `(service, template_id)` | Fast retrieval of service-scoped template error signatures. |
+
+---
+
+### 5.1 Universal Dynamic Forensic Context Extraction (`get_dynamic_forensic_context`)
+The database layer exposes `get_dynamic_forensic_context(query_text, service=None, limit=3, context_lines=4)`:
+1. **Stop-Word Removal & Stemming:** Strips English interrogatives and conversational words, deriving morphological stems (`breaked` $\rightarrow$ `break`, `crashed` $\rightarrow$ `crash`, `restarted` $\rightarrow$ `restart`).
+2. **Hybrid Search:** Combines FTS5 BM25 relevance (`service_logs_fts MATCH ...`) with fallback matching on `status`, `component`, and `message` in `service_logs`.
+3. **Execution Context Reconstruction:** For every matched event, queries `service_logs` within the same `file_name` for `context_lines` preceding records (`id < target_id ORDER BY id DESC LIMIT ?`) and `context_lines` succeeding records (`id > target_id ORDER BY id ASC LIMIT ?`), reconstructing an 8-line chronological execution window.
+4. **Arbitrary Operational Support:** Operates universally for breaks, halts, reboots, restarts, memory spikes, deadlocks, timeouts, SSL errors, and Base64 format exceptions with zero hardcoded keyword arrays.
 
 ---
 

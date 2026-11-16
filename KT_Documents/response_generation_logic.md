@@ -27,19 +27,18 @@ flowchart TD
         F --> G["QueryEngine.answer_query(query, service)"]
     end
 
-    subgraph Data_Retrieval ["3. Intent Deconstruction & SQLite RAG (<5ms)"]
-        G --> H{"Intent Classifier & Entity Extractor"}
-        H --> I["Exact Line Retrieval: get_log_line_with_context()\n(Target line + 8 surrounding context lines)"]
-        H --> J["Transaction Audit: get_transaction_lifecycle()\n(Full chronological audit trail for Tx ID)"]
-        H --> K["Time-Window Retrieval: get_time_window_logs()\n(Between Start and End timestamps)"]
-        H --> L["Error Signatures & Components:\nget_error_signatures_summary() / get_component_breakdown()"]
-        H --> M["BM25 Full-Text Search: search_logs_dynamic() via FTS5"]
-        H --> N["Service Break Tracker: get_service_break_flow()"]
-        H --> O["System KPI Aggregates: get_overview() & get_error_causes()"]
+    subgraph Data_Retrieval ["3. Universal Dynamic Forensic Retrieval & SQLite RAG (<5ms)"]
+        G --> H{"Universal Forensic Router & Tokenizer"}
+        H --> I["Universal Dynamic Extractor: get_dynamic_forensic_context()\n(Stop-words, Stems, FTS5 BM25 + Column Fallback, 8-line Context Windows)"]
+        H --> J["Exact Line Retrieval: get_log_line_with_context()\n(Target line + 8 surrounding context lines)"]
+        H --> K["Transaction Audit: get_transaction_lifecycle()\n(Full chronological audit trail for Tx ID)"]
+        H --> L["Time-Window Retrieval: get_time_window_logs()\n(Between Start and End timestamps)"]
+        H --> M["Error Signatures & Components:\nget_error_signatures_summary() / get_component_breakdown()"]
+        H --> N["System KPI Aggregates: get_overview() & get_error_causes()"]
     end
 
     subgraph Prompt_Engineering ["4. Context Synthesis & Prompt Formulation"]
-        I & J & K & L & M & N & O --> P["Structure Ground-Truth Facts & Context Window"]
+        I & J & K & L & M & N --> P["Structure Ground-Truth Facts & Context Window"]
         P --> Q["Inject Active Service Scope Directive & Direct Facts"]
     end
 
@@ -82,9 +81,14 @@ flowchart TD
 1. **Middleware Interception**: [`request_logging_middleware`](file:///backend/app/main.py#L98) assigns an 8-character UUID request ID (e.g. `[a3c9b1e4]`), logs the incoming HTTP request, timestamp, and client IP.
 2. **Dispatch to Query Engine**: The route handler passes the text and service scope to [`query_engine.answer_query()`](file:///backend/app/query_engine.py#L26).
 
-### Phase 3: Intent Deconstruction & SQLite RAG (< 5 ms)
-The [`QueryEngine`](file:///backend/app/query_engine.py) parses the natural language text to extract specific operational intents and parameters:
-* **Line-by-Line Inspection (`line 435`, `line #90`)**: Calls [`get_log_line_with_context()`](file:///backend/app/db.py#L502) in [`db.py`](file:///backend/app/db.py) to extract the exact line plus a surrounding **8-line execution window** (4 lines before, 4 lines after).
+### Phase 3: Universal Dynamic Forensic Retrieval & SQLite RAG (< 5 ms)
+The [`QueryEngine`](file:///backend/app/query_engine.py) eliminates brittle hardcoded keyword checks in favor of a universal dynamic forensic context pipeline:
+* **Universal Dynamic Forensic Extractor ([`get_dynamic_forensic_context()`](file:///backend/app/db.py))**:
+  - Filters out conversational English stop words and interrogatives (`what`, `why`, `how`, `does`, `is`, `the`, `service`, `please`, etc.).
+  - Generates morphological stems (`breaked` $\rightarrow$ `break`, `crashed` $\rightarrow$ `crash`, `restarted` $\rightarrow$ `restart`).
+  - Queries SQLite FTS5 with BM25 ranking joined with direct `status`, `component`, and `message` column match fallbacks.
+  - Automatically reconstructs an **8-line chronological context window** (4 lines preceding, 4 lines succeeding) for every matched event, dynamically supporting 50+ arbitrary failure scenarios (service breaks, reboots, restarts, memory spikes, timeouts, SSL errors, Base64 exceptions) without any `if-else` branches.
+* **Line-by-Line Forensic Inspection (`line 435`, `line #90`)**: Calls [`get_log_line_with_context()`](file:///backend/app/db.py#L502) in [`db.py`](file:///backend/app/db.py) to extract the exact line plus a surrounding **8-line execution window** (4 lines before, 4 lines after).
 * **Transaction Lifecycle Tracing (`TransactionId: ...`, `C49527...`)**: Calls [`get_transaction_lifecycle()`](file:///backend/app/db.py#L561) to pull every log entry mentioning that identifier across all files in chronological order.
 * **Temporal Scans (`between 14:00 and 14:15`)**: Calls [`get_time_window_logs()`](file:///backend/app/db.py#L580) to pull exact chronologically ordered events within that time slice.
 * **Component Forensics**: Calls [`get_component_breakdown()`](file:///backend/app/db.py#L645) to calculate failure rates per software component.

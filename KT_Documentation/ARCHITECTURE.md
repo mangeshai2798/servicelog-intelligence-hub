@@ -104,13 +104,14 @@ flowchart TD
 4. **Metric Cache Invalidation:** `analyzer.py` re-calculates overall success rate, service breakdown, and failure causes.
 
 ### B. AI Query Execution Flow
-1. **User Input:** User submits query (e.g., *"Why did PaymentService crash at 14:22?"*) with active service filter.
-2. **Intent Analysis:** `query_engine.py` inspects the text for line numbers, transaction IDs, time windows, or break flows.
-3. **Targeted Forensic Extraction:** 
+1. **User Input:** User submits query (e.g., *"Why did PaymentService crash at 14:22?"*, *"Did any service restart?"*, or *"Was there a Base64 decode issue?"*) with active service filter.
+2. **Intent Analysis & Dynamic Tokenization:** `query_engine.py` removes hardcoded keyword checks. It passes the inquiry to `get_dynamic_forensic_context()` in `db.py`, which strips stop-words and derives morphological stems.
+3. **Universal Dynamic Forensic Extraction:** 
+   - Queries SQLite `service_logs_fts` via BM25 relevance alongside direct `status`, `component`, and `message` column matching.
+   - Automatically retrieves an **8-line chronological context window** (4 lines before, 4 lines after) for every matched operational event.
    - Line numbers trigger `get_log_line_with_context()` (target line ± 4 lines).
    - Transaction IDs trigger `get_transaction_lifecycle()` (chronological cross-service audit).
-   - Dynamic terms query `logs_fts` with BM25 ranking.
-4. **Prompt Assembly:** Ground-truth evidence and system instructions are assembled into a structured prompt.
+4. **Prompt Assembly:** Ground-truth evidence, execution flow context, and system instructions are assembled into a structured prompt.
 5. **Local Neural Generation:** `LocalQwenEngine` executes `generate_response()`, recording Time to First Token (TTFT), token count, and tokens/sec.
 6. **Refusal Interception:** If the model produces a refusal phrase (e.g., *"I don't have access to logs"*), the safeguard replaces it with deterministic database findings.
 7. **Formatting & Client Render:** Output is packaged with execution timing metadata and rendered into formatted markdown on the dashboard.

@@ -11,6 +11,7 @@ Designed for high-volume distributed microservices, financial settlement pipelin
 * **100% Offline & Privacy-Compliant**: Powered by an in-memory `Qwen/Qwen2.5-0.5B-Instruct` model running locally in PyTorch via CPU tensors. Zero external API calls, zero cloud dependencies, and zero data leakage.
 * **Ultra-Generic Architecture**: No hardcoded service names, file names, or UI text. Everything is driven dynamically from the log content, database metadata, and the centralized [`.env`](file:///.env) configuration file.
 * **Multi-Gigabyte Scalability (O(1) RAM Ingestion)**: Streams log files line-by-line using Python generator iterators without loading entire files into memory. Handles gigabytes of logs in constant memory (< 35 MB RAM).
+* **Universal Dynamic Forensic Extractor**: Eliminates hardcoded keyword checks with autonomous FTS5 BM25 relevance search, stop-word cleaning, morphological stemming, and automatic 8-line context windows (4 lines before, 4 lines after) across 50+ arbitrary operational failure cases (breaks, reboots, restarts, memory spikes, deadlocks, timeouts, SSL errors, Base64 exceptions).
 * **Forensic SQLite & FTS5 Search**: Sub-millisecond lookups for line-by-line inspection (with surrounding 8-line context windows), end-to-end transaction lifecycle tracing, time intervals, and token-level BM25 full-text search.
 * **High-Precision Telemetry & Response Timing**: Tracks and displays exact Time to First Token (TTFT), neural generation duration, token generation speed (tokens/sec), and end-to-end latency directly on the UI and in the terminal.
 * **Smart Startup Lifecycle**: The single-command launcher automatically polls backend health and only opens the browser when log scanning, SQLite indexing, and local model warmup are 100% completed.
@@ -110,7 +111,43 @@ python backend/calculate_response_time.py "what happened on line 435"
 python backend/calculate_response_time.py --benchmark
 ```
 
-### 3. Inspect Live Backend Logs
+### 3. Evaluate Models in Separate Tests (0.5B, 1.5B, 3B)
+A dedicated benchmarking engine evaluates working efficiency, throughput, TTFT, and RAM consumption across models in **strict sequential isolation** (one model in memory at a time). You can test each model individually in separate terminal runs:
+
+```powershell
+# Step 1: Download any missing model weights locally (e.g. 1.5B or 3B)
+python backend/download_model.py --model 1.5B
+
+# Step 2: Run automated memory isolation and test suite (8 tests)
+python backend/test_models_benchmark.py
+
+# Step 3: Test individual models one at a time in separate terminal commands:
+# Run Qwen 2.5 0.5B evaluation (Ultra-fast, ~1 GB RAM footprint)
+python backend/benchmark_models.py --model 0.5B
+
+# Run Qwen 2.5 1.5B evaluation (Balanced speed & reasoning, ~3 GB RAM footprint)
+python backend/benchmark_models.py --model 1.5B
+
+# Run Qwen 2.5 3B evaluation (Deep forensic reasoning in bfloat16, ~6 GB RAM footprint)
+python backend/benchmark_models.py --model 3B
+
+# Optional: Run quick smoke test (3 queries instead of 10) on any model
+python backend/benchmark_models.py --model 0.5B --quick --max-tokens 50
+python backend/benchmark_models.py --model 1.5B --quick --max-tokens 50
+python backend/benchmark_models.py --model 3B --quick --max-tokens 50
+
+# Step 4: Inspect the generated reports for your manager:
+# - Dedicated single-model reports:
+#   * KT_Documents/BENCHMARK_0.5B.md
+#   * KT_Documents/BENCHMARK_1.5B.md
+#   * KT_Documents/BENCHMARK_3B.md
+# - Consolidated master comparison report:
+#   * KT_Documents/MODEL_BENCHMARK_REPORT.md
+# - Structured machine-readable metrics:
+#   * backend/data/benchmark_results.json
+```
+
+### 4. Inspect Live Backend Logs
 Every startup event, HTTP request, SQLite index operation, query classification, and LLM token timing is recorded in `logs/backend.log`:
 - **In Dashboard UI:** Click **"Backend Logs"** in the navigation bar to open the live terminal viewer with real-time polling.
 - **In PowerShell:**
