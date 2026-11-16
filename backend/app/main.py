@@ -62,6 +62,11 @@ async def lifespan(app: FastAPI):
     init_db()
     sync_logs_to_db(entries)
 
+    # Pre-warm analysis caches so all user queries execute in milliseconds
+    logger.info("[STARTUP-WARMUP] Pre-computing and caching service summaries and root-cause analyses...")
+    analyzer.get_services_summary()
+    analyzer.get_error_causes()
+
     logger.info(
         f"[STARTUP-INDEX-COMPLETE] Indexed {len(entries):,} log lines across {overview.total_log_files} file(s). "
         f"Total Records: {overview.total_records_processed:,} | Success Rate: {overview.success_rate_percent}%"

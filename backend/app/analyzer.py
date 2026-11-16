@@ -21,6 +21,8 @@ class LogAnalyzer:
         self._metrics_len_cache: Dict[str, int] = {}
         self._break_cache: Dict[str, Optional[LogEntry]] = {}
         self._cached_overview: Optional[OverviewMetrics] = None
+        self._cached_services: Optional[List[ServiceSummary]] = None
+        self._cached_causes: Dict[str, List[ErrorCauseSummary]] = {}
         self._last_entries_len: int = 0
 
     def _calculate_file_metrics(self, file_name: str, entries: List[LogEntry]) -> Tuple[int, int, int]:
@@ -220,8 +222,12 @@ class LogAnalyzer:
             )
 
     def get_services_summary(self) -> List[ServiceSummary]:
-        start_t = time.time()
         entries = self.parser.parse_all()
+        if self._cached_services and len(entries) == self._last_entries_len:
+            logger.debug("[ANALYZER-CACHE-HIT] Serving ServiceSummary from cache.")
+            return self._cached_services
+
+        start_t = time.time()
         files = self.parser.get_log_files()
         summaries: List[ServiceSummary] = []
 
@@ -298,12 +304,19 @@ class LogAnalyzer:
             ))
 
         dur_ms = (time.time() - start_t) * 1000.0
+        self._cached_services = summaries
+        self._last_entries_len = len(entries)
         logger.info(f"[ANALYZER-SERVICES-COMPLETE] Generated summaries for {len(summaries)} service(s) in {dur_ms:.1f}ms")
         return summaries
 
     def get_error_causes(self, service: Optional[str] = None) -> List[ErrorCauseSummary]:
-        start_t = time.time()
         entries = self.parser.parse_all()
+        cache_key = (service or "ALL").lower()
+        if cache_key in self._cached_causes and len(entries) == self._last_entries_len:
+            logger.debug(f"[ANALYZER-CACHE-HIT] Serving ErrorCauses for '{cache_key}' from cache.")
+            return self._cached_causes[cache_key]
+
+        start_t = time.time()
         error_entries = [
             e for e in entries
             if e.level == "ERROR" and (not service or service.upper() == "ALL" or e.service.lower() == service.lower())
@@ -399,6 +412,8 @@ class LogAnalyzer:
             causes = [c for c in causes if c.service == service]
 
         dur_ms = (time.time() - start_t) * 1000.0
+        self._cached_causes[cache_key] = causes
+        self._last_entries_len = len(entries)
         logger.info(f"[ANALYZER-RCA-COMPLETE] Discovered {len(causes)} root causes (service={service}) in {dur_ms:.1f}ms")
         return causes
 
