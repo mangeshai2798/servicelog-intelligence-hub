@@ -35,3 +35,6 @@ DEFAULT_PROVIDER = os.getenv("PROVIDER", "qwen")
 DEFAULT_QWEN_MODEL = os.getenv("LOCAL_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
 MODEL_PATH = os.getenv("MODEL_PATH", "models/Qwen2.5-0.5B-Instruct")
 MAX_NEW_TOKENS = int(os.getenv("MAX_NEW_TOKENS", "220"))
+TORCH_THREADS = int(os.getenv("TORCH_THREADS", "4"))
+DYNAMIC_PROMPT_PRUNING = os.getenv("DYNAMIC_PROMPT_PRUNING", "True").lower() == "true"
+FAST_RESPONSE_MODE = os.getenv("FAST_RESPONSE_MODE", "False").lower() == "true"

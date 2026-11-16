@@ -1,3 +1,4 @@
+import os
 import time
 import re
 from typing import Dict, Any, List, Optional
@@ -163,8 +164,11 @@ class QueryEngine:
         gen_time_s: Optional[float] = None
         speed: Optional[float] = None
         gen_tokens_count: Optional[int] = None
+        prompt_tokens_count: Optional[int] = None
 
-        if ai_service.is_configured():
+        fast_response_mode = os.getenv("FAST_RESPONSE_MODE", "false").lower() == "true"
+
+        if ai_service.is_configured() and not fast_response_mode:
             logger.info(f"[QUERY-ROUTING] Routing query to Local Qwen SLM ('{ai_service.model_name}')")
             res_obj = ai_service.generate_response(query, context_data, return_metrics=True)
             if res_obj:
@@ -174,12 +178,14 @@ class QueryEngine:
                     gen_time_s = round(float(res_obj.get("generation_time_s", 0.0)), 2)
                     speed = round(float(res_obj.get("speed", 0.0)), 1)
                     gen_tokens_count = int(res_obj.get("num_tokens", 0))
+                    prompt_tokens_count = int(res_obj.get("prompt_tokens", 0))
                 else:
                     llm_answer = str(res_obj)
                     ttft_s = None
                     gen_time_s = None
                     speed = None
                     gen_tokens_count = None
+                    prompt_tokens_count = None
 
                 # Refusal guard: Intercept any small SLM cop-out ("please provide logs") and elevate to diagnostic engine
                 refusal_phrases = [
@@ -243,6 +249,7 @@ class QueryEngine:
                     f"• Query                     : \"{query}\"\n"
                     f"• Scope                     : {scope_str}\n"
                     f"• Model                     : Local Qwen 2.5 ({ai_service.model_name})\n"
+                    f"• Prompt Tokens Processed   : {prompt_tokens_count or 'N/A'} tokens (Optimized Dynamic Pruning)\n"
                     f"{'-'*80}\n"
                     f"• Time to First Token (TTFT): {ttft_str}\n"
                     f"• Neural Generation Duration: {gen_time_str}\n"

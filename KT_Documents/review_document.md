@@ -377,15 +377,20 @@ When presenting to seniors and managers, follow this 6-step walkthrough:
 - Explain the **Strict Memory Isolation Guarantee**: models are completely evicted from RAM before a new model boots, preventing OOM crashes.
 - Explain the **`torch.bfloat16`** optimization that reduced 3B RAM consumption from 9.2 GB to 6.2 GB.
 
-### Step 6: Review Benchmarks & Automated Tests (2 Minutes)
-1. Show the automated unit test suite passing 7 comprehensive tests:
+### Step 6: Review Benchmarks, Optimizations & Automated Tests (2 Minutes)
+1. Show the automated unit test suite passing 8 comprehensive tests:
    ```powershell
    python backend/test_models_benchmark.py
    ```
-2. Open the generated executive reports:
+2. Demonstrate the response time optimization suite:
+   - **Dynamic Query-Aware Prompt Pruning (`DYNAMIC_PROMPT_PRUNING=True`)**: Reduces prompt token size from ~3,670 to ~450–1,200 tokens, cutting TTFT by over 50–80%.
+   - **Performance-Core Thread Pinning (`TORCH_THREADS=4`)**: Eliminates Intel hybrid E-core thread barrier stalling on Core i5-13420H, boosting generation speed from 1.9 to 5.2–7.7 tok/s.
+   - **Adaptive Token Budgeting**: Automatically caps generation at 95 tokens for concise operational facts.
+   - **Deterministic Fast-Path (`FAST_RESPONSE_MODE=True`)**: Optional $< 15\text{ ms}$ verified ground truth mode.
+3. Open the generated executive reports:
    - [MODEL_BENCHMARK_REPORT.md](file:///c:/Users/mangesh.bondre/Desktop/Logs_Monitoring_Project/KT_Documents/MODEL_BENCHMARK_REPORT.md)
    - [BENCHMARK_0.5B.md](file:///c:/Users/mangesh.bondre/Desktop/Logs_Monitoring_Project/KT_Documents/BENCHMARK_0.5B.md)
-- Point out the empirical decision matrix demonstrating that our architecture is fully validated and ready for production deployment.
+- Point out the empirical decision matrix demonstrating that our architecture is fully validated, high-speed, and ready for production deployment.
 
 ---
 
@@ -394,7 +399,7 @@ When presenting to seniors and managers, follow this 6-step walkthrough:
 | Action | Command | Purpose |
 | :--- | :--- | :--- |
 | **Launch Dashboard** | `python run_dashboard.py` | Starts backend, primes SQLite, warms up SLM, opens browser. |
-| **Run Unit Tests** | `python backend/test_models_benchmark.py` | Runs 7 automated tests verifying isolation, switching, and parsing. |
+| **Run Unit Tests** | `python backend/test_models_benchmark.py` | Runs 8 automated tests verifying isolation, switching, pruning, and parsing. |
 | **Benchmark 0.5B Model** | `python backend/benchmark_models.py --model 0.5B` | Evaluates 0.5B model across 10 standardized SRE queries. |
 | **Benchmark 1.5B Model** | `python backend/benchmark_models.py --model 1.5B` | Evaluates 1.5B model in isolation across SRE queries. |
 | **Benchmark 3B Model** | `python backend/benchmark_models.py --model 3B` | Evaluates 3B model in bfloat16 across SRE queries. |

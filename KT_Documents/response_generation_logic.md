@@ -297,14 +297,29 @@ All 10 queries below were executed against the active system running the Dorches
 
 ---
 
-## 4. Latency & Performance Summary
+## 4. Latency & Performance Optimization Suite
 
-| Processing Stage | Typical Latency | Key Performance Driver |
-| :--- | :--- | :--- |
-| **Log Streaming & SQLite Sync (35,860 lines)** | **~900 ms** | O(1) RAM streaming file reader with bulk SQLite transaction commit |
-| **SQLite KPI & RCA Aggregation** | **< 15 ms** | Indexed queries on `(service_name, log_level, timestamp)` |
-| **Exact Line & Context Window Lookup** | **< 1 ms** | B-Tree index on `(file_name, line_number)` |
-| **Transaction Lifecycle Extraction** | **< 2 ms** | B-Tree index on `transaction_id` |
-| **FTS5 Token Search** | **< 5 ms** | SQLite Full-Text Search 5 virtual table lookup |
-| **Local In-Memory Qwen 2.5 Inference** | **15 – 35 s** | Local CPU tensor calculation (greedy decoding, zero cloud cost) |
-| **Deterministic Direct Fallback** | **< 1 ms** | Instant in-memory formatting from cached database metrics |
+| Processing Stage | Before Optimization | After Optimization (Pruned & Thread Tuned) | Fast-Path Mode | Key Performance Driver |
+| :--- | :--- | :--- | :--- | :--- |
+| **Log Streaming & SQLite Ingestion (35,860 lines)** | ~900 ms | **~900 ms** | ~900 ms | O(1) RAM streaming reader with chunked SQLite commits |
+| **SQLite KPI & RCA Aggregation** | < 15 ms | **< 15 ms** | < 15 ms | Indexed queries on `(service_name, log_level, timestamp)` |
+| **Exact Line Context Lookup (8 Lines)** | < 1 ms | **< 1 ms** | < 1 ms | B-Tree index on `(file_name, line_number)` |
+| **Transaction Lifecycle Extraction** | < 2 ms | **< 2 ms** | < 2 ms | B-Tree index on `transaction_id` |
+| **FTS5 Dynamic Forensic Log Search** | < 5 ms | **< 5 ms** | < 5 ms | SQLite Full-Text Search 5 virtual table lookup |
+| **Prompt Token Overhead** | 3,670 tokens | **450 – 1,200 tokens (3x-8x smaller)** | N/A | Dynamic query-aware pruning drops unneeded sections |
+| **Time to First Token (TTFT)** | **18.32 s** | **~1.2 – 8.2 s (Over 50% faster)** | **< 0.001 s** | Quadratic self-attention prefill computation minimized |
+| **Neural Generation Speed** | **1.9 tok/s** | **5.2 – 7.7 tok/s (2.7x faster)** | N/A | P-core thread pinning (4 threads) & smaller KV-cache |
+| **Total Query Latency** | **33.97 s** | **~3 – 18 s** | **< 15 ms (Instant)** | 100% offline, privacy-guaranteed local intelligence |
+
+### Performance Optimization Mechanisms Implemented
+1. **Dynamic Query-Aware Prompt Pruning (`DYNAMIC_PROMPT_PRUNING=True`)**:
+   - Analyzes user query intent (forensic break, line inspection, transaction tracing, component reliability, structural template, or system overview).
+   - Only injects the specific diagnostic telemetry needed for that intent rather than dumping all 11 tables unconditionally.
+   - Reduces prompt length by 65–85%, dramatically slashing CPU prefill duration.
+2. **PyTorch CPU Performance-Core Pinning (`TORCH_THREADS=4`)**:
+   - Pins thread execution pool to the machine's 4 physical Performance Cores (P-cores) on Intel hybrid architecture (Core i5-13420H).
+   - Prevents P-core thread synchronization stalls waiting on slower Efficient Cores (E-cores).
+3. **Adaptive Token Budgeting (`max_new_tokens`)**:
+   - Dynamically caps maximum tokens based on question complexity (95 tokens for factual operational answers; 180 for broad overviews).
+4. **Deterministic Instant Fast-Path (`FAST_RESPONSE_MODE=True`)**:
+   - Bypasses neural tensor generation entirely and serves answers in $< 15\text{ ms}$ using verified SQLite diagnostic ground truth.

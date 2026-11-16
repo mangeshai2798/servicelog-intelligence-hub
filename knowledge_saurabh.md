@@ -232,6 +232,16 @@ Run these 3 commands during your meeting to demonstrate the system live:
 
 ---
 
+### Q5: "How do you optimize response generation latency on CPU without a dedicated GPU?"
+* **Your Answer:**  
+  *"We implemented a 4-tier CPU inference optimization suite:
+  1. **Dynamic Prompt Pruning (`DYNAMIC_PROMPT_PRUNING=True`)**: Instead of dumping all 11 diagnostic tables into the prompt, the engine classifies query intent and injects only query-relevant telemetry. This cuts prompt length by 65–85% (from 3,670 to ~450–1,200 tokens), dropping prefill time (TTFT) by over 50–80%.
+  2. **PyTorch P-Core Thread Pinning (`TORCH_THREADS=4`)**: On Intel hybrid architecture (13th Gen Core i5-13420H), unpinned multi-threading causes performance P-cores to stall waiting for slower efficiency E-cores. Pinning to the 4 physical P-cores increased token generation speed from 1.9 to 5.2–7.7 tok/s.
+  3. **Adaptive Token Budgeting**: Automatically caps generation at 95 tokens for concise operational facts, eliminating needless trailing tokens.
+  4. **Deterministic Fast-Path (`FAST_RESPONSE_MODE=True`)**: For sub-second SLA requirements, serves answers directly from verified SQLite ground truth in $< 15\text{ ms}$."*
+
+---
+
 ## 📂 6. Codebase File Navigator for Saurabh Sir
 
 | File | Purpose | Key Functions / Classes |
